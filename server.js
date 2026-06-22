@@ -167,7 +167,7 @@ io.on('connection', (socket) => {
         timerCurrent: 60
       },
       settings: {
-        theme: customSettings?.theme || { primary: '#06B6D4', secondary: '#EC4899', darkBg: '#0B0815' },
+        theme: customSettings?.theme || { primary: '#4db6a4', secondary: '#7ac8bc', darkBg: '#16292f' },
         customQuestions: customSettings?.customQuestions || [],
         botEnabled: false,
         botName: 'ผู้เล่นนิรนาม'
@@ -411,7 +411,7 @@ io.on('connection', (socket) => {
       
       // If host disconnected, close the room
       if (room.hostSocketId === socket.id) {
-        io.to(code).emit('room-closed', 'Host disconnected.');
+        io.to(code).emit('room-closed', 'เกมถูกกดยกเลิกเนื่องจากโฮสต์ยกเลิกการเชื่อมต่อหรือปิดห้อง');
         delete rooms[code];
         console.log(`Room closed: ${code} due to host disconnect.`);
         break;
@@ -422,8 +422,15 @@ io.on('connection', (socket) => {
       if (playerIndex > -1) {
         const playerName = room.players[playerIndex].name;
         room.players.splice(playerIndex, 1);
-        io.to(code).emit('player-left', { playerName, players: room.players, roomState: room });
-        console.log(`Player ${playerName} left room ${code}`);
+        
+        if (room.gameState.status === 'playing') {
+          io.to(code).emit('room-closed', `เกมถูกกดยกเลิกเนื่องจากผู้เล่น ${playerName} ออกจากเกม`);
+          delete rooms[code];
+          console.log(`Room closed: ${code} due to player ${playerName} leaving during active game.`);
+        } else {
+          io.to(code).emit('player-left', { playerName, players: room.players, roomState: room });
+          console.log(`Player ${playerName} left lobby of room ${code}`);
+        }
         break;
       }
     }

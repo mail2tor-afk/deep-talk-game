@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;500;600&family=Patrick+Hand&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#e7e5df; }
+</style>
+</helmet>
+
+<div style="min-width:max-content; min-height:100vh; box-sizing:border-box; padding:48px; background:#e7e5df; font-family:'Mali',cursive;">
+
+  <!-- ===== TITLE BLOCK ===== -->
+  <div style="max-width:760px; margin-bottom:40px;">
+    <div style="font-family:'Patrick Hand',cursive; font-size:13px; letter-spacing:2px; color:#8a8a8a; text-transform:uppercase;">Low-fi wireframe exploration</div>
+    <div style="font-size:38px; font-weight:600; color:#1d1d1d; margin-top:4px; line-height:1.1;">DeepTalk.io — มือถือผู้เล่น <span style="color: {{ accent }};">(player.html)</span></div>
+    <div style="font-size:16px; color:#555; margin-top:12px; line-height:1.5;">3 แนวทางโครงสร้างหน้าจอ สำหรับเกมความสัมพันธ์ที่ "ท้าทาย" — ลึกลับ ตื่นเต้น ไม่น่าเบื่อ. แต่ละแถวคือ flow เดียวกัน (ล็อบบี้ → ตอบ → เดาตัวตน → เปิดเผย) ต่างกันที่วิธีจัดวาง.</div>
+    <div style="display:inline-block; margin-top:14px; padding:6px 14px; border:2px dashed #b8a8d8; border-radius:20px; font-family:'Patrick Hand',cursive; font-size:14px; color:#6b5b95;">ยังเป็นโครงร่าง — สี/ภาพจริงใส่ทีหลัง (ดูตัวอย่างธีมลึกลับด้านล่างสุด)</div>
+  </div>
+
+  <!-- ============================================================= -->
+  <!-- APPROACH A -->
+  <!-- ============================================================= -->
+  <div style="margin-bottom:52px;">
+    <div style="display:flex; align-items:baseline; gap:14px; margin-bottom:6px;">
+      <div style="font-family:'Patrick Hand',cursive; font-size:26px; color:#1d1d1d;">แนวทาง A · การ์ดเดี่ยวเต็มจอ</div>
+      <div style="height:10px; flex:1; max-width:200px; background: {{ accent }}; opacity:0.25; border-radius:5px;"></div>
+    </div>
+    <div style="font-size:15px; color:#666; margin-bottom:22px; max-width:680px;">โฟกัสทีละสิ่งเดียว · ปัดเพื่อไปต่อ · เนื้อหาถูกซ่อนจนถึงเวลาเปิด → ให้ความรู้สึกลึกลับ ลุ้น ตื่นเต้น. การ์ดหักมุมแอบอยู่ขอบล่าง.</div>
+
+    <div style="display:flex; gap:34px; align-items:flex-start;">
+
+      <!-- A1 Lobby -->
+      <div style="display:flex; flex-direction:column; gap:9px; align-items:flex-start;">
+        <div style="font-family:'Patrick Hand',cursive; font-size:14px; color:#777;">01 · ล็อบบี้</div>
+        <div data-screen-label="A — Lobby" style="flex:none; width:280px; height:580px; background:#fbfaf7; border:2.5px solid #2a2a2a; border-radius:30px; padding:14px; display:flex; flex-direction:column; gap:12px; position:relative; box-shadow:5px 6px 0 rgba(0,0,0,0.1);">
+          <div style="width:70px; height:5px; background:#ccc; border-radius:3px; align-self:center;"></div>
+          <div style="display:flex; justify-content:space-between; align-items:center; font-family:'Patrick Hand',cursive; font-size:13px; color:#555;"><span>ห้อง: ABCD</span><span style="border:2px solid #333; border-radius:50%; width:24px; height:24px; display:flex; align-items:center; justify-content:center;">✕</span></div>
+          <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px;">
+            <div style="width:70px; height:70px; border:5px solid #e0e0e0; border-top-color: {{ accent }}; border-radius:50%;"></div>
+            <div style="font-size:17px; color:#444;">รอโฮสต์เริ่มเกม…</div>
+            <div style="font-size:13px; color:#999;">ชื่อคุณ: ____</div>
+          </div>
+          <div style="border:2px solid #333; border-radius:12px; padding:10px; display:flex; align-items:center; gap:10px;"><span style="width:20px; height:20px; border:2px solid #333; border-radius:4px;"></span><span style="font-size:13px; color:#444; line-height:1.2;">🤖 เปิดบอทสวมรอย (ลับ)</span></div>
+          <div style="border:2px dashed #999; border-radius:12px; padding:9px; display:flex; align-items:center; gap:10px; color:#777; font-size:13px;"><span style="width:34px; height:20px; background:#ddd; border-radius:10px;"></span>เปิดกล้อง/ไมค์ (LDR)</div>
+          <div style="border:2px solid {{ accent }}; border-bottom:none; border-radius:14px 14px 0 0; padding:8px; text-align:center; font-family:'Patrick Hand',cursive; font-size:13px; color: {{ accent }}; margin:0 -2px -16px;">การ์ดหักมุม ▲</div>
+        </div>
+      </div>
+
+      <!-- A2 Answer -->
+      <div style="display:flex; flex-direction:column; gap:9px; align-items:flex-start; position:relative;">
+        <div style="font-family:'Patrick Hand',cursive; font-size:14px; color:#777;">02 · ตอบคำถาม</div>
+        <div data-screen-label="A — Answer" style="flex:none; width:280px; height:580px; background:#fbfaf7; border:2.5px solid #2a2a2a; border-radius:30px; padding:14px; display:flex; flex-direction:column; gap:12px; box-shadow:5px 6px 0 rgba(0,0,0,0.1);">
+          <div style="display:flex; justify-content:space-between; align-items:center; font-family:'Patrick Hand',cursive; font-size:12px; color:#555;"><span style="border:2px solid {{ accent }}; color:{{ accent }}; border-radius:14px; padding:3px 10px;">🛡️ Safe Skip</span><span style="border:2px solid #333; border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center;">✕</span></div>
+          <div style="border:2px solid #333; border-radius:14px; padding:16px; display:flex; flex-direction:column; gap:12px; background:#fff;">
+            <div style="font-size:19px; color:#1d1d1d; line-height:1.35;">อะไรคือสิ่งที่คุณไม่เคยกล้าบอกใครในห้องนี้?</div>
+            <div style="height:7px; width:90%; background:#e3e3e3; border-radius:4px;"></div>
+            <div style="height:7px; width:60%; background:#e3e3e3; border-radius:4px;"></div>
+            <div style="font-family:'Patrick Hand',cursive; font-size:12px; color:#aaa;">EN translation…</div>
+          </div>
+          <div style="flex:1; border:2px solid #333; border-radius:12px; padding:10px; background:#fff; color:#bbb; font-size:14px;">พิมพ์คำตอบของคุณ…</div>
+          <div style="display:flex; align-items:center; gap:8px;"><div style="flex:1; height:7px; background:#e3e3e3; border-radius:4px; overflow:hidden;"><div style="width:55%; height:100%; background: {{ accent }};"></div></div><span style="font-family:'Patrick Hand',cursive; font-size:12px; color:#888;">84/150</span></div>
+          <div style="border-radius:12px; padding:12px; text-align:center; font-family:'Patrick Hand',cursive; font-size:16px; background: {{ accent }}; color:#fff;">ส่งคำตอบ →</div>
+        </div>
+        <div style="display: {{ notesDisplay }}; position:absolute; top:38px; right:-78px; width:118px; background:#fff7c2; border:1.5px solid #e0d27a; padding:8px 10px; font-family:'Patrick Hand',cursive; font-size:12px; color:#7a6a1a; transform:rotate(4deg); box-shadow:2px 2px 5px rgba(0,0,0,0.12); line-height:1.3;">การ์ดอยู่บนมือ ไม่ต้องเงยมองทีวี</div>
+      </div>
+
+      <!-- A3 Guess -->
+      <div style="display:flex; flex-direction:column; gap:9px; align-items:flex-start;">
+        <div style="font-family:'Patrick Hand',cursive; font-size:14px; color:#777;">03 · เดาตัวตน</div>
+        <div data-screen-label="A — Guess" style="flex:none; width:280px; height:580px; background:#fbfaf7; border:2.5px solid #2a2a2a; border-radius:30px; padding:14px; display:flex; flex-direction:column; gap:12px; box-shadow:5px 6px 0 rgba(0,0,0,0.1);">
+          <div style="display:flex; justify-content:space-between; align-items:center; font-family:'Patrick Hand',cursive; font-size:12px; color:#555;"><span>ห้อง: ABCD</span><span>เดาว่าใครเขียน?</span></div>
+          <div style="border:2px solid {{ accent }}; border-radius:14px; padding:16px; background:#faf6ff;">
+            <div style="font-family:'Patrick Hand',cursive; font-size:12px; color: {{ accent }}; margin-bottom:8px;">คำตอบนิรนาม #3</div>
+            <div style="font-size:17px; color:#1d1d1d; line-height:1.35;">"ตอนเด็กผมแอบกลัวที่จะถูกลืม…"</div>
+          </div>
+          <div style="font-size:13px; color:#777;">ใครเป็นเจ้าของ?</div>
+          <div style="flex:1; display:grid; grid-template-columns:1fr 1fr; gap:10px; align-content:start;">
+            <div style="border:2px solid #333; border-radius:14px; padding:12px 4px; text-align:center; font-size:13px; background:#fff;">มะนาว</div>
+            <div style="border:2px solid {{ accent }}; border-radius:14px; padding:12px 4px; text-align:center; font-size:13px; background: {{ accent }}; color:#fff;">โบ๊ท</div>
+            <div style="border:2px solid #333; border-radius:14px; padding:12px 4px; text-align:center; font-size:13px; background:#fff;">ฟ้า</div>
+            <div style="border:2px solid #333; border-radius:14px; padding:12px 4px; text-align:center; font-size:13px; background:#fff;">กานต์</div>
+            <div style="border:2px solid #333; border-radius:14px; padding:12px 4px; text-align:center; font-size:13px; background:#fff;">??? (บอท)</div>
+            <div style="border:2px solid #333; border-radius:14px; padding:12px 4px; text-align:center; font-size:13px; background:#fff;">นิว</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- A4 Reveal -->
+      <div style="display:flex; flex-direction:column; gap:9px; align-items:flex-start;">
+        <div style="font-family:'Patrick Hand',cursive; font-size:14px; color:#777;">04 · เปิดเผย</div>
+        <div data-screen-label="A — Reveal" style="flex:none; width:280px; height:580px; background:#fbfaf7; border:2.5px solid #2a2a2a; border-radius:30px; padding:14px; display:flex; flex-direction:column; gap:12px; box-shadow:5px 6px 0 rgba(0,0,0,0.1);">
+          <div style="display:flex; justify-content:space-between; align-items:center; font-family:'Patrick Hand',cursive; font-size:13px; color:#555;"><span>เปิดใจ 🔓</span><span style="border:2px solid #333; border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center;">✕</span></div>
+          <div style="flex:1; display:flex; flex-direction:column; gap:11px; overflow:hidden;">
+            <div style="border:2px solid #333; border-radius:12px; padding:11px; background:#fff;"><div style="font-family:'Patrick Hand',cursive; font-size:12px; color: {{ accent }};">โบ๊ท</div><div style="font-size:14px; color:#333; line-height:1.3; margin-top:3px;">"ตอนเด็กผมแอบกลัวที่จะถูกลืม…"</div></div>
+            <div style="border:2px solid #333; border-radius:12px; padding:11px; background:#fff;"><div style="font-family:'Patrick Hand',cursive; font-size:12px; color: {{ accent }};">ฟ้า</div><div style="font-size:14px; color:#333; line-height:1.3; margin-top:3px;">"กลัวว่าคนรักจะเปลี่ยนไป…"</div></div>
+            <div style="border:2px solid #333; border-radius:12px; padding:11px; background:#fff;"><div style="font-family:'Patrick Hand',cursive; font-size:12px; color: {{ accent }};">มะนาว</div><div style="font-size:14px; color:#333; line-height:1.3; margin-top:3px;">"อยากให้พ่อภูมิใจสักครั้ง…"</div></div>
+          </div>
+          <div style="border:2px solid #333; border-radius:12px; padding:11px; text-align:center; font-family:'Patrick Hand',cursive; font-size:15px; color:#333;">คุยกันต่อ →</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================================= -->
+  <!-- APPROACH B -->
+  <!-- ============================================================= -->
+  <div style="margin-bottom:52px;">
+    <div style="display:flex; align-items:baseline; gap:14px; margin-bottom:6px;">
+      <div style="font-family:'Patrick Hand',cursive; font-size:26px; color:#1d1d1d;">แนวทาง B · รีโมทคอนโทรล</div>
+      <div style="height:10px; flex:1; max-width:200px; background: {{ accent }}; opacity:0.25; border-radius:5px;"></div>
+    </div>
+    <div style="font-size:15px; color:#666; margin-bottom:22px; max-width:680px;">มือถือ = แผงควบคุมเกม · HUD ความปลอดภัยอยู่บนตลอด · ถาดการ์ดหักมุม 4 ใบอยู่ล่างตลอดเวลา → กดขัดจังหวะได้ทันที คาดเดาง่าย คุมเกมสนุก.</div>
+
+    <div style="display:flex; gap:34px; align-items:flex-start;">
+
+      <!-- B1 -->
+      <div style="display:flex; flex-direction:column; gap:9px; align-items:flex-start;">
+        <div style="font-family:'Patrick Hand',cursive; font-size:14px; color:#777;">01 · ล็อบบี้</div>
+        <div data-screen-label="B — Lobby" style="flex:none; width:280px; height:580px; background:#fbfaf7; border:2.5px solid #2a2a2a; border-radius:30px; padding:0; display:flex; flex-direction:column; overflow:hidden; box-shadow:5px 6px 0 rgba(0,0,0,0.1);">
+          <div style="background:#2a2a2a; color:#fff; padding:12px 14px; display:flex; justify-content:space-between; align-items:center; font-family:'Patrick Hand',cursive; font-size:13px;"><span style="border:1.5px solid #fff; border-radius:12px; padding:3px 9px;">✕ ยกเลิก</span><span style="border:1.5px solid {{ accent }}; color:#fff; background:{{ accent }}; border-radius:12px; padding:3px 9px;">🛡️ Safe Skip</span></div>
+          <div style="flex:1; padding:14px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px;">
+            <div style="width:60px; height:60px; border:5px solid #e0e0e0; border-top-color: {{ accent }}; border-radius:50%;"></div>
+            <div style="font-size:16px; color:#444;">รอเริ่มเกม…</div>
+            <div style="display:flex; flex-wrap:wrap; gap:7px; justify-content:center;"><span style="border:2px solid #333; border-radius:14px; padding:4px 11px; font-size:12px;">โบ๊ท</span><span style="border:2px solid #333; border-radius:14px; padding:4px 11px; font-size:12px;">ฟ้า</span><span style="border:2px solid #333; border-radius:14px; padding:4px 11px; font-size:12px;">มะนาว</span><span style="border:2px dashed #999; border-radius:14px; padding:4px 11px; font-size:12px; color:#999;">+ รอ</span></div>
+          </div>
+          <div style="border-top:2px solid #ddd; padding:10px 12px; display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:8px; opacity:0.45;">
+            <div style="border:2px solid #333; border-radius:10px; padding:8px 2px; text-align:center; font-size:18px;">🎭</div>
+            <div style="border:2px solid #333; border-radius:10px; padding:8px 2px; text-align:center; font-size:18px;">👉</div>
+            <div style="border:2px solid #333; border-radius:10px; padding:8px 2px; text-align:center; font-size:18px;">⏩</div>
+            <div style="border:2px solid #333; border-radius:10px; padding:8px 2px; text-align:center; font-size:18px;">🔥</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- B2 -->
+      <div style="display:flex; flex-direction:column; gap:9px; align-items:flex-start; position:relative;">
+        <div style="font-family:'Patrick Hand',cursive; font-size:14px; color:#777;">02 · ตอบคำถาม</div>
+        <div data-screen-label="B — Answer" style="flex:none; width:280px; height:580px; background:#fbfaf7; border:2.5px solid #2a2a2a; border-radius:30px; padding:0; display:flex; flex-direction:column; overflow:hidden; box-shadow:5px 6px 0 rgba(0,0,0,0.1);">
+          <div style="background:#2a2a2a; color:#fff; padding:12px 14px; display:flex; justify-content:space-between; align-items:center; font-family:'Patrick Hand',cursive; font-size:13px;"><span style="border:1.5px solid #fff; border-radius:12px; padding:3px 9px;">✕ ยกเลิก</span><span style="border:1.5px solid {{ accent }}; color:#fff; background:{{ accent }}; border-radius:12px; padding:3px 9px;">🛡️ Safe Skip</span></div>
+          <div style="flex:1; padding:14px; display:flex; flex-direction:column; gap:11px;">
+            <div style="border:2px solid #333; border-radius:12px; padding:13px; background:#fff;"><div style="font-size:17px; color:#1d1d1d; line-height:1.35;">ความลับเล็ก ๆ ที่คุณเก็บไว้คืออะไร?</div><div style="height:6px; width:55%; background:#e3e3e3; border-radius:4px; margin-top:8px;"></div></div>
+            <div style="flex:1; border:2px solid #333; border-radius:12px; padding:10px; background:#fff; color:#bbb; font-size:14px;">พิมพ์คำตอบ…</div>
+            <div style="display:flex; align-items:center; gap:8px;"><div style="flex:1; height:7px; background:#e3e3e3; border-radius:4px; overflow:hidden;"><div style="width:40%; height:100%; background: {{ accent }};"></div></div><span style="font-family:'Patrick Hand',cursive; font-size:12px; color:#888;">60/150</span></div>
+            <div style="border-radius:11px; padding:11px; text-align:center; font-family:'Patrick Hand',cursive; font-size:15px; background: {{ accent }}; color:#fff;">ส่ง →</div>
+          </div>
+          <div style="border-top:2px solid #ddd; padding:10px 12px; display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:8px;">
+            <div style="border:2px solid #333; border-radius:10px; padding:8px 2px; text-align:center; font-size:18px;">🎭</div>
+            <div style="border:2px solid #333; border-radius:10px; padding:8px 2px; text-align:center; font-size:18px;">👉</div>
+            <div style="border:2px solid #333; border-radius:10px; padding:8px 2px; text-align:center; font-size:18px;">⏩</div>
+            <div style="border:2px solid #333; border-radius:10px; padding:8px 2px; text-align:center; font-size:18px;">🔥</div>
+          </div>
+        </div>
+        <div style="display: {{ notesDisplay }}; position:absolute; bottom:30px; right:-80px; width:120px; background:#fff7c2; border:1.5px solid #e0d27a; padding:8px 10px; font-family:'Patrick Hand',cursive; font-size:12px; color:#7a6a1a; transform:rotate(-3deg); box-shadow:2px 2px 5px rgba(0,0,0,0.12); line-height:1.3;">ถาดการ์ดอยู่ล่างเสมอ = กดป่วนได้ทุกเมื่อ</div>
+      </div>
+
+      <!-- B3 -->
+      <div style="display:flex; flex-direction:column; gap:9px; align-items:flex-start;">
+        <div style="font-family:'Patrick Hand',cursive; font-size:14px; color:#777;">03 · เดาตัวตน</div>
+        <div data-screen-label="B — Guess" style="flex:none; width:280px; height:580px; background:#fbfaf7; border:2.5px solid #2a2a2a; border-radius:30px; padding:0; display:flex; flex-direction:column; overflow:hidden; box-shadow:5px 6px 0 rgba(0,0,0,0.1);">
+          <div style="background:#2a2a2a; color:#fff; padding:12px 14px; display:flex; justify-content:space-between; align-items:center; font-family:'Patrick Hand',cursive; font-size:13px;"><span style="border:1.5px solid #fff; border-radius:12px; padding:3px 9px;">✕ ยกเลิก</span><span style="border:1.5px solid {{ accent }}; color:#fff; background:{{ accent }}; border-radius:12px; padding:3px 9px;">🛡️ Safe Skip</span></div>
+          <div style="flex:1; padding:14px; display:flex; flex-direction:column; gap:11px;">
+            <div style="border:2px solid {{ accent }}; border-radius:12px; padding:13px; background:#faf6ff;"><div style="font-family:'Patrick Hand',cursive; font-size:12px; color:{{ accent }};">นิรนาม #2</div><div style="font-size:15px; color:#1d1d1d; line-height:1.3; margin-top:5px;">"ฉันยังไม่กล้าบอกเขาว่าฉันรัก"</div></div>
+            <div style="font-size:13px; color:#777;">ทายว่าใคร?</div>
+            <div style="flex:1; display:grid; grid-template-columns:1fr 1fr; gap:9px; align-content:start;">
+              <div style="border:2px solid #333; border-radius:12px; padding:11px 4px; text-align:center; font-size:13px; background:#fff;">โบ๊ท</div>
+              <div style="border:2px solid #333; border-radius:12px; padding:11px 4px; text-align:center; font-size:13px; background:#fff;">ฟ้า</div>
+              <div style="border:2px solid #333; border-radius:12px; padding:11px 4px; text-align:center; font-size:13px; background:#fff;">มะนาว</div>
+              <div style="border:2px solid #333; border-radius:12px; padding:11px 4px; text-align:center; font-size:13px; background:#fff;">??? บอท</div>
+            </div>
+          </div>
+          <div style="border-top:2px solid #ddd; padding:10px 12px; display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:8px;">
+            <div style="border:2px solid #333; border-radius:10px; padding:8px 2px; text-align:center; font-size:18px;">🎭</div>
+            <div style="border:2px solid #333; border-radius:10px; padding:8px 2px; text-align:center; font-size:18px;">👉</div>
+            <div style="border:2px solid #333; border-radius:10px; padding:8px 2px; text-align:center; font-size:18px;">⏩</div>
+            <div style="border:2px solid #333; border-radius:10px; padding:8px 2px; text-align:center; font-size:18px;">🔥</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- B4 -->
+      <div style="display:flex; flex-direction:column; gap:9px; align-items:flex-start;">
+        <div style="font-family:'Patrick Hand',cursive; font-size:14px; color:#777;">04 · เปิดเผย</div>
+        <div data-screen-label="B — Reveal" style="flex:none; width:280px; height:580px; background:#fbfaf7; border:2.5px solid #2a2a2a; border-radius:30px; padding:0; display:flex; flex-direction:column; overflow:hidden; box-shadow:5px 6px 0 rgba(0,0,0,0.1);">
+          <div style="background:#2a2a2a; color:#fff; padding:12px 14px; display:flex; justify-content:space-between; align-items:center; font-family:'Patrick Hand',cursive; font-size:13px;"><span>คะแนนรอบนี้</span><span style="border:1.5px solid #fff; border-radius:12px; padding:3px 9px;">✕</span></div>
+          <div style="flex:1; padding:14px; display:flex; flex-direction:column; gap:9px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; border:2px solid {{ accent }}; border-radius:12px; padding:11px 13px; background:#faf6ff;"><span style="font-size:15px;">🥇 ฟ้า</span><span style="font-family:'Patrick Hand',cursive; color:{{ accent }};">+3</span></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; border:2px solid #333; border-radius:12px; padding:11px 13px; background:#fff;"><span style="font-size:15px;">🥈 โบ๊ท</span><span style="font-family:'Patrick Hand',cursive; color:#666;">+2</span></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; border:2px solid #333; border-radius:12px; padding:11px 13px; background:#fff;"><span style="font-size:15px;">🥉 มะนาว</span><span style="font-family:'Patrick Hand',cursive; color:#666;">+1</span></div>
+            <div style="font-size:12px; color:#999; margin-top:4px;">Safe Skip ใช้ไป: 2 ครั้ง</div>
+          </div>
+          <div style="border-top:2px solid #ddd; padding:12px; "><div style="border-radius:11px; padding:11px; text-align:center; font-family:'Patrick Hand',cursive; font-size:15px; background: {{ accent }}; color:#fff;">รอบต่อไป →</div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================================= -->
+  <!-- APPROACH C -->
+  <!-- ============================================================= -->
+  <div style="margin-bottom:52px;">
+    <div style="display:flex; align-items:baseline; gap:14px; margin-bottom:6px;">
+      <div style="font-family:'Patrick Hand',cursive; font-size:26px; color:#1d1d1d;">แนวทาง C · ฟีดสนทนา</div>
+      <div style="height:10px; flex:1; max-width:200px; background: {{ accent }}; opacity:0.25; border-radius:5px;"></div>
+    </div>
+    <div style="font-size:15px; color:#666; margin-bottom:22px; max-width:680px;">เหมือนแชตที่ค่อย ๆ ไหล · คำถาม คำตอบ โหวต และการเปิดเผยมาเป็นข้อความต่อกัน → อบอุ่น ใกล้ชิด เหมาะกับความสัมพันธ์ลึก ๆ. การ์ดหักมุมซ่อนในปุ่ม +.</div>
+
+    <div style="display:flex; gap:34px; align-items:flex-start;">
+
+      <!-- C1 -->
+      <div style="display:flex; flex-direction:column; gap:9px; align-items:flex-start;">
+        <div style="font-family:'Patrick Hand',cursive; font-size:14px; color:#777;">01 · ล็อบบี้</div>
+        <div data-screen-label="C — Lobby" style="flex:none; width:280px; height:580px; background:#f4f2ee; border:2.5px solid #2a2a2a; border-radius:30px; padding:0; display:flex; flex-direction:column; overflow:hidden; box-shadow:5px 6px 0 rgba(0,0,0,0.1);">
+          <div style="background:#fbfaf7; border-bottom:2px solid #ddd; padding:12px 14px; display:flex; justify-content:space-between; align-items:center; font-family:'Patrick Hand',cursive; font-size:13px; color:#555;"><span>ห้อง: ABCD</span><span style="border:2px solid {{ accent }}; color:{{ accent }}; border-radius:12px; padding:3px 9px;">🛡️</span></div>
+          <div style="flex:1; padding:14px; display:flex; flex-direction:column; gap:11px; justify-content:flex-end;">
+            <div style="align-self:center; font-size:12px; color:#999; background:#e6e3dd; padding:4px 12px; border-radius:12px;">— เริ่มห้องแล้ว —</div>
+            <div style="align-self:flex-start; max-width:78%; background:#fff; border:2px solid #333; border-radius:4px 16px 16px 16px; padding:9px 12px; font-size:13px; color:#444;">โบ๊ท เข้าร่วมวงแล้ว 👋</div>
+            <div style="align-self:flex-start; max-width:78%; background:#fff; border:2px solid #333; border-radius:4px 16px 16px 16px; padding:9px 12px; font-size:13px; color:#444;">ฟ้า เข้าร่วมวงแล้ว</div>
+            <div style="align-self:center; font-size:13px; color:#888;">กำลังรอโฮสต์เริ่ม…</div>
+          </div>
+          <div style="border-top:2px solid #ddd; padding:11px 12px; display:flex; align-items:center; gap:9px; background:#fbfaf7;"><span style="width:34px; height:34px; border:2px solid #999; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#999;">+</span><div style="flex:1; height:34px; border:2px solid #ccc; border-radius:18px; background:#eee;"></div><span style="width:34px; height:34px; background:#ccc; border-radius:50%;"></span></div>
+        </div>
+      </div>
+
+      <!-- C2 -->
+      <div style="display:flex; flex-direction:column; gap:9px; align-items:flex-start; position:relative;">
+        <div style="font-family:'Patrick Hand',cursive; font-size:14px; color:#777;">02 · ตอบคำถาม</div>
+        <div data-screen-label="C — Answer" style="flex:none; width:280px; height:580px; background:#f4f2ee; border:2.5px solid #2a2a2a; border-radius:30px; padding:0; display:flex; flex-direction:column; overflow:hidden; box-shadow:5px 6px 0 rgba(0,0,0,0.1);">
+          <div style="background:#fbfaf7; border-bottom:2px solid #ddd; padding:12px 14px; display:flex; justify-content:space-between; align-items:center; font-family:'Patrick Hand',cursive; font-size:13px; color:#555;"><span>รอบที่ 1</span><span style="border:2px solid {{ accent }}; color:{{ accent }}; border-radius:12px; padding:3px 9px;">🛡️</span></div>
+          <div style="flex:1; padding:14px; display:flex; flex-direction:column; gap:11px;">
+            <div style="align-self:center; font-size:12px; color:#999; background:#e6e3dd; padding:4px 12px; border-radius:12px;">คำถามใหม่ · ระดับ 2</div>
+            <div style="align-self:flex-start; max-width:82%; background:#fff; border:2px solid {{ accent }}; border-radius:4px 16px 16px 16px; padding:11px 13px;"><div style="font-size:15px; color:#1d1d1d; line-height:1.35;">ครั้งสุดท้ายที่คุณร้องไห้ เพราะอะไร?</div></div>
+            <div style="align-self:flex-end; max-width:82%; background:#efeafc; border:2px dashed {{ accent }}; border-radius:16px 4px 16px 16px; padding:10px 12px; color:#888; font-size:13px;">กำลังพิมพ์คำตอบ…</div>
+          </div>
+          <div style="padding:0 14px 4px; display:flex; align-items:center; gap:6px;"><div style="flex:1; height:5px; background:#e3e3e3; border-radius:3px; overflow:hidden;"><div style="width:30%; height:100%; background:{{ accent }};"></div></div><span style="font-family:'Patrick Hand',cursive; font-size:11px; color:#999;">45/150</span></div>
+          <div style="border-top:2px solid #ddd; padding:11px 12px; display:flex; align-items:center; gap:9px; background:#fbfaf7;"><span style="width:34px; height:34px; border:2px solid {{ accent }}; color:{{ accent }}; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:18px;">+</span><div style="flex:1; height:34px; border:2px solid #333; border-radius:18px; background:#fff;"></div><span style="width:34px; height:34px; background:{{ accent }}; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff;">↑</span></div>
+        </div>
+        <div style="display: {{ notesDisplay }}; position:absolute; top:120px; right:-78px; width:118px; background:#fff7c2; border:1.5px solid #e0d27a; padding:8px 10px; font-family:'Patrick Hand',cursive; font-size:12px; color:#7a6a1a; transform:rotate(3deg); box-shadow:2px 2px 5px rgba(0,0,0,0.12); line-height:1.3;">ปุ่ม + = การ์ดหักมุมซ่อนอยู่</div>
+      </div>
+
+      <!-- C3 -->
+      <div style="display:flex; flex-direction:column; gap:9px; align-items:flex-start;">
+        <div style="font-family:'Patrick Hand',cursive; font-size:14px; color:#777;">03 · เดาตัวตน</div>
+        <div data-screen-label="C — Guess" style="flex:none; width:280px; height:580px; background:#f4f2ee; border:2.5px solid #2a2a2a; border-radius:30px; padding:0; display:flex; flex-direction:column; overflow:hidden; box-shadow:5px 6px 0 rgba(0,0,0,0.1);">
+          <div style="background:#fbfaf7; border-bottom:2px solid #ddd; padding:12px 14px; display:flex; justify-content:space-between; align-items:center; font-family:'Patrick Hand',cursive; font-size:13px; color:#555;"><span>ทายกันหน่อย 👀</span><span style="border:2px solid {{ accent }}; color:{{ accent }}; border-radius:12px; padding:3px 9px;">🛡️</span></div>
+          <div style="flex:1; padding:14px; display:flex; flex-direction:column; gap:11px;">
+            <div style="align-self:flex-start; max-width:82%; background:#faf6ff; border:2px solid {{ accent }}; border-radius:4px 16px 16px 16px; padding:11px 13px;"><div style="font-family:'Patrick Hand',cursive; font-size:11px; color:{{ accent }}; margin-bottom:4px;">นิรนาม</div><div style="font-size:14px; color:#1d1d1d; line-height:1.3;">"เพราะหนังเรื่องนึง… แล้วคิดถึงยาย"</div></div>
+            <div style="align-self:center; font-size:12px; color:#888;">แตะชื่อที่คิดว่าใช่</div>
+            <div style="display:flex; flex-wrap:wrap; gap:8px; justify-content:center;"><span style="border:2px solid #333; border-radius:16px; padding:7px 15px; font-size:13px; background:#fff;">โบ๊ท</span><span style="border:2px solid {{ accent }}; background:{{ accent }}; color:#fff; border-radius:16px; padding:7px 15px; font-size:13px;">ฟ้า</span><span style="border:2px solid #333; border-radius:16px; padding:7px 15px; font-size:13px; background:#fff;">มะนาว</span><span style="border:2px solid #333; border-radius:16px; padding:7px 15px; font-size:13px; background:#fff;">??? บอท</span></div>
+          </div>
+          <div style="border-top:2px solid #ddd; padding:11px 12px; display:flex; align-items:center; gap:9px; background:#fbfaf7;"><span style="width:34px; height:34px; border:2px solid {{ accent }}; color:{{ accent }}; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:18px;">+</span><div style="flex:1; height:34px; border:2px solid #ccc; border-radius:18px; background:#eee;"></div><span style="width:34px; height:34px; background:#ccc; border-radius:50%;"></span></div>
+        </div>
+      </div>
+
+      <!-- C4 -->
+      <div style="display:flex; flex-direction:column; gap:9px; align-items:flex-start;">
+        <div style="font-family:'Patrick Hand',cursive; font-size:14px; color:#777;">04 · เปิดเผย</div>
+        <div data-screen-label="C — Reveal" style="flex:none; width:280px; height:580px; background:#f4f2ee; border:2.5px solid #2a2a2a; border-radius:30px; padding:0; display:flex; flex-direction:column; overflow:hidden; box-shadow:5px 6px 0 rgba(0,0,0,0.1);">
+          <div style="background:#fbfaf7; border-bottom:2px solid #ddd; padding:12px 14px; display:flex; justify-content:space-between; align-items:center; font-family:'Patrick Hand',cursive; font-size:13px; color:#555;"><span>เฉลย 🔓</span><span style="border:2px solid #333; border-radius:12px; padding:3px 9px;">✕</span></div>
+          <div style="flex:1; padding:14px; display:flex; flex-direction:column; gap:11px;">
+            <div style="align-self:flex-start; max-width:82%; background:#fff; border:2px solid #333; border-radius:4px 16px 16px 16px; padding:10px 12px;"><div style="font-family:'Patrick Hand',cursive; font-size:11px; color:{{ accent }}; margin-bottom:3px;">ฟ้า 💜</div><div style="font-size:13px; color:#333; line-height:1.3;">"เพราะหนังเรื่องนึง… แล้วคิดถึงยาย"</div></div>
+            <div style="align-self:flex-end; max-width:82%; background:#efeafc; border:2px solid {{ accent }}; border-radius:16px 4px 16px 16px; padding:10px 12px;"><div style="font-family:'Patrick Hand',cursive; font-size:11px; color:{{ accent }}; margin-bottom:3px; text-align:right;">คุณ</div><div style="font-size:13px; color:#333; line-height:1.3;">"เราเข้าใจเลย… อยากกอด"</div></div>
+            <div style="align-self:center; font-size:12px; color:#888; background:#e6e3dd; padding:4px 12px; border-radius:12px;">คุยกันต่อได้เลย</div>
+          </div>
+          <div style="border-top:2px solid #ddd; padding:11px 12px; display:flex; align-items:center; gap:9px; background:#fbfaf7;"><span style="width:34px; height:34px; border:2px solid {{ accent }}; color:{{ accent }}; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:18px;">+</span><div style="flex:1; height:34px; border:2px solid #333; border-radius:18px; background:#fff;"></div><span style="width:34px; height:34px; background:{{ accent }}; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff;">↑</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ============================================================= -->
+  <!-- MOOD PREVIEW -->
+  <!-- ============================================================= -->
+  <div>
+    <div style="display:flex; align-items:baseline; gap:14px; margin-bottom:6px;">
+      <div style="font-family:'Patrick Hand',cursive; font-size:26px; color:#1d1d1d;">ตัวอย่างธีมจริง · ลึกลับ ตื่นเต้น</div>
+      <div style="height:10px; flex:1; max-width:200px; background: {{ accent }}; opacity:0.25; border-radius:5px;"></div>
+    </div>
+    <div style="font-size:15px; color:#666; margin-bottom:22px; max-width:680px;">เมื่อโครงร่างถูกลงสี — พื้นมืด นีออนม่วง เรืองแสง สร้างบรรยากาศลุ้น น่าค้นหา (ใช้กับแนวทางไหนก็ได้).</div>
+
+    <div style="display:flex; gap:34px; align-items:flex-start;">
+      <div style="display:flex; flex-direction:column; gap:9px; align-items:flex-start;">
+        <div style="font-family:'Patrick Hand',cursive; font-size:14px; color:#777;">ตอบคำถาม (ลงสีแล้ว)</div>
+        <div data-screen-label="Mood — Answer" style="flex:none; width:280px; height:580px; background:#0c0a16; border:2.5px solid {{ accent }}; border-radius:30px; padding:14px; display:flex; flex-direction:column; gap:12px; box-shadow:0 0 28px rgba(124,58,237,0.45), 5px 6px 0 rgba(0,0,0,0.2);">
+          <div style="display:flex; justify-content:space-between; align-items:center; font-family:'Patrick Hand',cursive; font-size:12px; color:#b9a9e8;"><span style="border:1.5px solid {{ accent }}; color:#e9ddff; border-radius:14px; padding:3px 10px; box-shadow:0 0 10px rgba(124,58,237,0.6);">🛡️ Safe Skip</span><span style="border:1.5px solid #4a3f66; border-radius:50%; width:22px; height:22px; display:flex; align-items:center; justify-content:center; color:#8a7fb0;">✕</span></div>
+          <div style="border:1.5px solid {{ accent }}; border-radius:14px; padding:16px; background:rgba(124,58,237,0.08); box-shadow:0 0 18px rgba(124,58,237,0.25) inset;">
+            <div style="font-family:'Patrick Hand',cursive; font-size:11px; color:{{ accent }}; letter-spacing:1px;">ROUND 1 · LEVEL 2</div>
+            <div style="font-size:19px; color:#f3eeff; line-height:1.35; margin-top:8px; text-shadow:0 0 12px rgba(124,58,237,0.5);">อะไรคือสิ่งที่คุณไม่เคยกล้าบอกใครในห้องนี้?</div>
+            <div style="font-size:12px; color:#7d72a0; margin-top:8px;">What have you never dared to say here?</div>
+          </div>
+          <div style="flex:1; border:1.5px solid #3a3258; border-radius:12px; padding:12px; background:rgba(255,255,255,0.03); color:#6a6090; font-size:14px;">พิมพ์คำตอบของคุณ…</div>
+          <div style="display:flex; align-items:center; gap:8px;"><div style="flex:1; height:7px; background:#241d3a; border-radius:4px; overflow:hidden;"><div style="width:55%; height:100%; background:{{ accent }}; box-shadow:0 0 10px {{ accent }};"></div></div><span style="font-family:'Patrick Hand',cursive; font-size:12px; color:#8a7fb0;">84/150</span></div>
+          <div style="border-radius:12px; padding:13px; text-align:center; font-family:'Patrick Hand',cursive; font-size:16px; background:{{ accent }}; color:#fff; box-shadow:0 0 18px rgba(124,58,237,0.7);">ส่งคำตอบ →</div>
+        </div>
+      </div>
+
+      <div style="align-self:center; max-width:300px; padding:18px; background:#fff; border:2px solid #2a2a2a; border-radius:6px; box-shadow:4px 5px 0 rgba(0,0,0,0.1);">
+        <div style="font-family:'Patrick Hand',cursive; font-size:18px; color:#1d1d1d; margin-bottom:10px;">บอกผมได้เลย 👇</div>
+        <div style="font-size:14px; color:#555; line-height:1.6;">• ชอบ <b>แนวทาง</b> ไหนที่สุด (A/B/C)?<br>• อยากให้ลงสีธีมจริงเลยไหม หรือยังอยากแก้โครงก่อน?<br>• ปรับสี/เปิด-ปิดโน้ตได้ที่แผง Tweaks ด้านขวา</div>
+        <div style="margin-top:12px; font-size:13px; color:#999; line-height:1.5;">ถัดไปทำได้: host.html (จอทีวี) และ index.html (หน้าแรก) ในแนวที่เลือก</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: &quot;100%&quot;, &quot;height&quot;: &quot;100%&quot; },
+  &quot;accentColor&quot;: { &quot;editor&quot;: &quot;color&quot;, &quot;default&quot;: &quot;#7c3aed&quot;, &quot;tsType&quot;: &quot;string&quot; },
+  &quot;showNotes&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot; }
+}">
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      accent: this.props.accentColor ?? '#7c3aed',
+      notesDisplay: (this.props.showNotes ?? true) ? 'block' : 'none'
+    };
+  }
+}
+</script>
+</body>
+</html>

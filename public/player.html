@@ -1,136 +1,626 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Deep Talk Controller - Player Screen</title>
+  <title>DeepTalk Controller</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/player.css">
+  <style>
+    body.player-body {
+      background: #16292f;
+      font-family: 'IBM Plex Sans Thai', sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #eef7f4;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    .player-outer-wrap {
+      width: 100%;
+      max-width: 440px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 56px 20px 34px; /* safe areas for dynamic island and home bar */
+      position: relative;
+      overflow-y: auto;
+    }
+
+    .player-outer-wrap::before {
+      content: '';
+      position: absolute;
+      top: -90px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 340px;
+      height: 230px;
+      background: radial-gradient(ellipse, rgba(77, 182, 164, 0.24), transparent 70%);
+      pointer-events: none;
+    }
+
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .room-info {
+      line-height: 1.2;
+    }
+
+    .room-label {
+      font-family: 'Kanit';
+      font-size: 11px;
+      color: #8fb3aa;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .room-code {
+      font-family: 'Kanit';
+      font-size: 24px;
+      font-weight: 700;
+      color: #eef7f4;
+      letter-spacing: 3px;
+    }
+
+    .header-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .header-btn {
+      font-family: 'Kanit';
+      font-size: 13.5px;
+      padding: 8px 14px;
+      border-radius: 18px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-cancel {
+      border: 1px solid rgba(255, 120, 120, 0.4);
+      color: #ff9c9c;
+      background: rgba(255, 156, 156, 0.05);
+    }
+
+    .btn-cancel:hover {
+      background: rgba(255, 156, 156, 0.12);
+    }
+
+    .btn-safe {
+      border: 1.5px solid var(--primary);
+      color: #eef7f4;
+      background: transparent;
+    }
+
+    .btn-safe:hover {
+      background: rgba(77, 182, 164, 0.1);
+    }
+
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      z-index: 10;
+      margin-bottom: 20px;
+    }
+
+    .alert-banner {
+      background: rgba(122, 200, 188, 0.1);
+      border: 1px solid rgba(122, 200, 188, 0.28);
+      border-radius: 16px;
+      padding: 13px 16px;
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      margin-bottom: 20px;
+      font-size: 13.5px;
+      color: #cfe6e0;
+      line-height: 1.4;
+    }
+
+    /* Lobby State */
+    .lobby-players {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .player-tag {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1.5px solid rgba(122, 200, 188, 0.3);
+      border-radius: 6px 20px 20px 20px;
+      padding: 14px 18px;
+      font-size: 15.5px;
+      color: #e8f3f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .player-tag.host {
+      border-color: var(--primary);
+      background: rgba(77, 182, 164, 0.08);
+    }
+
+    /* Card Question */
+    .card-question {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1.5px solid rgba(122, 200, 188, 0.4);
+      border-radius: 6px 22px 22px 22px;
+      padding: 22px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 20px rgba(77, 182, 164, 0.1);
+      animation: safeGlow 3.6s ease-in-out infinite;
+    }
+
+    .card-badge {
+      font-family: 'Kanit';
+      font-size: 11px;
+      color: var(--primary);
+      background: rgba(77, 182, 164, 0.12);
+      padding: 4px 10px;
+      border-radius: 12px;
+      display: inline-block;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+      font-weight: 500;
+    }
+
+    .card-text-th {
+      font-family: 'Kanit';
+      font-size: 21px;
+      font-weight: 500;
+      color: #f4faf8;
+      line-height: 1.4;
+    }
+
+    .card-text-en {
+      font-size: 13.5px;
+      color: #9cc0b8;
+      margin-top: 10px;
+      line-height: 1.4;
+    }
+
+    /* Composer */
+    .composer-area {
+      background: rgba(10, 22, 24, 0.4);
+      border: 1px solid rgba(122, 200, 188, 0.2);
+      border-radius: 18px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .composer-textarea {
+      width: 100%;
+      min-height: 110px;
+      background: transparent;
+      border: none;
+      color: #cae3dc;
+      font-family: 'IBM Plex Sans Thai';
+      font-size: 15.5px;
+      line-height: 1.5;
+      resize: none;
+      padding: 0;
+    }
+
+    .composer-textarea:focus {
+      outline: none;
+    }
+
+    .composer-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12.5px;
+      color: #8fb3aa;
+    }
+
+    .incognito-toggle {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    /* Guessing options */
+    .guess-title {
+      font-family: 'Kanit';
+      font-size: 16px;
+      color: #cfe6e0;
+      text-align: center;
+      margin-bottom: 14px;
+    }
+
+    .guess-answer-box {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1.5px solid rgba(122, 200, 188, 0.45);
+      border-radius: 6px 20px 20px 20px;
+      padding: 16px 18px;
+      margin-bottom: 20px;
+    }
+
+    .guess-answer-badge {
+      font-family: 'Kanit';
+      font-size: 11px;
+      color: #7ac8bc;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+
+    .guess-answer-text {
+      font-size: 16px;
+      color: #f4faf8;
+      line-height: 1.45;
+    }
+
+    .guess-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .guess-btn {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1.5px solid rgba(122, 200, 188, 0.3);
+      border-radius: 20px;
+      padding: 12px 16px;
+      color: #e8f3f0;
+      font-family: 'Kanit';
+      font-size: 15px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    .guess-btn:hover {
+      background: rgba(77, 182, 164, 0.1);
+      border-color: var(--primary);
+    }
+
+    .guess-btn.selected {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #0e1a1f;
+      font-weight: 500;
+    }
+
+    /* Reveal Chat bubbles */
+    .reveal-scroll {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-height: 340px;
+      overflow-y: auto;
+      padding: 6px 4px;
+    }
+
+    .bubble {
+      max-width: 86%;
+      padding: 14px 16px;
+      line-height: 1.45;
+      font-size: 14.5px;
+    }
+
+    .bubble.other {
+      align-self: flex-start;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(122, 200, 188, 0.35);
+      border-radius: 6px 18px 18px 18px;
+    }
+
+    .bubble.me {
+      align-self: flex-end;
+      background: var(--primary);
+      color: #0e1a1f;
+      border-radius: 18px 6px 18px 18px;
+      box-shadow: 0 4px 12px rgba(77, 182, 164, 0.2);
+    }
+
+    .bubble-author {
+      font-family: 'Kanit';
+      font-size: 11.5px;
+      margin-bottom: 4px;
+      font-weight: 500;
+    }
+
+    .bubble.other .bubble-author {
+      color: var(--primary);
+    }
+
+    .bubble.me .bubble-author {
+      color: #0e1a1f;
+      opacity: 0.85;
+      text-align: right;
+    }
+
+    /* Host Panel Inside Lobby */
+    .host-dashboard {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1.5px solid rgba(122, 200, 188, 0.25);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .host-dashboard-title {
+      font-family: 'Kanit';
+      font-size: 16px;
+      color: #eef7f4;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .host-form-group {
+      margin-bottom: 14px;
+    }
+
+    .host-form-label {
+      font-family: 'Kanit';
+      font-size: 13px;
+      color: #9cc0b8;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .host-select {
+      width: 100%;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(122, 200, 188, 0.25);
+      border-radius: 10px;
+      padding: 0 10px;
+      color: #eef7f4;
+      font-family: 'IBM Plex Sans Thai';
+      font-size: 14px;
+    }
+
+    .intensity-container {
+      display: flex;
+      gap: 8px;
+    }
+
+    .intensity-btn {
+      flex: 1;
+      height: 38px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(122, 200, 188, 0.2);
+      border-radius: 10px;
+      color: #8fb3aa;
+      font-family: 'Kanit';
+      font-size: 13.5px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .intensity-btn.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #0e1a1f;
+      font-weight: 500;
+    }
+
+    .bot-checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13.5px;
+      color: #cfe6e0;
+      cursor: pointer;
+    }
+
+    .bot-checkbox-label input {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--primary);
+    }
+  </style>
 </head>
 <body class="player-body">
-  
-  <div class="player-container">
-    
-    <!-- HEADER: Status and Safe-Zone Button -->
-    <header class="player-header" style="flex-wrap: wrap; gap: 10px; justify-content: space-between;">
-      <div style="display: flex; flex-direction: column;">
-        <span id="player-name-badge" style="font-weight: 700; font-size: 1.1rem; color: #fff;">Joining...</span>
-        <span class="player-room-badge" id="player-room-badge">ROOM: ----</span>
+
+  <div class="player-outer-wrap">
+    <!-- HEADER BAR -->
+    <header class="header-bar">
+      <div class="room-info">
+        <div class="room-label" id="player-role-badge">ผู้เล่น</div>
+        <div class="room-code" id="player-room-badge">----</div>
       </div>
-      
-      <div style="display: flex; gap: 8px; align-items: center;">
-        <button class="btn btn-outline" id="player-cancel-btn" style="font-size: 0.75rem; padding: 6px 12px; background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.4); color: #f87171; text-transform: none;">✕ ยกเลิกเกม</button>
-        <button class="safe-zone-btn" id="safezone-btn" style="font-size: 0.75rem; padding: 8px 12px;" title="Skip this card safely with no penalties">🛡️ Safe Skip</button>
+      <div class="header-buttons">
+        <button class="header-btn btn-cancel" id="player-cancel-btn">✕ ยกเลิกเกม</button>
+        <button class="header-btn btn-safe" id="safezone-btn">🛡️ Safe Skip</button>
       </div>
     </header>
 
-    <!-- MAIN INTERACTIVE SPACE (Scrollable) -->
-    <main class="player-main-workspace" id="player-workspace">
-      
-      <!-- SUB-STATE 0: DIRECT JOIN FORM (Fallback if accessed without index.html form) -->
+    <!-- MAIN INTERACTIVE SPACE -->
+    <main class="main-content">
+
+      <!-- SUB-STATE 0: DIRECT JOIN FORM (Guest Pre-Join Screen) -->
       <section id="pstate-join" style="display: none; width: 100%;">
-        <div class="glass-panel" style="padding: 20px;">
-          <h2 style="font-family: var(--font-heading); margin-bottom: 20px; text-align: center;">Enter Room</h2>
+        <div class="glass-panel" style="padding: 24px;">
+          <h2 style="font-family: 'Kanit'; margin-bottom: 20px; text-align: center; font-size: 20px;" id="join-room-title">เข้าร่วมวงสนทนา</h2>
+          
+          <!-- Hidden input to hold room code from URL query param -->
+          <input type="hidden" id="direct-room-code">
+          
           <div class="form-group">
-            <label class="form-label" for="direct-room-code">Room Code (4 Letters)</label>
-            <input type="text" id="direct-room-code" class="form-input" placeholder="ABCD" maxlength="4" style="text-transform: uppercase; font-weight: bold; text-align: center; letter-spacing: 0.1em;">
+            <label class="form-label" for="direct-player-name">ระบุชื่อเล่นของคุณ</label>
+            <input type="text" id="direct-player-name" class="form-input" placeholder="เช่น ส้ม, ฟ้า" required maxlength="15">
           </div>
-          <div class="form-group">
-            <label class="form-label" for="direct-player-name">Your Nickname</label>
-            <input type="text" id="direct-player-name" class="form-input" placeholder="Somchai">
+
+          <!-- Forced Bot Choice -->
+          <div class="form-group" style="margin-top: 15px;">
+            <label class="form-label">ต้องการเพิ่มบอทนิรนามสวมรอยเข้ามาในวงสนทนาเพื่อลดความกดดันหรือไม่?</label>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+              <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(122,200,188,0.2); border-radius: 12px;">
+                <input type="radio" name="prejoin-bot-choice" value="true" checked style="accent-color: var(--primary); width: 18px; height: 18px;">
+                <div>
+                  <span style="font-family: 'Kanit'; font-size: 13.5px; font-weight: 500;">🤖 เพิ่มบอทนิรนามสวมรอย (แนะนำ)</span>
+                  <div style="font-size: 11px; color: #8fb3aa; margin-top: 2px;">ช่วยสลัวสวมรอยตอบคำถาม ป้องกันไม่ให้โฮสต์เดาคำตอบเปราะบางของคุณได้</div>
+                </div>
+              </label>
+              <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(122,200,188,0.2); border-radius: 12px;">
+                <input type="radio" name="prejoin-bot-choice" value="false" style="accent-color: var(--primary); width: 18px; height: 18px;">
+                <div>
+                  <span style="font-family: 'Kanit'; font-size: 13.5px; font-weight: 500;">ไม่เพิ่มบอท</span>
+                  <div style="font-size: 11px; color: #8fb3aa; margin-top: 2px;">เล่นเฉพาะคนจริงในห้องเท่านั้น</div>
+                </div>
+              </label>
+            </div>
           </div>
-          <button class="btn btn-secondary" id="direct-join-btn" style="width: 100%; margin-top: 10px;">
-            Join Game
-          </button>
+
+          <button class="submit-btn" id="direct-join-btn" style="margin-top: 15px;">เข้าร่วมวงสนทนา ➔</button>
         </div>
       </section>
 
-      <!-- SUB-STATE 1: LOBBY WAITING SCREEN -->
-      <section id="pstate-lobby" class="waiting-screen" style="display: none; width: 100%;">
-        <div class="waiting-spinner"></div>
-        <h2 style="font-family: var(--font-heading);">Connected to Room</h2>
-        <p style="color: var(--text-muted); font-size: 0.9rem;">
-          Wait for the host to select the game mode and start the round. Look at the main screen!
-        </p>
-
-        <!-- Bot Impersonator Checkbox for Invited Player -->
-        <div class="glass-panel" style="margin-top: 15px; padding: 15px; text-align: left;">
-          <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-family: var(--font-heading); font-size: 0.95rem; color: #fff;">
-            <input type="checkbox" id="player-bot-toggle" style="width: 18px; height: 18px; accent-color: var(--primary);">
-            🤖 เปิดใช้งานบอทนิรนามสวมรอย (สำหรับ 2 คน)
-          </label>
-          <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 5px; line-height: 1.4;">
-            เปิดใช้งานในกรณีเล่น 2 คน เพื่อให้บอทช่วยสวมรอยตอบคำถาม ป้องกันไม่ให้โฮสต์รู้ว่าคำตอบเปราะบางเป็นของคุณหรือของบอท
-          </p>
-        </div>
+      <!-- SUB-STATE 1: LOBBY & WAITING SCREEN -->
+      <section id="pstate-lobby" style="display: none; width: 100%;">
         
-        <!-- Local/LDR configuration tools for WebRTC streaming -->
-        <div class="glass-panel" id="mobile-stream-options" style="margin-top: 15px; padding: 15px; text-align: left; display: none;">
-          <h4 style="font-family: var(--font-heading); color: #fff; margin-bottom: 8px;">Hybrid Mode Streaming:</h4>
-          <label style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer;">
-            <input type="checkbox" id="camera-stream-toggle" style="accent-color: var(--primary);">
-            Enable Video Camera & Mic Stream
-          </label>
-          <video id="player-local-video" autoplay playsinline muted style="width: 100%; height: 100px; object-fit: cover; border-radius: var(--radius-sm); margin-top: 10px; display: none; background: #000; border: 1px solid var(--surface-border);"></video>
+        <!-- Host Dashboard Controls (Only visible to Host) -->
+        <div class="host-dashboard" id="host-controls" style="display: none;">
+          <div class="host-dashboard-title">👑 ตั้งค่าห้องเล่นเกม (โฮสต์)</div>
+          
+          <!-- Keep only intensity and start button on Host side (mode and bot checkbox removed) -->
+          <div class="host-form-group">
+            <label class="host-form-label">ระดับความลึกซึ้งของการสนทนา</label>
+            <div class="intensity-container">
+              <button class="intensity-btn active" data-level="1">ระดับ 1 (สนุก)</button>
+              <button class="intensity-btn" data-level="2">ระดับ 2 (ลึกซึ้ง)</button>
+              <button class="intensity-btn" data-level="3">ระดับ 3 (เปราะบาง)</button>
+            </div>
+          </div>
+
+          <button class="submit-btn" id="host-start-btn" style="margin-top: 18px;" disabled>เริ่มเกมเริ่มวงสนทนา ➔</button>
+        </div>
+
+        <!-- Waiting for Host Area (Visible to Guests or Host waiting) -->
+        <div class="glass-panel" style="padding: 24px; text-align: center;" id="guest-waiting-area">
+          <div class="waiting-spinner" style="margin: 0 auto 18px;"></div>
+          <h2 style="font-family: 'Kanit'; font-size: 18px; margin-bottom: 10px;" id="lobby-status-title">เชื่อมต่อห้องสำเร็จแล้ว</h2>
+          <p style="color: #9cc0b8; font-size: 13.5px; line-height: 1.45;" id="lobby-status-desc">
+            กำลังรอให้เพื่อนร่วมวงเข้ามาเพิ่ม และรอโฮสต์กดเริ่มเกม...
+          </p>
+
+          <!-- Guest Bot area removed as it's resolved during pre-join -->
+        </div>
+
+        <!-- Share Link Area -->
+        <div id="share-link-area" style="margin-top: 18px; background: rgba(255, 255, 255, 0.04); border: 1px dashed rgba(122, 200, 188, 0.3); border-radius: 14px; padding: 14px;">
+          <div style="font-family: 'Kanit'; font-size: 13px; color: #8fb3aa; margin-bottom: 6px;">🔗 ลิงก์ชวนเพื่อนเข้าร่วมวง:</div>
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="share-link-input" style="flex: 1; height: 38px; background: rgba(0,0,0,0.2); border: 1px solid rgba(122,200,188,0.2); border-radius: 8px; color: #eef7f4; padding: 0 10px; font-size: 12.5px;" readonly>
+            <button id="copy-share-link-btn" style="background: var(--primary); color: #0e1a1f; font-family: 'Kanit'; font-size: 12.5px; border: none; border-radius: 8px; padding: 0 14px; cursor: pointer; font-weight: 500; height: 38px;">คัดลอก</button>
+          </div>
+        </div>
+
+        <!-- Joined Players List (Visible to everyone) -->
+        <div style="margin-top: 24px;">
+          <div style="font-family: 'Kanit'; font-size: 14px; color: #8fb3aa; margin-bottom: 10px;">รายชื่อผู้ร่วมวงสนทนา:</div>
+          <div class="lobby-players" id="lobby-players-list">
+            <!-- Joined players injected dynamically -->
+          </div>
         </div>
       </section>
 
-      <!-- SUB-STATE 2: WRITE ANSWER -->
+      <!-- SUB-STATE 2: WRITE ANSWER (Typing View) -->
       <section id="pstate-write" style="display: none; width: 100%;">
-        <div class="answer-form-container">
-          <div class="active-card-hint" id="player-card-hint">
-            คำถามประจำรอบ (Active Question)
-          </div>
-          
-          <!-- Question text on mobile screen -->
-          <div class="glass-panel" style="padding: 18px; border: 1px solid var(--primary); text-align: center; margin-bottom: 10px; background: rgba(6, 182, 212, 0.05);">
-            <div id="player-question-text-th" style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 8px; line-height: 1.4;"></div>
-            <div id="player-question-text-en" style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;"></div>
-          </div>
-          
-          <textarea id="player-answer-input" class="mobile-textarea" placeholder="พิมพ์คำตอบอย่างซื่อสัตย์ของคุณที่นี่..."></textarea>
-          <div class="char-counter"><span id="char-count">0</span> / 150</div>
-          
-          <button class="btn btn-primary" id="player-submit-answer-btn">
-            ส่งคำตอบ ➔
-          </button>
+        <div class="alert-banner">
+          <span>🔒</span>
+          <div>คำตอบของคุณจะถูกสลับและนำเสนอแบบไม่ระบุชื่อเสมอ ปลอดภัยหายห่วง</div>
         </div>
+
+        <div class="card-question">
+          <span class="card-badge" id="player-card-hint">คำถามชวนคิด · ระดับ 1</span>
+          <div class="card-text-th" id="player-question-text-th">คำถามภาษาไทย</div>
+        </div>
+
+        <div class="composer-area">
+          <textarea id="player-answer-input" class="composer-textarea" placeholder="พิมพ์คำตอบอย่างจริงใจของคุณที่นี่..."></textarea>
+          <div class="composer-footer">
+            <label class="incognito-toggle">
+              <input type="checkbox" id="incognito-checkbox" checked style="accent-color: var(--primary); display: none;">
+              <span>🔒 นิรนาม (ส่งแบบไม่ระบุชื่อ)</span>
+            </label>
+            <div><span id="char-count">0</span> / 150</div>
+          </div>
+        </div>
+
+        <button class="submit-btn" id="player-submit-answer-btn">ส่งคำตอบไปยังวงสนทนา ➔</button>
       </section>
 
-      <!-- SUB-STATE 3: ANSWER SUBMITTED WAITING -->
-      <section id="pstate-submitted" class="waiting-screen" style="display: none;">
-        <div class="waiting-spinner" style="border-top-color: var(--secondary);"></div>
-        <h2 style="font-family: var(--font-heading);">ส่งคำตอบเรียบร้อย!</h2>
-        <p style="color: var(--text-muted); font-size: 0.9rem;">
-          กำลังรอให้เพื่อนร่วมวงป้อนคำตอบครบทุกคน... เตรียมพร้อมนะ!
+      <!-- SUB-STATE 3: ANSWER SUBMITTED (Waiting Screen) -->
+      <section id="pstate-submitted" class="glass-panel" style="display: none; padding: 30px; text-align: center;">
+        <div class="waiting-spinner" style="margin: 0 auto 20px; border-top-color: var(--primary);"></div>
+        <h2 style="font-family: 'Kanit'; font-size: 19px; margin-bottom: 10px;">ส่งคำตอบสำเร็จ!</h2>
+        <p style="color: #9cc0b8; font-size: 14px; line-height: 1.5;">
+          คำตอบของคุณถูกจัดเก็บในกองนิรนามเรียบร้อยแล้ว กำลังรอผู้เล่นอื่น ๆ พิมพ์และส่งคำตอบครบถ้วน...
         </p>
       </section>
 
       <!-- SUB-STATE 4: INCOGNITO VOTING / GUESSING -->
-      <section id="pstate-vote" class="voting-container" style="display: none;">
-        <div class="voting-title">ทายซิว่า... ใครเขียนคำตอบนี้?</div>
-        <div class="active-card-hint" id="voting-answer-highlight" style="font-weight: 500; font-size: 1rem; border-color: var(--secondary); color: #fff;">
-          "ข้อความคำตอบ"
-        </div>
+      <section id="pstate-vote" style="display: none; width: 100%;">
+        <div class="guess-title">ทายกันหน่อย 🎭</div>
         
-        <div class="voting-list" id="voting-players-list">
-          <!-- List of player options to vote on -->
+        <div class="guess-answer-box">
+          <div class="guess-answer-badge">🎭 คำตอบนิรนามผู้เขียน</div>
+          <div class="guess-answer-text" id="voting-answer-highlight">"ข้อความคำตอบที่ถูกสุ่มขึ้นมาโชว์..."</div>
         </div>
 
-        <button class="btn btn-secondary" id="player-submit-vote-btn" disabled>
-          ส่งคะแนนโหวตทาย ➔
-        </button>
+        <div style="font-size: 13.5px; color: #8fb3aa; text-align: center; margin-bottom: 12px;" id="voting-desc">
+          คุณคิดว่าใครเป็นคนเขียนคำตอบข้อความด้านบนนี้?
+        </div>
+
+        <div class="guess-grid" id="voting-players-list">
+          <!-- Guess choices injected dynamically -->
+        </div>
+
+        <button class="submit-btn" id="player-submit-vote-btn" disabled>ส่งคะแนนโหวตทาย ➔</button>
       </section>
 
-      <!-- SUB-STATE 5: ROUND OVER / SHOW ANSWERS DIRECTLY -->
+      <!-- SUB-STATE 5: ROUND OVER (Revealed Answers Flow) -->
       <section id="pstate-roundover" style="display: none; width: 100%;">
-        <div class="glass-panel" style="padding: 20px; display: flex; flex-direction: column; gap: 15px; border-color: var(--accent);">
-          <h2 style="font-family: var(--font-heading); color: var(--accent); text-align: center; font-size: 1.3rem;">คำตอบเปิดใจของทุกคน 🔓</h2>
-          <div id="player-revealed-answers-list" style="display: flex; flex-direction: column; gap: 10px; max-height: 250px; overflow-y: auto;">
-            <!-- Answers list injected here -->
+        <div class="glass-panel" style="padding: 22px; display: flex; flex-direction: column;">
+          <h2 style="font-family: 'Kanit'; font-size: 18px; color: var(--primary); text-align: center; margin-bottom: 16px;">🔓 เฉลยคำตอบแล้ว</h2>
+          
+          <!-- Question context so players don't forget the question -->
+          <div id="roundover-question-box" style="margin-bottom: 18px; padding: 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(122,200,188,0.2); border-radius: 12px; text-align: left; font-size: 14.5px;">
+            <div style="font-family: 'Kanit'; font-size: 11px; color: var(--primary); margin-bottom: 6px; letter-spacing: 0.5px;">คำถามประจำรอบ:</div>
+            <div id="roundover-question-th" style="font-family: 'Kanit'; font-weight: 500; color: #f4faf8; line-height: 1.4;"></div>
           </div>
-          <p style="color: var(--text-muted); font-size: 0.8rem; text-align: center; margin-top: 10px;">
-            รอโฮสต์เปิดการ์ดใบถัดไป... (Waiting for host to start next card...)
+          
+          <div class="reveal-scroll" id="player-revealed-answers-list">
+            <!-- Revealed answers bubbles injected dynamically -->
+          </div>
+
+          <!-- Next Card Controller (Only visible to Host) -->
+          <div id="host-next-card-area" style="display: none; margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(122,200,188,0.15);">
+            <button class="submit-btn" id="host-next-card-btn">จั่วคำถามการ์ดถัดไป ➔</button>
+          </div>
+
+          <!-- Waiting Screen (Visible to Guests) -->
+          <p id="guest-next-card-waiting" style="color: #8fb3aa; font-size: 13px; text-align: center; margin-top: 20px; line-height: 1.4;">
+            กำลังรอให้โฮสต์จั่วการ์ดคำถามใหม่...
           </p>
         </div>
       </section>
@@ -168,24 +658,26 @@
       <div class="twist-modal-content">
         <h3 class="twist-modal-title" id="twist-modal-title">Fake It</h3>
         <p class="twist-modal-desc" id="twist-modal-desc">
-          Submit a fabricated answer. Players must guess if you are lying or telling the truth.
+          สวมรอยส่งคำตอบหลอกลวง คนอื่นต้องทายว่าคุณกำลังโกหกหรือไม่
         </p>
         
         <!-- Target player select (for Nominate or target-based cards) -->
         <div class="form-group" id="twist-target-group" style="display: none; text-align: left;">
-          <label class="form-label" for="twist-target-select">Choose Target Player:</label>
+          <label class="form-label" for="twist-target-select">เลือกเป้าหมายผู้เล่น:</label>
           <select id="twist-target-select" class="custom-select-mobile">
             <!-- Player option tags injected here -->
           </select>
         </div>
 
         <div style="display: flex; gap: 10px; margin-top: 15px;">
-          <button class="btn btn-outline" id="twist-close-btn" style="flex: 1; padding: 10px;">Cancel</button>
-          <button class="btn btn-secondary" id="twist-play-confirm-btn" style="flex: 1; padding: 10px; background: var(--accent);">Play Card!</button>
+          <button class="btn btn-outline" id="twist-close-btn" style="flex: 1; padding: 10px;">ยกเลิก</button>
+          <button class="btn btn-secondary" id="twist-play-confirm-btn" style="flex: 1; padding: 10px; background: var(--accent); color: #0e1a1f;">ใช้การ์ดขัดขวาง!</button>
         </div>
       </div>
     </div>
 
+    <!-- Home indicator gesture bar simulation -->
+    <div style="flex:none; height:24px; display:flex; align-items:center; justify-content:center; position:relative; z-index:6;"><span style="width:108px; height:4px; border-radius:2px; background:rgba(238,247,244,0.35);"></span></div>
   </div>
 
   <!-- SCRIPT IMPORTS -->

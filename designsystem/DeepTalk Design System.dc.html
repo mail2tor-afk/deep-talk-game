@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#eceff0; }
+  a { text-decoration:none; }
+</style>
+</helmet>
+
+<div style="min-height:100vh; background:#eceff0; font-family:'IBM Plex Sans Thai',sans-serif; padding:56px 32px 80px;">
+  <div style="max-width:1080px; margin:0 auto;">
+
+    <!-- ===== HERO ===== -->
+    <div style="background:linear-gradient(150deg,#16292f 0%,#1d3640 55%,#193038 100%); border-radius:26px; padding:48px 44px; position:relative; overflow:hidden; box-shadow:0 24px 60px rgba(22,41,47,0.35);">
+      <div style="position:absolute; top:-120px; right:-60px; width:480px; height:340px; background:radial-gradient(ellipse,rgba(77,182,164,0.3),transparent 70%); pointer-events:none;"></div>
+      <div style="position:relative;">
+        <div style="display:flex; align-items:center; gap:16px;">
+          <div style="width:60px; height:60px; border-radius:18px; background:{{ accent }}; display:flex; align-items:center; justify-content:center; font-size:30px; box-shadow:0 0 26px rgba(77,182,164,0.4);">🔮</div>
+          <div>
+            <div style="font-family:'Kanit'; font-size:34px; font-weight:700; color:#eef7f4; line-height:1;">DeepTalk</div>
+            <div style="font-family:'Kanit'; font-size:13px; letter-spacing:2px; color:{{ accent }}; text-transform:uppercase; margin-top:4px;">Safe Harbor · Design System</div>
+          </div>
+        </div>
+        <div style="font-size:18px; color:#cfe6e0; margin-top:24px; max-width:620px; line-height:1.55;">เกมบทสนทนาลึกซึ้งบนมือถือ — โทนน้ำลึกสงบที่ให้ความรู้สึก <b style="color:#eef7f4;">ปลอดภัย เชื่อใจ และนิรนาม</b> ชวนให้กล้าเปิดใจโดยไม่มีใครรู้ว่าใครตอบ.</div>
+        <div style="display:flex; gap:24px; margin-top:28px; flex-wrap:wrap;">
+          <div><div style="font-family:'Kanit'; font-size:26px; font-weight:600; color:#eef7f4;">4</div><div style="font-size:13px; color:#9cc0b8;">หน้าหลัก</div></div>
+          <div style="width:1px; background:rgba(122,200,188,0.2);"></div>
+          <div><div style="font-family:'Kanit'; font-size:26px; font-weight:600; color:#eef7f4;">2</div><div style="font-size:13px; color:#9cc0b8;">เครื่องอ้างอิง</div></div>
+          <div style="width:1px; background:rgba(122,200,188,0.2);"></div>
+          <div><div style="font-family:'Kanit'; font-size:26px; font-weight:600; color:#eef7f4;">3</div><div style="font-size:13px; color:#9cc0b8;">แนวทางที่สำรวจ</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== PRINCIPLES ===== -->
+    <div style="margin-top:48px;">
+      <div style="font-family:'Kanit'; font-size:13px; letter-spacing:2px; color:#7fa399; text-transform:uppercase; margin-bottom:14px;">หลักการออกแบบ</div>
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:16px;">
+        <div style="background:#fff; border-radius:16px; padding:20px; box-shadow:0 2px 10px rgba(22,41,47,0.06);"><div style="font-size:26px;">🔒</div><div style="font-family:'Kanit'; font-size:16px; font-weight:600; color:#16292f; margin-top:10px;">นิรนามเสมอ</div><div style="font-size:13px; color:#5a7068; margin-top:5px; line-height:1.45;">คำตอบไม่ผูกกับชื่อ แม้โฮสต์ก็ไม่เห็นว่าใครเขียน</div></div>
+        <div style="background:#fff; border-radius:16px; padding:20px; box-shadow:0 2px 10px rgba(22,41,47,0.06);"><div style="font-size:26px;">🛡️</div><div style="font-family:'Kanit'; font-size:16px; font-weight:600; color:#16292f; margin-top:10px;">ปลอดภัยมาก่อน</div><div style="font-size:13px; color:#5a7068; margin-top:5px; line-height:1.45;">ปุ่ม Safe Skip ทุกจอ ข้ามคำถามได้เสมอ ไม่มีบทลงโทษ</div></div>
+        <div style="background:#fff; border-radius:16px; padding:20px; box-shadow:0 2px 10px rgba(22,41,47,0.06);"><div style="font-size:26px;">🌙</div><div style="font-family:'Kanit'; font-size:16px; font-weight:600; color:#16292f; margin-top:10px;">สงบ ชวนเปิดใจ</div><div style="font-size:13px; color:#5a7068; margin-top:5px; line-height:1.45;">โทนน้ำลึก แสงนุ่ม ลึกลับแต่ไม่กดดัน ไม่กระตุ้นเกินไป</div></div>
+        <div style="background:#fff; border-radius:16px; padding:20px; box-shadow:0 2px 10px rgba(22,41,47,0.06);"><div style="font-size:26px;">👆</div><div style="font-family:'Kanit'; font-size:16px; font-weight:600; color:#16292f; margin-top:10px;">แตะง่าย อ่านชัด</div><div style="font-size:13px; color:#5a7068; margin-top:5px; line-height:1.45;">ปุ่ม ≥ 44px คอนทราสต์สูงบนพื้นมืด</div></div>
+      </div>
+    </div>
+
+    <!-- ===== COLORS ===== -->
+    <div style="margin-top:48px;">
+      <div style="font-family:'Kanit'; font-size:13px; letter-spacing:2px; color:#7fa399; text-transform:uppercase; margin-bottom:14px;">สีหลัก (Palette)</div>
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:16px;">
+        <div style="background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 2px 10px rgba(22,41,47,0.06);"><div style="height:84px; background:#16292f;"></div><div style="padding:13px 15px;"><div style="font-family:'Kanit'; font-size:14px; color:#16292f; font-weight:500;">Deep</div><div style="font-family:monospace; font-size:12px; color:#7fa399;">#16292F</div><div style="font-size:11.5px; color:#8a9b95; margin-top:3px;">พื้นหลังหลัก</div></div></div>
+        <div style="background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 2px 10px rgba(22,41,47,0.06);"><div style="height:84px; background:#1d3640;"></div><div style="padding:13px 15px;"><div style="font-family:'Kanit'; font-size:14px; color:#16292f; font-weight:500;">Surface</div><div style="font-family:monospace; font-size:12px; color:#7fa399;">#1D3640</div><div style="font-size:11.5px; color:#8a9b95; margin-top:3px;">พื้นรอง / การ์ด</div></div></div>
+        <div style="background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 2px 10px rgba(22,41,47,0.06);"><div style="height:84px; background:{{ accent }};"></div><div style="padding:13px 15px;"><div style="font-family:'Kanit'; font-size:14px; color:#16292f; font-weight:500;">Primary</div><div style="font-family:monospace; font-size:12px; color:#7fa399;">#4DB6A4</div><div style="font-size:11.5px; color:#8a9b95; margin-top:3px;">ปุ่มหลัก / เน้น</div></div></div>
+        <div style="background:#fff; border-radius:16px; overflow:hidden; box-shadow:0 2px 10px rgba(22,41,47,0.06);"><div style="height:84px; background:#7ac8bc;"></div><div style="padding:13px 15px;"><div style="font-family:'Kanit'; font-size:14px; color:#16292f; font-weight:500;">Jade</div><div style="font-family:monospace; font-size:12px; color:#7fa399;">#7AC8BC</div><div style="font-size:11.5px; color:#8a9b95; margin-top:3px;">ป้าย / ไฮไลต์</div></div></div>
+      </div>
+      <div style="display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-top:16px;">
+        <div style="display:flex; align-items:center; gap:12px; background:#fff; border-radius:14px; padding:13px 16px; box-shadow:0 2px 10px rgba(22,41,47,0.06);"><span style="width:34px; height:34px; border-radius:9px; background:#8bd3a0;"></span><div><div style="font-family:'Kanit'; font-size:13px; color:#16292f;">Positive</div><div style="font-family:monospace; font-size:11px; color:#7fa399;">#8BD3A0</div></div></div>
+        <div style="display:flex; align-items:center; gap:12px; background:#fff; border-radius:14px; padding:13px 16px; box-shadow:0 2px 10px rgba(22,41,47,0.06);"><span style="width:34px; height:34px; border-radius:9px; background:#e6b86b;"></span><div><div style="font-family:'Kanit'; font-size:13px; color:#16292f;">Caution</div><div style="font-family:monospace; font-size:11px; color:#7fa399;">#E6B86B</div></div></div>
+        <div style="display:flex; align-items:center; gap:12px; background:#fff; border-radius:14px; padding:13px 16px; box-shadow:0 2px 10px rgba(22,41,47,0.06);"><span style="width:34px; height:34px; border-radius:9px; background:#ff9c9c;"></span><div><div style="font-family:'Kanit'; font-size:13px; color:#16292f;">Danger</div><div style="font-family:monospace; font-size:11px; color:#7fa399;">#FF9C9C</div></div></div>
+        <div style="display:flex; align-items:center; gap:12px; background:#fff; border-radius:14px; padding:13px 16px; box-shadow:0 2px 10px rgba(22,41,47,0.06);"><span style="width:34px; height:34px; border-radius:9px; background:#eef7f4; border:1px solid #dde5e2;"></span><div><div style="font-family:'Kanit'; font-size:13px; color:#16292f;">Ink</div><div style="font-family:monospace; font-size:11px; color:#7fa399;">#EEF7F4</div></div></div>
+      </div>
+    </div>
+
+    <!-- ===== TYPE ===== -->
+    <div style="margin-top:48px;">
+      <div style="font-family:'Kanit'; font-size:13px; letter-spacing:2px; color:#7fa399; text-transform:uppercase; margin-bottom:14px;">ตัวอักษร (Type)</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+        <div style="background:#fff; border-radius:16px; padding:24px 26px; box-shadow:0 2px 10px rgba(22,41,47,0.06);">
+          <div style="font-family:monospace; font-size:12px; color:#7fa399;">Display · Kanit</div>
+          <div style="font-family:'Kanit'; font-size:38px; font-weight:600; color:#16292f; margin-top:6px; line-height:1.1;">ครั้งสุดท้ายที่คุณ</div>
+          <div style="font-family:'Kanit'; font-size:20px; font-weight:500; color:#3a5a52; margin-top:10px;">หัวข้อรอง · Subheading 20</div>
+          <div style="font-size:13px; color:#8a9b95; margin-top:12px;">หัวข้อ คำถาม ปุ่ม CTA · น้ำหนัก 500–700</div>
+        </div>
+        <div style="background:#fff; border-radius:16px; padding:24px 26px; box-shadow:0 2px 10px rgba(22,41,47,0.06);">
+          <div style="font-family:monospace; font-size:12px; color:#7fa399;">Body · IBM Plex Sans Thai</div>
+          <div style="font-size:17px; color:#16292f; margin-top:10px; line-height:1.5;">เนื้อหาทั่วไป คำตอบ และคำอธิบาย อ่านสบายตาในขนาด 14–17px</div>
+          <div style="font-size:13px; color:#5a7068; margin-top:12px; line-height:1.5;">คำบรรยายรอง · Secondary 13–14 · ใช้กับ label และ caption</div>
+          <div style="font-family:monospace; font-size:12px; color:#7fa399; margin-top:12px;">monospace · ค่า/โค้ด/สเปก</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== COMPONENTS ===== -->
+    <div style="margin-top:48px;">
+      <div style="font-family:'Kanit'; font-size:13px; letter-spacing:2px; color:#7fa399; text-transform:uppercase; margin-bottom:14px;">คอมโพเนนต์ (Components)</div>
+      <div style="background:linear-gradient(150deg,#16292f 0%,#1d3640 55%,#193038 100%); border-radius:22px; padding:34px; box-shadow:0 16px 44px rgba(22,41,47,0.3);">
+        <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:34px;">
+
+          <!-- buttons -->
+          <div>
+            <div style="font-family:'Kanit'; font-size:12px; color:#7fa399; letter-spacing:1px; margin-bottom:14px;">ปุ่ม &amp; ป้าย</div>
+            <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center;">
+              <span style="background:{{ accent }}; color:#0e1a1f; font-family:'Kanit'; font-size:15px; font-weight:600; padding:13px 24px; border-radius:14px; box-shadow:0 6px 18px rgba(77,182,164,0.3);">ส่งคำตอบ →</span>
+              <span style="border:1.5px solid {{ accent }}; color:{{ accent }}; font-family:'Kanit'; font-size:15px; padding:12px 22px; border-radius:14px;">ปุ่มรอง</span>
+              <span style="border:1.5px solid {{ accent }}; color:#eef7f4; border-radius:18px; padding:9px 16px; font-family:'Kanit'; font-size:14px;">🛡️ เซฟ</span>
+              <span style="border:1px solid rgba(255,120,120,0.4); color:#ff9c9c; border-radius:14px; padding:11px 18px; font-family:'Kanit'; font-size:14px;">✕ ยกเลิก</span>
+            </div>
+          </div>
+
+          <!-- chips -->
+          <div>
+            <div style="font-family:'Kanit'; font-size:12px; color:#7fa399; letter-spacing:1px; margin-bottom:14px;">ชิป / ปุ่มชื่อ</div>
+            <div style="display:flex; flex-wrap:wrap; gap:11px; align-items:center;">
+              <span style="border:1.5px solid rgba(122,200,188,0.45); color:#e8f3f0; border-radius:22px; padding:11px 20px; font-family:'Kanit'; font-size:14px; background:rgba(255,255,255,0.05);">โบ๊ท</span>
+              <span style="border:1.5px solid {{ accent }}; background:{{ accent }}; color:#0e1a1f; border-radius:22px; padding:11px 20px; font-family:'Kanit'; font-size:14px;">ฟ้า ✓</span>
+              <span style="border:1.5px solid rgba(122,200,188,0.45); color:#e8f3f0; border-radius:22px; padding:11px 20px; font-family:'Kanit'; font-size:14px; background:rgba(255,255,255,0.05);">🤖 ???</span>
+            </div>
+          </div>
+
+          <!-- bubbles -->
+          <div>
+            <div style="font-family:'Kanit'; font-size:12px; color:#7fa399; letter-spacing:1px; margin-bottom:14px;">บับเบิลสนทนา</div>
+            <div style="display:flex; flex-direction:column; gap:12px;">
+              <div style="align-self:flex-start; max-width:85%; background:rgba(255,255,255,0.08); border:1px solid rgba(122,200,188,0.45); border-radius:6px 18px 18px 18px; padding:13px 16px;"><div style="font-family:'Kanit'; font-size:10px; color:{{ accent }}; margin-bottom:4px;">🎭 ไม่ระบุชื่อ</div><div style="font-size:14px; color:#f4faf8; line-height:1.4;">"เพราะหนังเรื่องนึง…"</div></div>
+              <div style="align-self:flex-end; max-width:85%; background:{{ accent }}; border-radius:18px 6px 18px 18px; padding:13px 16px;"><div style="font-size:14px; color:#0e1a1f; line-height:1.4;">"เราเข้าใจเลย 🫂"</div></div>
+            </div>
+          </div>
+
+          <!-- input -->
+          <div>
+            <div style="font-family:'Kanit'; font-size:12px; color:#7fa399; letter-spacing:1px; margin-bottom:14px;">ช่องพิมพ์ &amp; ส่ง</div>
+            <div style="display:flex; align-items:center; gap:11px;">
+              <span style="width:46px; height:46px; border:1.5px solid {{ accent }}; color:{{ accent }}; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:23px;">+</span>
+              <div style="flex:1; height:46px; border-radius:23px; background:rgba(255,255,255,0.09); border:1px solid rgba(122,200,188,0.3); display:flex; align-items:center; padding:0 18px; color:#cae3dc; font-size:15px;">พิมพ์…</div>
+              <span style="width:46px; height:46px; background:{{ accent }}; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#0e1a1f; font-size:20px;">↑</span>
+            </div>
+          </div>
+
+          <!-- mood -->
+          <div>
+            <div style="font-family:'Kanit'; font-size:12px; color:#7fa399; letter-spacing:1px; margin-bottom:14px;">ตัวเลือกอารมณ์</div>
+            <div style="display:flex; gap:12px;">
+              <span style="width:48px; height:48px; border-radius:50%; background:rgba(255,255,255,0.06); border:1.5px solid rgba(122,200,188,0.25); display:flex; align-items:center; justify-content:center; font-size:22px;">😄</span>
+              <span style="width:48px; height:48px; border-radius:50%; background:{{ accent }}; display:flex; align-items:center; justify-content:center; font-size:22px; box-shadow:0 0 16px rgba(77,182,164,0.5);">🙂</span>
+              <span style="width:48px; height:48px; border-radius:50%; background:rgba(255,255,255,0.06); border:1.5px solid rgba(122,200,188,0.25); display:flex; align-items:center; justify-content:center; font-size:22px;">😐</span>
+              <span style="width:48px; height:48px; border-radius:50%; background:rgba(255,255,255,0.06); border:1.5px solid rgba(122,200,188,0.25); display:flex; align-items:center; justify-content:center; font-size:22px;">😔</span>
+              <span style="width:48px; height:48px; border-radius:50%; background:rgba(255,255,255,0.06); border:1.5px solid rgba(122,200,188,0.25); display:flex; align-items:center; justify-content:center; font-size:22px;">😰</span>
+            </div>
+          </div>
+
+          <!-- sentiment tags -->
+          <div>
+            <div style="font-family:'Kanit'; font-size:12px; color:#7fa399; letter-spacing:1px; margin-bottom:14px;">แท็กวิเคราะห์ความรู้สึก</div>
+            <div style="display:flex; flex-wrap:wrap; gap:10px;">
+              <span style="font-family:'Kanit'; font-size:12px; color:#8bd3a0; border:1px solid rgba(139,211,160,0.4); border-radius:11px; padding:6px 13px;">เชิงบวก</span>
+              <span style="font-family:'Kanit'; font-size:12px; color:#e6b86b; border:1px solid rgba(230,184,107,0.4); border-radius:11px; padding:6px 13px;">วิตกกังวล</span>
+              <span style="font-family:'Kanit'; font-size:12px; color:{{ accent }}; border:1px solid rgba(77,182,164,0.4); border-radius:11px; padding:6px 13px;">ใคร่ครวญตนเอง</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== DEVICES ===== -->
+    <div style="margin-top:48px;">
+      <div style="font-family:'Kanit'; font-size:13px; letter-spacing:2px; color:#7fa399; text-transform:uppercase; margin-bottom:14px;">เครื่องอ้างอิง (Devices)</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+        <div style="background:#fff; border-radius:16px; padding:22px 24px; box-shadow:0 2px 10px rgba(22,41,47,0.06); display:flex; align-items:center; gap:18px;">
+          <span style="font-size:34px;">📱</span>
+          <div><div style="font-family:'Kanit'; font-size:18px; font-weight:600; color:#16292f;">iPhone 16 Pro</div><div style="font-family:monospace; font-size:13px; color:#7fa399; margin-top:3px;">402 × 874 pt · @3x</div><div style="font-size:12.5px; color:#8a9b95; margin-top:3px;">Dynamic Island · top inset 59 · home 34</div></div>
+        </div>
+        <div style="background:#fff; border-radius:16px; padding:22px 24px; box-shadow:0 2px 10px rgba(22,41,47,0.06); display:flex; align-items:center; gap:18px;">
+          <span style="font-size:34px;">📱</span>
+          <div><div style="font-family:'Kanit'; font-size:18px; font-weight:600; color:#16292f;">Samsung Galaxy S25</div><div style="font-family:monospace; font-size:13px; color:#7fa399; margin-top:3px;">360 × 780 px · ~3x</div><div style="font-size:12.5px; color:#8a9b95; margin-top:3px;">กล้องเจาะรู · status 38 · gesture bar</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SCREENS INDEX ===== -->
+    <div style="margin-top:48px;">
+      <div style="font-family:'Kanit'; font-size:13px; letter-spacing:2px; color:#7fa399; text-transform:uppercase; margin-bottom:14px;">หน้าจอทั้งหมด · กดเพื่อเปิด</div>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:18px;">
+
+        <a href="DeepTalk Landing - Safe Harbor.dc.html" style="background:#fff; border-radius:18px; overflow:hidden; box-shadow:0 2px 12px rgba(22,41,47,0.07); display:block;">
+          <div style="height:88px; background:linear-gradient(150deg,#16292f,#1d3640); display:flex; align-items:center; justify-content:center; font-size:34px;">🚪</div>
+          <div style="padding:16px 18px;"><div style="font-family:'Kanit'; font-size:11px; color:#7fa399;">index.html</div><div style="font-family:'Kanit'; font-size:17px; font-weight:600; color:#16292f; margin-top:2px;">หน้าแรก / เข้าร่วม</div><div style="font-size:12.5px; color:#5a7068; margin-top:5px;">เข้าร่วม · สร้างห้อง · ปรับแบรนด์ B2B</div><div style="font-family:'Kanit'; font-size:13px; color:{{ accent }}; margin-top:11px;">เปิดหน้า →</div></div>
+        </a>
+
+        <a href="DeepTalk Player - Device Ready.dc.html" style="background:#fff; border-radius:18px; overflow:hidden; box-shadow:0 2px 12px rgba(22,41,47,0.07); display:block;">
+          <div style="height:88px; background:linear-gradient(150deg,#16292f,#1d3640); display:flex; align-items:center; justify-content:center; font-size:34px;">📱</div>
+          <div style="padding:16px 18px;"><div style="font-family:'Kanit'; font-size:11px; color:#7fa399;">player.html · device-ready</div><div style="font-family:'Kanit'; font-size:17px; font-weight:600; color:#16292f; margin-top:2px;">มือถือผู้เล่น</div><div style="font-size:12.5px; color:#5a7068; margin-top:5px;">iPhone 16 Pro &amp; S25 · 4 สเตป</div><div style="font-family:'Kanit'; font-size:13px; color:{{ accent }}; margin-top:11px;">เปิดหน้า →</div></div>
+        </a>
+
+        <a href="DeepTalk Host Screen - Safe Harbor.dc.html" style="background:#fff; border-radius:18px; overflow:hidden; box-shadow:0 2px 12px rgba(22,41,47,0.07); display:block;">
+          <div style="height:88px; background:linear-gradient(150deg,#16292f,#1d3640); display:flex; align-items:center; justify-content:center; font-size:34px;">📺</div>
+          <div style="padding:16px 18px;"><div style="font-family:'Kanit'; font-size:11px; color:#7fa399;">host.html</div><div style="font-family:'Kanit'; font-size:17px; font-weight:600; color:#16292f; margin-top:2px;">จอทีวีกลางวง</div><div style="font-size:12.5px; color:#5a7068; margin-top:5px;">ล็อบบี้ · โหมด · กระดาน · สรุปคะแนน</div><div style="font-family:'Kanit'; font-size:13px; color:{{ accent }}; margin-top:11px;">เปิดหน้า →</div></div>
+        </a>
+
+        <a href="DeepTalk Journal - Safe Harbor.dc.html" style="background:#fff; border-radius:18px; overflow:hidden; box-shadow:0 2px 12px rgba(22,41,47,0.07); display:block;">
+          <div style="height:88px; background:linear-gradient(150deg,#16292f,#1d3640); display:flex; align-items:center; justify-content:center; font-size:34px;">🌙</div>
+          <div style="padding:16px 18px;"><div style="font-family:'Kanit'; font-size:11px; color:#7fa399;">journal.html · device-ready</div><div style="font-family:'Kanit'; font-size:17px; font-weight:600; color:#16292f; margin-top:2px;">สมุดทบทวนเดี่ยว</div><div style="font-size:12.5px; color:#5a7068; margin-top:5px;">อารมณ์ · คำถามลึก · วิเคราะห์ · คลัง</div><div style="font-family:'Kanit'; font-size:13px; color:{{ accent }}; margin-top:11px;">เปิดหน้า →</div></div>
+        </a>
+
+        <a href="DeepTalk Concept C - Safe Harbor.dc.html" style="background:#fff; border-radius:18px; overflow:hidden; box-shadow:0 2px 12px rgba(22,41,47,0.07); display:block;">
+          <div style="height:88px; background:linear-gradient(150deg,#1d3640,#193038); display:flex; align-items:center; justify-content:center; font-size:34px;">💬</div>
+          <div style="padding:16px 18px;"><div style="font-family:'Kanit'; font-size:11px; color:#7fa399;">explore · concept</div><div style="font-family:'Kanit'; font-size:17px; font-weight:600; color:#16292f; margin-top:2px;">ผู้เล่น — ฟีดสนทนา</div><div style="font-size:12.5px; color:#5a7068; margin-top:5px;">5 จอ รวมถาดการ์ดหักมุม</div><div style="font-family:'Kanit'; font-size:13px; color:{{ accent }}; margin-top:11px;">เปิดหน้า →</div></div>
+        </a>
+
+        <a href="DeepTalk Player Wireframes.dc.html" style="background:#fff; border-radius:18px; overflow:hidden; box-shadow:0 2px 12px rgba(22,41,47,0.07); display:block;">
+          <div style="height:88px; background:#e7e5df; display:flex; align-items:center; justify-content:center; font-size:34px;">✏️</div>
+          <div style="padding:16px 18px;"><div style="font-family:'Kanit'; font-size:11px; color:#7fa399;">explore · wireframe</div><div style="font-family:'Kanit'; font-size:17px; font-weight:600; color:#16292f; margin-top:2px;">3 แนวทางเริ่มต้น</div><div style="font-size:12.5px; color:#5a7068; margin-top:5px;">การ์ดเดี่ยว · รีโมท · ฟีดสนทนา</div><div style="font-family:'Kanit'; font-size:13px; color:{{ accent }}; margin-top:11px;">เปิดหน้า →</div></div>
+        </a>
+
+      </div>
+    </div>
+
+    <!-- footer -->
+    <div style="margin-top:48px; text-align:center; font-size:13px; color:#9aaaa4;">DeepTalk · Safe Harbor Design System · บทสนทนาที่ปลอดภัย ไม่มีใครรู้ว่าใครตอบ 🔒</div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;accentColor&quot;: { &quot;editor&quot;: &quot;color&quot;, &quot;default&quot;: &quot;#4db6a4&quot;, &quot;tsType&quot;: &quot;string&quot; }
+}">
+class Component extends DCLogic {
+  renderVals() {
+    return { accent: this.props.accentColor ?? '#4db6a4' };
+  }
+}
+</script>
+</body>
+</html>

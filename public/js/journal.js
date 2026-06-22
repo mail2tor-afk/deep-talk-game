@@ -1,35 +1,42 @@
 /**
- * Solo Reflection Journal Controller
+ * Solo Reflection Journal Controller - Redesigned
  */
 
 document.addEventListener('DOMContentLoaded', () => {
   // DOM Elements
+  const moodItems = document.querySelectorAll('.mood-item');
   const moodButtons = document.querySelectorAll('.mood-btn');
-  const promptTh = document.getElementById('prompt-th');
-  const promptEn = document.getElementById('prompt-en');
-  const promptCategory = document.getElementById('prompt-category');
-  const newPromptBtn = document.getElementById('new-prompt-btn');
+  const promptTh = document.getElementById('prompt-text-th');
+  const promptEn = document.getElementById('prompt-text-en');
+  const refreshPromptBtn = document.getElementById('refresh-prompt-btn');
   const journalInput = document.getElementById('journal-input');
-  const saveEntryBtn = document.getElementById('save-entry-btn');
-  const sentimentFeedback = document.getElementById('sentiment-feedback');
+  const saveJournalBtn = document.getElementById('save-journal-btn');
+  
+  const sentimentBanner = document.getElementById('sentiment-banner');
   const sentimentText = document.getElementById('sentiment-text');
-  const sentimentDesc = document.getElementById('sentiment-desc');
-  const logsList = document.getElementById('logs-list');
+
+  const journalToggleView = document.getElementById('journal-toggle-view');
+  const journalViewTitle = document.getElementById('journal-view-title');
+  const viewWrite = document.getElementById('view-write');
+  const viewHistory = document.getElementById('view-history');
+  const logsListContainer = document.getElementById('logs-list-container');
 
   // State
-  let selectedMood = 'neutral';
+  let selectedMood = 'good';
   let activePrompt = null;
   let sentimentTimeout = null;
+  let currentView = 'write'; // 'write' or 'history'
 
   // Initialize
-  selectMood('neutral');
+  selectMood('good');
   loadNewPrompt();
   renderLogs();
 
   // Mood Button Event Handlers
-  moodButtons.forEach(btn => {
+  moodItems.forEach(item => {
+    const btn = item.querySelector('.mood-btn');
     btn.addEventListener('click', () => {
-      const mood = btn.getAttribute('data-mood');
+      const mood = item.getAttribute('data-mood');
       selectMood(mood);
     });
   });
@@ -37,18 +44,39 @@ document.addEventListener('DOMContentLoaded', () => {
   // Select Mood state helper
   function selectMood(mood) {
     selectedMood = mood;
-    moodButtons.forEach(btn => {
-      btn.classList.remove('selected');
-      if (btn.getAttribute('data-mood') === mood) {
-        btn.classList.add('selected');
+    
+    // Clear all inline shadows and selected classes
+    moodItems.forEach(item => {
+      item.classList.remove('selected');
+      const btn = item.querySelector('.mood-btn');
+      btn.style.borderColor = 'rgba(122, 200, 188, 0.25)';
+      btn.style.boxShadow = 'none';
+      
+      if (item.getAttribute('data-mood') === mood) {
+        item.classList.add('selected');
+        
+        // Apply matching color glow
+        const color = getMoodColor(mood);
+        btn.style.borderColor = color;
+        btn.style.boxShadow = `0 0 16px ${color}`;
       }
     });
   }
 
+  function getMoodColor(mood) {
+    switch (mood) {
+      case 'great': return '#8bd3a0'; // Positive
+      case 'good': return '#4db6a4';  // Primary
+      case 'sad': return '#e6b86b';   // Caution
+      case 'anxious': return '#ff9c9c'; // Danger
+      default: return '#eef7f4'; // Ink
+    }
+  }
+
   // Load random deep reflection prompt
   function loadNewPrompt() {
-    // Reflection journal utilizes deeper levels (Level 2 & 3)
     const db = window.DEEP_TALK_DB;
+    // reflection journal uses Level 2 & 3 questions
     const pool = [...db[2], ...db[3]];
     
     if (pool.length > 0) {
@@ -57,11 +85,15 @@ document.addEventListener('DOMContentLoaded', () => {
       
       promptTh.innerText = activePrompt.questionTh;
       promptEn.innerText = activePrompt.questionEn;
-      promptCategory.innerText = `LEVEL ${activePrompt.level} • ${activePrompt.category}`;
+      
+      const categoryBadge = document.querySelector('.card-prompt-label');
+      if (categoryBadge) {
+        categoryBadge.innerText = `คำถามชวนคิด · ระดับ ${activePrompt.level} (หมวด: ${activePrompt.category})`;
+      }
     }
   }
 
-  newPromptBtn.addEventListener('click', loadNewPrompt);
+  refreshPromptBtn.addEventListener('click', loadNewPrompt);
 
   // Debounced Sentiment Analysis during typing
   journalInput.addEventListener('input', () => {
@@ -71,14 +103,19 @@ document.addEventListener('DOMContentLoaded', () => {
       if (text.trim().length > 10) {
         const sentiment = window.DeepTalkUtils.analyzeSentiment(text);
         
-        sentimentFeedback.className = `sentiment-panel visible`;
-        sentimentFeedback.style.borderLeftColor = getSentimentColor(sentiment.label);
+        sentimentBanner.style.display = 'flex';
+        const color = getSentimentColor(sentiment.label);
         
-        sentimentText.innerText = sentiment.label.toUpperCase();
-        sentimentText.style.color = getSentimentColor(sentiment.label);
-        sentimentDesc.innerText = sentiment.descTh + ' / ' + sentiment.descEn;
+        const dot = sentimentBanner.querySelector('span');
+        if (dot) {
+          dot.style.backgroundColor = color;
+          dot.style.boxShadow = `0 0 8px ${color}`;
+        }
+        
+        sentimentText.innerText = getSentimentLabelTh(sentiment.label);
+        sentimentText.style.color = color;
       } else {
-        sentimentFeedback.className = 'sentiment-panel';
+        sentimentBanner.style.display = 'none';
       }
     }, 600);
   });
@@ -86,18 +123,27 @@ document.addEventListener('DOMContentLoaded', () => {
   // Get color code matching sentiment type
   function getSentimentColor(label) {
     switch (label) {
-      case 'positive': return '#10b981'; // Green
-      case 'anxious': return '#f43f5e';  // Red
-      case 'reflective': return '#a855f7'; // Purple
-      default: return '#3b82f6'; // Blue / Neutral
+      case 'positive': return '#8bd3a0';
+      case 'anxious': return '#e6b86b';
+      case 'reflective': return '#7ac8bc';
+      default: return '#4db6a4';
+    }
+  }
+
+  function getSentimentLabelTh(label) {
+    switch (label) {
+      case 'positive': return 'เชิงบวก / ผ่อนคลาย';
+      case 'anxious': return 'กังวล / เหนื่อยล้า';
+      case 'reflective': return 'ทบทวนใคร่ครวญตนเอง';
+      default: return 'จิตใจสงบมั่นคง';
     }
   }
 
   // Save journal entries
-  saveEntryBtn.addEventListener('click', () => {
+  saveJournalBtn.addEventListener('click', () => {
     const text = journalInput.value.trim();
     if (!text) {
-      alert("Please write down some reflection before saving.");
+      alert("กรุณาบันทึกข้อความความรู้สึกของคุณก่อนบันทึก");
       return;
     }
 
@@ -132,23 +178,42 @@ document.addEventListener('DOMContentLoaded', () => {
       console.error("Error reading logs:", e);
     }
 
-    logs.unshift(newEntry); // Prepend
+    logs.unshift(newEntry);
     localStorage.setItem('deeptalk_journal_logs', JSON.stringify(logs));
 
     // Reset Form
     journalInput.value = '';
-    sentimentFeedback.className = 'sentiment-panel';
-    selectMood('neutral');
+    sentimentBanner.style.display = 'none';
+    selectMood('good');
     loadNewPrompt();
     
     // Re-render
     renderLogs();
-    alert("✓ Reflection saved successfully.");
+    alert("✓ บันทึกความรู้สึกสำเร็จ");
+  });
+
+  // Toggle write and history view
+  journalToggleView.addEventListener('click', () => {
+    if (currentView === 'write') {
+      currentView = 'history';
+      viewWrite.style.display = 'none';
+      viewHistory.style.display = 'flex';
+      journalViewTitle.innerText = 'บันทึกย้อนหลัง 📚';
+      journalToggleView.innerText = '✍️';
+      journalToggleView.title = 'เขียนบันทึกใหม่';
+    } else {
+      currentView = 'write';
+      viewWrite.style.display = 'flex';
+      viewHistory.style.display = 'none';
+      journalViewTitle.innerText = 'สมุดทบทวน 🌙';
+      journalToggleView.innerText = '📚';
+      journalToggleView.title = 'ดูบันทึกย้อนหลัง';
+    }
   });
 
   // Render logs list
   function renderLogs() {
-    logsList.innerHTML = '';
+    logsListContainer.innerHTML = '';
     
     let logs = [];
     try {
@@ -161,17 +226,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (logs.length === 0) {
-      logsList.innerHTML = `
-        <div class="glass-panel" style="padding: 20px; text-align: center; color: var(--text-muted);">
-          No reflection entries yet. Take a moment to write your first entry today.
+      logsListContainer.innerHTML = `
+        <div class="log-item-card" style="text-align: center; color: #8fb3aa; padding: 24px;">
+          ยังไม่มีบันทึกทบทวนในขณะนี้ เริ่มบันทึกความรู้สึกของคุณวันนี้ได้เลย ✍️
         </div>
       `;
       return;
     }
 
-    // Mood Emojis Map
     const moodEmojis = {
-      great: '😊',
+      great: '😄',
       good: '🙂',
       neutral: '😐',
       sad: '😔',
@@ -179,39 +243,39 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     logs.forEach(entry => {
-      const card = document.createElement('article');
-      card.className = 'glass-panel log-entry';
+      const card = document.createElement('div');
+      card.className = 'log-item-card';
       
       const moodEmoji = moodEmojis[entry.mood] || '😐';
+      const color = getSentimentColor(entry.sentiment);
 
       card.innerHTML = `
-        <div class="log-meta">
-          <div class="log-date-mood">
-            <span>${entry.date}</span>
-            <span>•</span>
-            <span>Mood: ${moodEmoji} ${entry.mood.toUpperCase()}</span>
+        <div class="log-item-header">
+          <div class="log-item-meta">
+            <span class="log-item-emoji">${moodEmoji}</span>
+            <span class="log-item-date">${entry.date}</span>
           </div>
-          <div style="display: flex; align-items: center; gap: 15px;">
-            <span class="log-sentiment-tag ${entry.sentiment}">${entry.sentiment}</span>
-            <button class="log-delete-btn" data-id="${entry.id}">Delete</button>
-          </div>
+          <button class="log-item-delete" data-id="${entry.id}" title="ลบบันทึก">🗑️</button>
         </div>
         ${entry.prompt ? `
-          <div class="log-prompt">
-            Q: ${entry.prompt.questionTh} / ${entry.prompt.questionEn}
+          <div class="log-item-question">
+            คำถาม: ${entry.prompt.questionTh}
           </div>
         ` : ''}
-        <div class="log-content">${escapeHTML(entry.content)}</div>
+        <div class="log-item-content">${escapeHTML(entry.content)}</div>
+        <span class="log-item-tag" style="background: ${color}20; color: ${color}; border: 1px solid ${color}40;">
+          ${getSentimentLabelTh(entry.sentiment)}
+        </span>
       `;
 
-      logsList.appendChild(card);
+      logsListContainer.appendChild(card);
     });
 
     // Attach delete listeners
-    document.querySelectorAll('.log-delete-btn').forEach(btn => {
-      btn.addEventListener('click', (e) => {
+    document.querySelectorAll('.log-item-delete').forEach(btn => {
+      btn.addEventListener('click', () => {
         const id = btn.getAttribute('data-id');
-        if (confirm("Are you sure you want to delete this entry?")) {
+        if (confirm("คุณแน่ใจหรือไม่ว่าต้องการลบบันทึกความรู้สึกรายการนี้?")) {
           deleteEntry(id);
         }
       });

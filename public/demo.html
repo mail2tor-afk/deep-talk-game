@@ -3,190 +3,154 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>หน้าทดลองจำลองการเล่น - DeepTalk.io Demo</title>
+  <title>DeepTalk - Dual Device Simulator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <style>
     body {
       margin: 0;
       padding: 0;
-      height: 100vh;
+      background: #0f1c20;
+      color: #eef7f4;
+      font-family: 'Kanit', sans-serif;
       display: flex;
       flex-direction: column;
-      background: #07040d;
+      height: 100vh;
       overflow: hidden;
-      font-family: 'Inter', sans-serif;
     }
-    
-    .demo-bar {
-      background: rgba(20, 16, 35, 0.95);
-      border-bottom: 1px solid var(--surface-border);
-      padding: 12px 25px;
+
+    .sim-header {
+      background: #16292f;
+      border-bottom: 1.5px solid rgba(122, 200, 188, 0.25);
+      padding: 12px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      z-index: 100;
-      backdrop-filter: blur(10px);
+      flex-shrink: 0;
     }
 
-    .demo-title {
-      font-family: var(--font-heading);
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #fff;
+    .sim-title {
+      font-size: 18px;
+      font-weight: 600;
       display: flex;
       align-items: center;
       gap: 10px;
     }
 
-    .demo-badge {
-      background: var(--secondary);
-      color: #fff;
-      font-size: 0.75rem;
-      font-weight: bold;
-      padding: 3px 8px;
-      border-radius: 4px;
+    .sim-badge {
+      background: var(--primary);
+      color: #0e1a1f;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 6px;
       text-transform: uppercase;
     }
 
-    .demo-desc {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-
-    .demo-workspace {
+    .sim-workspace {
       display: flex;
-      flex-grow: 1;
-      width: 100%;
-      height: calc(100vh - 60px);
+      flex: 1;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+      padding: 20px;
+      background: radial-gradient(circle at 50% 50%, #1a3037 0%, #0f1c20 100%);
+      overflow-y: auto;
     }
 
-    .demo-pane {
-      flex: 1;
-      height: 100%;
+    .phone-container {
       display: flex;
       flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .phone-label {
+      font-size: 14px;
+      color: #8fb3aa;
+      font-weight: 500;
+    }
+
+    .phone-frame {
+      width: 375px;
+      height: 760px;
+      background: #000;
+      border-radius: 40px;
+      border: 10px solid #2d3e40;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 0 4px #1a2a2d;
+      overflow: hidden;
       position: relative;
     }
 
-    .demo-pane-header {
-      background: rgba(255, 255, 255, 0.02);
-      border-bottom: 1px solid var(--surface-border);
-      padding: 8px 15px;
-      font-family: var(--font-heading);
-      font-weight: 600;
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .demo-pane-iframe {
+    .phone-iframe {
       width: 100%;
-      flex-grow: 1;
+      height: 100%;
       border: none;
-      background: #0c0816;
+      background: #16292f;
     }
 
-    /* Vertical Divider */
-    .demo-divider {
-      width: 4px;
-      background: var(--surface-border);
-      height: 100%;
-      position: relative;
-    }
-
-    .demo-divider::before {
-      content: '';
+    /* Simulate dynamic island on left and right frames */
+    .phone-island {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(to bottom, var(--primary), var(--secondary));
-      opacity: 0.3;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 110px;
+      height: 28px;
+      background: #000;
+      border-radius: 15px;
+      z-index: 1000;
+      pointer-events: none;
     }
   </style>
 </head>
 <body>
 
-  <!-- Top bar controls -->
-  <div class="demo-bar">
-    <div class="demo-title">
-      <span class="demo-badge">Developer Mode</span>
-      <span>ระบบจำลองการเล่นบอร์ดเกมออนไลน์แบบแบ่งหน้าต่าง (Split Screen)</span>
+  <header class="sim-header">
+    <div class="sim-title">
+      🔮 DeepTalk - Dual Device Simulator <span class="sim-badge">Dev Mode</span>
     </div>
-    <div class="demo-desc" id="sync-status">
-      สถานะ: รอการสร้างห้องในหน้าต่างซ้ายเพื่อซิงค์ระบบ...
+    <div style="font-size: 13.5px; color: #8fb3aa;">
+      จำลองทดสอบระบบแบบสองมือถือฝั่ง Host และ Player เพื่อตรวจสอบความคุ้นชิน
     </div>
-    <div>
-      <a href="index.html" class="btn btn-outline" style="font-size: 0.75rem; padding: 6px 12px;">
-        🏠 กลับหน้าหลักเว็บ
-      </a>
-    </div>
-  </div>
+  </header>
 
-  <!-- Main Side-by-Side simulation panel -->
-  <div class="demo-workspace">
+  <main class="sim-workspace">
     
-    <!-- LEFT PANEL: Host Screen -->
-    <div class="demo-pane" style="border-right: 1px solid var(--surface-border);">
-      <div class="demo-pane-header">
-        <span>🖥️ หน้าจอหลักห้องเล่นเกม (Host Display)</span>
-        <span style="color: var(--primary);">จำลอง Smart TV หรือหน้าจอหลัก</span>
+    <!-- Phone 1: Host -->
+    <div class="phone-container">
+      <div class="phone-label">📱 เครื่องที่ 1 (ใช้เพื่อกดสร้างห้อง / เป็นโฮสต์)</div>
+      <div class="phone-frame">
+        <div class="phone-island"></div>
+        <iframe src="index.html" class="phone-iframe"></iframe>
       </div>
-      <iframe src="host.html" class="demo-pane-iframe" id="host-iframe"></iframe>
     </div>
 
-    <!-- Divider decoration -->
-    <div class="demo-divider"></div>
-
-    <!-- RIGHT PANEL: Player Controller -->
-    <div class="demo-pane">
-      <div class="demo-pane-header">
-        <span>📱 หน้าจอผู้เล่นคนแรก (Player Controller)</span>
-        <span style="color: var(--secondary);" id="player-status-badge">จำลองหน้าจอมือถือ</span>
+    <!-- Phone 2: Player -->
+    <div class="phone-container">
+      <div class="phone-label">📱 เครื่องที่ 2 (ฝั่งผู้เล่นเกสต์ - วางลิงก์เพื่อเข้าร่วม)</div>
+      <div style="display: flex; gap: 8px; width: 375px; margin-bottom: 8px;">
+        <input type="text" id="guest-url-input" placeholder="วางลิงก์ที่ได้รับจาก Host ที่นี่..." style="flex: 1; height: 32px; background: rgba(255,255,255,0.08); border: 1.5px solid rgba(122,200,188,0.25); border-radius: 8px; color: #fff; padding: 0 10px; font-size: 13px;">
+        <button onclick="loadGuestUrl()" style="height: 32px; background: var(--primary); color: #0e1a1f; border: none; border-radius: 8px; padding: 0 12px; font-family: 'Kanit'; font-size: 13px; font-weight: 500; cursor: pointer;">โหลดลิงก์</button>
       </div>
-      <iframe src="index.html" class="demo-pane-iframe" id="player-iframe"></iframe>
+      <div class="phone-frame">
+        <div class="phone-island"></div>
+        <iframe id="guest-iframe" src="index.html" class="phone-iframe"></iframe>
+      </div>
     </div>
 
-  </div>
+  </main>
 
   <script>
-    const hostIframe = document.getElementById('host-iframe');
-    const playerIframe = document.getElementById('player-iframe');
-    const syncStatusEl = document.getElementById('sync-status');
-    const playerStatusBadge = document.getElementById('player-status-badge');
-
-    let currentRoomCode = null;
-
-    // Periodically poll host iframe to check if room is created
-    const syncInterval = setInterval(() => {
-      try {
-        const hostWindow = hostIframe.contentWindow;
-        
-        // If roomCode exists on host window object
-        if (hostWindow && hostWindow.roomCode) {
-          const roomCode = hostWindow.roomCode;
-          
-          if (roomCode !== currentRoomCode) {
-            currentRoomCode = roomCode;
-            
-            // Auto fill player controller frame using invite link format
-            const inviteUrl = `player.html?room=${roomCode}`;
-            playerIframe.src = inviteUrl;
-            
-            syncStatusEl.innerText = `✓ ซิงค์เรียบร้อย! เชื่อมต่อหน้าจอผู้เล่นเข้ารหัสห้อง: ${roomCode}`;
-            syncStatusEl.style.color = '#10b981';
-            playerStatusBadge.innerText = `ซิงค์กับห้อง: ${roomCode}`;
-            playerStatusBadge.style.color = '#10b981';
-            
-            console.log("Auto-synced player frame to room:", roomCode);
-          }
-        }
-      } catch (e) {
-        // Cross-origin checks or frame loads
+    function loadGuestUrl() {
+      const url = document.getElementById('guest-url-input').value.trim();
+      if (url) {
+        document.getElementById('guest-iframe').src = url;
+      } else {
+        alert("กรุณากรอกลิงก์เชิญก่อน");
       }
-    }, 1000);
+    }
   </script>
 
 </body>

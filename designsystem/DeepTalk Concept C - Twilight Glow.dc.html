@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#ece8f5; }
+  @keyframes glowPulse { 0%,100% { box-shadow:0 0 0 1px rgba(167,139,250,0.35), 0 0 22px rgba(167,139,250,0.30); } 50% { box-shadow:0 0 0 1px rgba(167,139,250,0.55), 0 0 34px rgba(167,139,250,0.55); } }
+  @keyframes floatUp { 0% { transform:translateY(6px); opacity:0; } 100% { transform:translateY(0); opacity:1; } }
+</style>
+</helmet>
+
+<div style="min-width:max-content; min-height:100vh; box-sizing:border-box; padding:48px; background:#ece8f5; font-family:'IBM Plex Sans Thai',sans-serif;">
+
+  <!-- ===== HEADER ===== -->
+  <div style="max-width:780px; margin-bottom:34px;">
+    <div style="font-family:'Kanit',sans-serif; font-size:12px; letter-spacing:3px; color:#9b8bc4; text-transform:uppercase; font-weight:500;">Concept C · Conversation Feed</div>
+    <div style="font-family:'Kanit',sans-serif; font-size:40px; font-weight:600; color:#2a2140; margin-top:2px; line-height:1.05;">ธีม <span style="color: {{ accent }};">Twilight Glow</span></div>
+    <div style="font-size:16px; color:#6a6088; margin-top:12px; line-height:1.55;">ม่วงทไวไลต์อุ่น ไม่ดำสนิท · แสงเรืองนุ่ม ๆ · สีพีช-ชมพูเป็นตัวกระตุ้นพลังให้อยากตอบ — ลึกลับ ตื่นเต้น ชวนเปิดใจ ไม่น่ากลัว.</div>
+    <div style="display:flex; gap:18px; margin-top:18px; flex-wrap:wrap;">
+      <div style="display:flex; align-items:center; gap:8px;"><span style="width:22px; height:22px; border-radius:50%; background:#2d2152; box-shadow:0 1px 4px rgba(0,0,0,0.2);"></span><span style="font-family:'Kanit'; font-size:12px; color:#6a6088;">#2D2152 ทไวไลต์</span></div>
+      <div style="display:flex; align-items:center; gap:8px;"><span style="width:22px; height:22px; border-radius:50%; background:#a78bfa; box-shadow:0 1px 4px rgba(0,0,0,0.2);"></span><span style="font-family:'Kanit'; font-size:12px; color:#6a6088;">#A78BFA ม่วงเรือง</span></div>
+      <div style="display:flex; align-items:center; gap:8px;"><span style="width:22px; height:22px; border-radius:50%; background: {{ accent }}; box-shadow:0 1px 4px rgba(0,0,0,0.2);"></span><span style="font-family:'Kanit'; font-size:12px; color:#6a6088;">ตัวกระตุ้น (ปรับได้)</span></div>
+    </div>
+  </div>
+
+  <!-- ===== PHONE ROW ===== -->
+  <div style="display:flex; gap:38px; align-items:flex-start;">
+
+    <!-- ========== 1 · LOBBY ========== -->
+    <div style="display:flex; flex-direction:column; gap:11px; align-items:flex-start;">
+      <div style="font-family:'Kanit'; font-size:14px; color:#8a7eae;">01 · ล็อบบี้</div>
+      <div data-screen-label="C — Lobby" style="flex:none; width:300px; height:624px; border-radius:42px; padding:8px; background:#1c1530; box-shadow:0 20px 50px rgba(45,33,82,0.35);">
+        <div style="width:100%; height:100%; border-radius:35px; overflow:hidden; background:linear-gradient(168deg,#2d2152 0%,#3a2660 55%,#34234f 100%); display:flex; flex-direction:column; position:relative;">
+          <div style="position:absolute; top:-60px; left:50%; transform:translateX(-50%); width:240px; height:160px; background:radial-gradient(ellipse,rgba(167,139,250,0.45),transparent 70%); pointer-events:none;"></div>
+          <div style="padding:16px 18px 12px; display:flex; justify-content:space-between; align-items:center; position:relative;">
+            <div><div style="font-family:'Kanit'; font-size:11px; color:#9b8bc4; letter-spacing:1px;">ห้อง</div><div style="font-family:'Kanit'; font-size:18px; font-weight:600; color:#f3eeff; letter-spacing:2px;">ABCD</div></div>
+            <span style="border:1.5px solid {{ accent }}; color:#fff; border-radius:16px; padding:5px 12px; font-family:'Kanit'; font-size:12px; box-shadow:0 0 14px rgba(251,122,153,0.4);">🛡️ เซฟ</span>
+          </div>
+          <div style="flex:1; padding:8px 16px; display:flex; flex-direction:column; gap:11px; justify-content:flex-end; position:relative;">
+            <div style="align-self:center; font-size:12px; color:#bcaee0; background:rgba(255,255,255,0.07); padding:5px 14px; border-radius:14px;">✨ ห้องเปิดแล้ว · รอเพื่อน</div>
+            <div style="align-self:flex-start; max-width:80%; background:rgba(255,255,255,0.08); border:1px solid rgba(167,139,250,0.35); border-radius:6px 18px 18px 18px; padding:10px 14px; font-size:14px; color:#ece6ff;">โบ๊ท เข้าร่วมวงแล้ว 👋</div>
+            <div style="align-self:flex-start; max-width:80%; background:rgba(255,255,255,0.08); border:1px solid rgba(167,139,250,0.35); border-radius:6px 18px 18px 18px; padding:10px 14px; font-size:14px; color:#ece6ff;">ฟ้า เข้าร่วมวงแล้ว 💜</div>
+            <div style="align-self:flex-start; display:flex; align-items:center; gap:6px; padding:10px 16px; background:rgba(255,255,255,0.06); border-radius:18px;"><span style="width:7px; height:7px; border-radius:50%; background:#a78bfa;"></span><span style="width:7px; height:7px; border-radius:50%; background:#a78bfa; opacity:0.6;"></span><span style="width:7px; height:7px; border-radius:50%; background:#a78bfa; opacity:0.3;"></span></div>
+            <div style="align-self:center; font-family:'Kanit'; font-size:13px; color:#cfc3ee; margin-top:4px;">กำลังรอโฮสต์เริ่ม… 🔮</div>
+          </div>
+          <div style="padding:12px 14px 16px; display:flex; align-items:center; gap:10px; background:rgba(20,14,38,0.4); border-top:1px solid rgba(167,139,250,0.18);">
+            <span style="width:38px; height:38px; border:1.5px solid rgba(167,139,250,0.4); color:#a78bfa; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:20px;">+</span>
+            <div style="flex:1; height:38px; border-radius:20px; background:rgba(255,255,255,0.06); display:flex; align-items:center; padding:0 14px; color:#6f648f; font-size:13px;">รอเริ่มเกม…</div>
+            <span style="width:38px; height:38px; background:rgba(255,255,255,0.1); border-radius:50%;"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== 2 · ANSWER ========== -->
+    <div style="display:flex; flex-direction:column; gap:11px; align-items:flex-start;">
+      <div style="font-family:'Kanit'; font-size:14px; color:#8a7eae;">02 · ตอบคำถาม</div>
+      <div data-screen-label="C — Answer" style="flex:none; width:300px; height:624px; border-radius:42px; padding:8px; background:#1c1530; box-shadow:0 20px 50px rgba(45,33,82,0.35);">
+        <div style="width:100%; height:100%; border-radius:35px; overflow:hidden; background:linear-gradient(168deg,#2d2152 0%,#3a2660 55%,#34234f 100%); display:flex; flex-direction:column; position:relative;">
+          <div style="position:absolute; top:-60px; left:50%; transform:translateX(-50%); width:240px; height:160px; background:radial-gradient(ellipse,rgba(167,139,250,0.4),transparent 70%); pointer-events:none;"></div>
+          <div style="padding:16px 18px 12px; display:flex; justify-content:space-between; align-items:center;">
+            <div style="font-family:'Kanit'; font-size:14px; color:#f3eeff; font-weight:500;">รอบที่ 1</div>
+            <span style="border:1.5px solid {{ accent }}; color:#fff; border-radius:16px; padding:5px 12px; font-family:'Kanit'; font-size:12px; box-shadow:0 0 14px rgba(251,122,153,0.4);">🛡️ เซฟ</span>
+          </div>
+          <div style="flex:1; padding:8px 16px; display:flex; flex-direction:column; gap:13px;">
+            <div style="align-self:center; font-family:'Kanit'; font-size:11px; color:#1c1530; background:#a78bfa; padding:5px 14px; border-radius:14px; font-weight:500; box-shadow:0 0 16px rgba(167,139,250,0.5);">⚡ คำถามใหม่ · ระดับ 2</div>
+            <div style="align-self:flex-start; max-width:88%; background:rgba(255,255,255,0.1); border:1px solid rgba(167,139,250,0.5); border-radius:6px 20px 20px 20px; padding:15px 17px; animation:glowPulse 3.2s ease-in-out infinite;">
+              <div style="font-family:'Kanit'; font-size:19px; font-weight:500; color:#fbf8ff; line-height:1.35;">ครั้งสุดท้ายที่คุณร้องไห้ เพราะอะไร?</div>
+              <div style="display: {{ enDisplay }}; font-size:12px; color:#b9aade; margin-top:7px;">When was the last time you cried, and why?</div>
+            </div>
+            <div style="align-self:flex-end; max-width:86%; background:rgba(255,255,255,0.04); border:1.5px dashed {{ accent }}; border-radius:20px 6px 20px 20px; padding:12px 15px; color:#d8cdf2; font-size:14px;">กำลังพิมพ์คำตอบ…<span style="opacity:0.6;">|</span></div>
+          </div>
+          <div style="padding:0 18px 8px; display:flex; align-items:center; gap:9px;">
+            <div style="flex:1; height:6px; background:rgba(255,255,255,0.1); border-radius:3px; overflow:hidden;"><div style="width:42%; height:100%; background: {{ accent }}; box-shadow:0 0 10px {{ accent }};"></div></div>
+            <span style="font-family:'Kanit'; font-size:11px; color:#bcaee0;">63/150</span>
+          </div>
+          <div style="padding:8px 14px 16px; display:flex; align-items:center; gap:10px; background:rgba(20,14,38,0.4); border-top:1px solid rgba(167,139,250,0.18);">
+            <span style="width:38px; height:38px; border:1.5px solid {{ accent }}; color: {{ accent }}; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:21px;">+</span>
+            <div style="flex:1; height:38px; border-radius:20px; background:rgba(255,255,255,0.1); border:1px solid rgba(167,139,250,0.3); display:flex; align-items:center; padding:0 14px; color:#d8cdf2; font-size:13px;">พิมพ์…</div>
+            <span style="width:38px; height:38px; background: {{ accent }}; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-size:18px; box-shadow:0 0 16px rgba(251,122,153,0.6);">↑</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== 3 · GUESS ========== -->
+    <div style="display:flex; flex-direction:column; gap:11px; align-items:flex-start;">
+      <div style="font-family:'Kanit'; font-size:14px; color:#8a7eae;">03 · เดาตัวตน</div>
+      <div data-screen-label="C — Guess" style="flex:none; width:300px; height:624px; border-radius:42px; padding:8px; background:#1c1530; box-shadow:0 20px 50px rgba(45,33,82,0.35);">
+        <div style="width:100%; height:100%; border-radius:35px; overflow:hidden; background:linear-gradient(168deg,#2d2152 0%,#3a2660 55%,#34234f 100%); display:flex; flex-direction:column; position:relative;">
+          <div style="position:absolute; top:-60px; left:50%; transform:translateX(-50%); width:240px; height:160px; background:radial-gradient(ellipse,rgba(167,139,250,0.4),transparent 70%); pointer-events:none;"></div>
+          <div style="padding:16px 18px 12px; display:flex; justify-content:space-between; align-items:center;">
+            <div style="font-family:'Kanit'; font-size:14px; color:#f3eeff; font-weight:500;">ทายกันหน่อย 👀</div>
+            <span style="border:1.5px solid {{ accent }}; color:#fff; border-radius:16px; padding:5px 12px; font-family:'Kanit'; font-size:12px; box-shadow:0 0 14px rgba(251,122,153,0.4);">🛡️ เซฟ</span>
+          </div>
+          <div style="flex:1; padding:8px 16px; display:flex; flex-direction:column; gap:14px;">
+            <div style="align-self:flex-start; max-width:90%; background:rgba(255,255,255,0.1); border:1px solid rgba(167,139,250,0.5); border-radius:6px 20px 20px 20px; padding:14px 16px;">
+              <div style="font-family:'Kanit'; font-size:11px; color:#a78bfa; letter-spacing:1px; margin-bottom:6px;">❓ ใครเขียนข้อความนี้?</div>
+              <div style="font-size:15px; color:#fbf8ff; line-height:1.4;">"เพราะหนังเรื่องนึง… แล้วมันทำให้คิดถึงยาย"</div>
+            </div>
+            <div style="align-self:center; font-size:12px; color:#bcaee0;">แตะชื่อที่คิดว่าใช่ · เหลือ 0:14</div>
+            <div style="display:flex; flex-wrap:wrap; gap:9px; justify-content:center;">
+              <span style="border:1.5px solid rgba(167,139,250,0.45); color:#ece6ff; border-radius:18px; padding:9px 18px; font-family:'Kanit'; font-size:14px; background:rgba(255,255,255,0.05);">โบ๊ท</span>
+              <span style="border:1.5px solid {{ accent }}; background: {{ accent }}; color:#fff; border-radius:18px; padding:9px 18px; font-family:'Kanit'; font-size:14px; box-shadow:0 0 16px rgba(251,122,153,0.5);">ฟ้า ✓</span>
+              <span style="border:1.5px solid rgba(167,139,250,0.45); color:#ece6ff; border-radius:18px; padding:9px 18px; font-family:'Kanit'; font-size:14px; background:rgba(255,255,255,0.05);">มะนาว</span>
+              <span style="border:1.5px solid rgba(167,139,250,0.45); color:#ece6ff; border-radius:18px; padding:9px 18px; font-family:'Kanit'; font-size:14px; background:rgba(255,255,255,0.05);">🤖 ???</span>
+            </div>
+          </div>
+          <div style="padding:12px 14px 16px; display:flex; align-items:center; gap:10px; background:rgba(20,14,38,0.4); border-top:1px solid rgba(167,139,250,0.18);">
+            <span style="width:38px; height:38px; border:1.5px solid {{ accent }}; color: {{ accent }}; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:21px;">+</span>
+            <div style="flex:1; height:38px; border-radius:20px; background:rgba(255,255,255,0.06); display:flex; align-items:center; padding:0 14px; color:#6f648f; font-size:13px;">เลือกคำตอบด้านบน</div>
+            <span style="width:38px; height:38px; background:rgba(255,255,255,0.1); border-radius:50%;"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== 4 · REVEAL ========== -->
+    <div style="display:flex; flex-direction:column; gap:11px; align-items:flex-start;">
+      <div style="font-family:'Kanit'; font-size:14px; color:#8a7eae;">04 · เปิดเผย</div>
+      <div data-screen-label="C — Reveal" style="flex:none; width:300px; height:624px; border-radius:42px; padding:8px; background:#1c1530; box-shadow:0 20px 50px rgba(45,33,82,0.35);">
+        <div style="width:100%; height:100%; border-radius:35px; overflow:hidden; background:linear-gradient(168deg,#2d2152 0%,#3a2660 55%,#34234f 100%); display:flex; flex-direction:column; position:relative;">
+          <div style="position:absolute; top:-60px; left:50%; transform:translateX(-50%); width:240px; height:160px; background:radial-gradient(ellipse,rgba(251,122,153,0.32),transparent 70%); pointer-events:none;"></div>
+          <div style="padding:16px 18px 12px; display:flex; justify-content:space-between; align-items:center;">
+            <div style="font-family:'Kanit'; font-size:15px; color:#f3eeff; font-weight:600;">🔓 เฉลยแล้ว</div>
+            <span style="border:1.5px solid rgba(167,139,250,0.4); color:#cfc3ee; border-radius:16px; padding:5px 11px; font-family:'Kanit'; font-size:12px;">✕</span>
+          </div>
+          <div style="flex:1; padding:8px 16px; display:flex; flex-direction:column; gap:13px;">
+            <div style="align-self:flex-start; max-width:88%; background:rgba(255,255,255,0.1); border:1px solid rgba(167,139,250,0.4); border-radius:6px 20px 20px 20px; padding:13px 16px;">
+              <div style="font-family:'Kanit'; font-size:12px; color: {{ accent }}; margin-bottom:4px; font-weight:500;">ฟ้า 💜</div>
+              <div style="font-size:14px; color:#fbf8ff; line-height:1.4;">"เพราะหนังเรื่องนึง… แล้วคิดถึงยาย"</div>
+            </div>
+            <div style="align-self:flex-end; max-width:86%; background: {{ accent }}; border-radius:20px 6px 20px 20px; padding:13px 16px; box-shadow:0 6px 20px rgba(251,122,153,0.35);">
+              <div style="font-family:'Kanit'; font-size:12px; color:#fff; opacity:0.85; margin-bottom:4px; text-align:right; font-weight:500;">คุณ</div>
+              <div style="font-size:14px; color:#fff; line-height:1.4;">"เราเข้าใจเลย… อยากกอดเลยตอนนี้ 🫂"</div>
+            </div>
+            <div style="align-self:flex-start; max-width:88%; background:rgba(255,255,255,0.1); border:1px solid rgba(167,139,250,0.4); border-radius:6px 20px 20px 20px; padding:13px 16px;">
+              <div style="font-family:'Kanit'; font-size:12px; color: {{ accent }}; margin-bottom:4px; font-weight:500;">โบ๊ท</div>
+              <div style="font-size:14px; color:#fbf8ff; line-height:1.4;">"ขอบคุณที่กล้าเล่านะ 🙏"</div>
+            </div>
+            <div style="align-self:center; font-family:'Kanit'; font-size:12px; color:#bcaee0; background:rgba(255,255,255,0.07); padding:5px 14px; border-radius:14px;">คุยกันต่อได้เลย ✨</div>
+          </div>
+          <div style="padding:8px 14px 16px; display:flex; align-items:center; gap:10px; background:rgba(20,14,38,0.4); border-top:1px solid rgba(167,139,250,0.18);">
+            <span style="width:38px; height:38px; border:1.5px solid {{ accent }}; color: {{ accent }}; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:21px;">+</span>
+            <div style="flex:1; height:38px; border-radius:20px; background:rgba(255,255,255,0.1); border:1px solid rgba(167,139,250,0.3); display:flex; align-items:center; padding:0 14px; color:#d8cdf2; font-size:13px;">พิมพ์ตอบกลับ…</div>
+            <span style="width:38px; height:38px; background: {{ accent }}; border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-size:18px; box-shadow:0 0 16px rgba(251,122,153,0.6);">↑</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== 5 · TWIST TRAY ========== -->
+    <div style="display:flex; flex-direction:column; gap:11px; align-items:flex-start;">
+      <div style="font-family:'Kanit'; font-size:14px; color:#8a7eae;">+ · การ์ดหักมุม (กดปุ่ม +)</div>
+      <div data-screen-label="C — Twist Tray" style="flex:none; width:300px; height:624px; border-radius:42px; padding:8px; background:#1c1530; box-shadow:0 20px 50px rgba(45,33,82,0.35);">
+        <div style="width:100%; height:100%; border-radius:35px; overflow:hidden; background:linear-gradient(168deg,#2d2152 0%,#3a2660 55%,#34234f 100%); display:flex; flex-direction:column; position:relative;">
+          <div style="flex:1; padding:16px; display:flex; flex-direction:column; gap:11px; opacity:0.4;">
+            <div style="align-self:flex-start; max-width:80%; background:rgba(255,255,255,0.08); border-radius:6px 18px 18px 18px; padding:11px 14px; font-size:13px; color:#ece6ff;">ครั้งสุดท้ายที่คุณร้องไห้…</div>
+          </div>
+          <!-- dim overlay + sheet -->
+          <div style="position:absolute; inset:0; background:rgba(12,8,24,0.55);"></div>
+          <div style="position:absolute; left:0; right:0; bottom:0; background:linear-gradient(180deg,#352552,#241a3e); border-radius:26px 26px 35px 35px; padding:20px 18px 22px; box-shadow:0 -10px 40px rgba(0,0,0,0.4); animation:floatUp 0.4s ease;">
+            <div style="width:42px; height:5px; background:rgba(255,255,255,0.25); border-radius:3px; margin:0 auto 16px;"></div>
+            <div style="font-family:'Kanit'; font-size:17px; font-weight:600; color:#fbf8ff; margin-bottom:3px;">🎴 การ์ดหักมุม</div>
+            <div style="font-size:13px; color:#bcaee0; margin-bottom:16px;">ขัดจังหวะวง สร้างความตื่นเต้น!</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:11px;">
+              <div style="border:1.5px solid rgba(167,139,250,0.4); border-radius:16px; padding:14px 12px; background:rgba(167,139,250,0.1);"><div style="font-size:24px;">🎭</div><div style="font-family:'Kanit'; font-size:14px; font-weight:500; color:#fbf8ff; margin-top:6px;">Fake It</div><div style="font-size:11px; color:#b9aade; margin-top:2px;">แกล้งตอบหลอก</div></div>
+              <div style="border:1.5px solid rgba(167,139,250,0.4); border-radius:16px; padding:14px 12px; background:rgba(167,139,250,0.1);"><div style="font-size:24px;">👉</div><div style="font-family:'Kanit'; font-size:14px; font-weight:500; color:#fbf8ff; margin-top:6px;">Nominate</div><div style="font-size:11px; color:#b9aade; margin-top:2px;">ชี้ให้ใครตอบ</div></div>
+              <div style="border:1.5px solid rgba(167,139,250,0.4); border-radius:16px; padding:14px 12px; background:rgba(167,139,250,0.1);"><div style="font-size:24px;">⏩</div><div style="font-family:'Kanit'; font-size:14px; font-weight:500; color:#fbf8ff; margin-top:6px;">Fast Fwd</div><div style="font-size:11px; color:#b9aade; margin-top:2px;">ข้ามไปเลย</div></div>
+              <div style="border:1.5px solid {{ accent }}; border-radius:16px; padding:14px 12px; background:rgba(251,122,153,0.15); box-shadow:0 0 18px rgba(251,122,153,0.3);"><div style="font-size:24px;">🔥</div><div style="font-family:'Kanit'; font-size:14px; font-weight:500; color:#fff; margin-top:6px;">Hot Seat</div><div style="font-size:11px; color:#ffd9e2; margin-top:2px;">จับขึ้นเก้าอี้ร้อน</div></div>
+            </div>
+            <div style="text-align:center; font-family:'Kanit'; font-size:13px; color:#8a7eae; margin-top:16px;">ปิด</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: &quot;100%&quot;, &quot;height&quot;: &quot;100%&quot; },
+  &quot;accentColor&quot;: { &quot;editor&quot;: &quot;color&quot;, &quot;default&quot;: &quot;#fb7a99&quot;, &quot;tsType&quot;: &quot;string&quot; },
+  &quot;showEnglish&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot; }
+}">
+class Component extends DCLogic {
+  renderVals() {
+    return {
+      accent: this.props.accentColor ?? '#fb7a99',
+      enDisplay: (this.props.showEnglish ?? true) ? 'block' : 'none'
+    };
+  }
+}
+</script>
+</body>
+</html>
