@@ -1,0 +1,298 @@
+/* ==========================================================================
+   No-App Deep Talk Platform - Mobile Controller Styles
+   ========================================================================== */
+
+body.player-body {
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 100vh;
+  overflow: hidden; /* Prevent bouncy scrolling on mobile Safari/Chrome */
+  position: fixed;
+  width: 100%;
+  height: 100%;
+}
+
+.player-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+}
+
+/* Header with Safe-Zone integration */
+.player-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-shrink: 0;
+}
+
+.player-room-badge {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 0.95rem;
+  background: rgba(6, 182, 212, 0.08);
+  border: 1px solid rgba(6, 182, 212, 0.2);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+}
+
+.persistent-safezone {
+  flex-shrink: 0;
+}
+
+.persistent-safezone button {
+  background: linear-gradient(135deg, #ef4444, #b91c1c); /* Red alert instead of green to emphasize boundaries */
+  box-shadow: 0 4px 10px rgba(239, 68, 68, 0.25);
+  font-size: 0.75rem;
+  padding: 8px 14px;
+}
+
+/* Scrollable Interactive Space */
+.player-main-workspace {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow-y: auto;
+  margin-bottom: 15px;
+}
+
+/* View State: Waiting Lobby */
+.waiting-screen {
+  text-align: center;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.waiting-spinner {
+  width: 50px;
+  height: 50px;
+  border: 3px solid rgba(255, 255, 255, 0.05);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s infinite linear;
+  margin: 0 auto;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* View State: Answer Submission Form */
+.answer-form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+}
+
+.active-card-hint {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.4;
+  border-left: 2px solid var(--primary);
+  padding-left: 10px;
+  margin-bottom: 10px;
+}
+
+.mobile-textarea {
+  width: 100%;
+  min-height: 140px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  padding: 15px;
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  line-height: 1.4;
+  resize: none;
+  transition: var(--transition-smooth);
+}
+
+.mobile-textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow: 0 0 15px rgba(6, 182, 212, 0.15);
+}
+
+.char-counter {
+  text-align: right;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: -15px;
+}
+
+/* View State: Voting / Guessing List */
+.voting-container {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.voting-title {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-align: center;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.voting-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+.vote-item {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--surface-border);
+  padding: 16px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  text-align: center;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  transition: var(--transition-smooth);
+}
+
+.vote-item:active, .vote-item.selected {
+  background: rgba(236, 72, 153, 0.08);
+  border-color: var(--secondary);
+  color: var(--secondary);
+  box-shadow: 0 0 10px rgba(236, 72, 153, 0.1);
+}
+
+/* Twist Cards Dock (Bottom of interface) */
+.twist-dock {
+  border-top: 1px solid var(--surface-border);
+  padding-top: 15px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.twist-dock-header {
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  justify-content: space-between;
+}
+
+.twist-tray {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.twist-button {
+  flex: 1;
+  aspect-ratio: 1;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-sm);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+  padding: 5px;
+}
+
+.twist-button:active {
+  transform: scale(0.95);
+}
+
+.twist-button.disabled {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.twist-icon {
+  font-size: 1.4rem;
+  color: var(--accent);
+}
+
+.twist-name {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* Twist Card Explanation Modal */
+.twist-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.twist-modal.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.twist-modal-content {
+  background: var(--bg-deep);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-lg);
+  padding: 25px;
+  width: 100%;
+  max-width: 320px;
+  text-align: center;
+  box-shadow: 0 0 30px rgba(234, 179, 8, 0.2);
+}
+
+.twist-modal-title {
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+
+.twist-modal-desc {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+  margin-bottom: 20px;
+}
+
+/* Form selects inside controller */
+.custom-select-mobile {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--surface-border);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  padding: 10px;
+  font-size: 1rem;
+}

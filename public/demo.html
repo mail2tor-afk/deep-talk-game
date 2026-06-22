@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>หน้าทดลองจำลองการเล่น - DeepTalk.io Demo</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: #07040d;
+      overflow: hidden;
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .demo-bar {
+      background: rgba(20, 16, 35, 0.95);
+      border-bottom: 1px solid var(--surface-border);
+      padding: 12px 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+
+    .demo-title {
+      font-family: var(--font-heading);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .demo-badge {
+      background: var(--secondary);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: bold;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .demo-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    .demo-workspace {
+      display: flex;
+      flex-grow: 1;
+      width: 100%;
+      height: calc(100vh - 60px);
+    }
+
+    .demo-pane {
+      flex: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .demo-pane-header {
+      background: rgba(255, 255, 255, 0.02);
+      border-bottom: 1px solid var(--surface-border);
+      padding: 8px 15px;
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .demo-pane-iframe {
+      width: 100%;
+      flex-grow: 1;
+      border: none;
+      background: #0c0816;
+    }
+
+    /* Vertical Divider */
+    .demo-divider {
+      width: 4px;
+      background: var(--surface-border);
+      height: 100%;
+      position: relative;
+    }
+
+    .demo-divider::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to bottom, var(--primary), var(--secondary));
+      opacity: 0.3;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top bar controls -->
+  <div class="demo-bar">
+    <div class="demo-title">
+      <span class="demo-badge">Developer Mode</span>
+      <span>ระบบจำลองการเล่นบอร์ดเกมออนไลน์แบบแบ่งหน้าต่าง (Split Screen)</span>
+    </div>
+    <div class="demo-desc" id="sync-status">
+      สถานะ: รอการสร้างห้องในหน้าต่างซ้ายเพื่อซิงค์ระบบ...
+    </div>
+    <div>
+      <a href="index.html" class="btn btn-outline" style="font-size: 0.75rem; padding: 6px 12px;">
+        🏠 กลับหน้าหลักเว็บ
+      </a>
+    </div>
+  </div>
+
+  <!-- Main Side-by-Side simulation panel -->
+  <div class="demo-workspace">
+    
+    <!-- LEFT PANEL: Host Screen -->
+    <div class="demo-pane" style="border-right: 1px solid var(--surface-border);">
+      <div class="demo-pane-header">
+        <span>🖥️ หน้าจอหลักห้องเล่นเกม (Host Display)</span>
+        <span style="color: var(--primary);">จำลอง Smart TV หรือหน้าจอหลัก</span>
+      </div>
+      <iframe src="host.html" class="demo-pane-iframe" id="host-iframe"></iframe>
+    </div>
+
+    <!-- Divider decoration -->
+    <div class="demo-divider"></div>
+
+    <!-- RIGHT PANEL: Player Controller -->
+    <div class="demo-pane">
+      <div class="demo-pane-header">
+        <span>📱 หน้าจอผู้เล่นคนแรก (Player Controller)</span>
+        <span style="color: var(--secondary);" id="player-status-badge">จำลองหน้าจอมือถือ</span>
+      </div>
+      <iframe src="index.html" class="demo-pane-iframe" id="player-iframe"></iframe>
+    </div>
+
+  </div>
+
+  <script>
+    const hostIframe = document.getElementById('host-iframe');
+    const playerIframe = document.getElementById('player-iframe');
+    const syncStatusEl = document.getElementById('sync-status');
+    const playerStatusBadge = document.getElementById('player-status-badge');
+
+    let currentRoomCode = null;
+
+    // Periodically poll host iframe to check if room is created
+    const syncInterval = setInterval(() => {
+      try {
+        const hostWindow = hostIframe.contentWindow;
+        
+        // If roomCode exists on host window object
+        if (hostWindow && hostWindow.roomCode) {
+          const roomCode = hostWindow.roomCode;
+          
+          if (roomCode !== currentRoomCode) {
+            currentRoomCode = roomCode;
+            
+            // Auto fill player controller frame using invite link format
+            const inviteUrl = `player.html?room=${roomCode}`;
+            playerIframe.src = inviteUrl;
+            
+            syncStatusEl.innerText = `✓ ซิงค์เรียบร้อย! เชื่อมต่อหน้าจอผู้เล่นเข้ารหัสห้อง: ${roomCode}`;
+            syncStatusEl.style.color = '#10b981';
+            playerStatusBadge.innerText = `ซิงค์กับห้อง: ${roomCode}`;
+            playerStatusBadge.style.color = '#10b981';
+            
+            console.log("Auto-synced player frame to room:", roomCode);
+          }
+        }
+      } catch (e) {
+        // Cross-origin checks or frame loads
+      }
+    }, 1000);
+  </script>
+
+</body>
+</html>

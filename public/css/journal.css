@@ -1,0 +1,314 @@
+/* ==========================================================================
+   No-App Deep Talk Platform - Solo Reflection Journal Styles
+   ========================================================================== */
+
+.journal-layout {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 30px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.journal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--surface-border);
+  padding-bottom: 20px;
+}
+
+.journal-title-section h1 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary), #a855f7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.journal-subtitle {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+/* Mood/Sentiment Logger */
+.mood-picker-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mood-selector {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+
+.mood-btn {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  padding: 15px 10px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  transition: var(--transition-smooth);
+}
+
+.mood-btn:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.mood-btn.selected[data-mood="great"] {
+  border-color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
+}
+
+.mood-btn.selected[data-mood="good"] {
+  border-color: #3b82f6;
+  background: rgba(59, 130, 246, 0.1);
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.15);
+}
+
+.mood-btn.selected[data-mood="neutral"] {
+  border-color: #eab308;
+  background: rgba(234, 179, 8, 0.1);
+  box-shadow: 0 0 15px rgba(234, 179, 8, 0.15);
+}
+
+.mood-btn.selected[data-mood="sad"] {
+  border-color: #a855f7;
+  background: rgba(168, 85, 247, 0.1);
+  box-shadow: 0 0 15px rgba(168, 85, 247, 0.15);
+}
+
+.mood-btn.selected[data-mood="anxious"] {
+  border-color: #f43f5e;
+  background: rgba(244, 63, 94, 0.1);
+  box-shadow: 0 0 15px rgba(244, 63, 94, 0.15);
+}
+
+.mood-emoji {
+  font-size: 1.8rem;
+}
+
+.mood-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+/* Prompt Card Panel */
+.journal-prompt-card {
+  padding: 30px;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, rgba(20, 16, 35, 0.7) 0%, rgba(30, 20, 50, 0.5) 100%);
+  border: 1px solid var(--surface-border);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.journal-prompt-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(to right, var(--primary), #a855f7);
+}
+
+.journal-prompt-card .prompt-header {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 12px;
+}
+
+.journal-prompt-card .prompt-text-th {
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  font-weight: 700;
+  line-height: 1.4;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.journal-prompt-card .prompt-text-en {
+  font-size: 1rem;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+
+/* Diary Entry Workspace */
+.journal-workspace {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.journal-textarea {
+  width: 100%;
+  min-height: 250px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--surface-border);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  color: #fff;
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  line-height: 1.6;
+  resize: vertical;
+  transition: var(--transition-smooth);
+}
+
+.journal-textarea:focus {
+  outline: none;
+  border-color: #a855f7;
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.15);
+}
+
+.journal-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* Sentiment Tracker Panel */
+.sentiment-panel {
+  padding: 15px 20px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.02);
+  border-left: 4px solid var(--primary);
+  font-size: 0.95rem;
+  display: none;
+  animation: slide-down 0.3s ease-out forwards;
+}
+
+@keyframes slide-down {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.sentiment-panel.visible {
+  display: block;
+}
+
+.sentiment-value {
+  font-weight: 700;
+  color: #fff;
+}
+
+/* Logs and History */
+.history-section {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.history-section h2 {
+  font-size: 1.3rem;
+  color: #fff;
+  border-bottom: 1px solid var(--surface-border);
+  padding-bottom: 8px;
+}
+
+.logs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.log-entry {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.log-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.log-date-mood {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.log-sentiment-tag {
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.log-sentiment-tag.positive {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.log-sentiment-tag.neutral {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.log-sentiment-tag.reflective {
+  background: rgba(168, 85, 247, 0.15);
+  color: #a855f7;
+  border: 1px solid rgba(168, 85, 247, 0.3);
+}
+
+.log-sentiment-tag.anxious {
+  background: rgba(244, 63, 94, 0.15);
+  color: #f43f5e;
+  border: 1px solid rgba(244, 63, 94, 0.3);
+}
+
+.log-prompt {
+  font-style: italic;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  border-left: 2px solid var(--surface-border);
+  padding-left: 8px;
+}
+
+.log-content {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+}
+
+.log-delete-btn {
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  font-size: 0.8rem;
+  opacity: 0.7;
+  transition: var(--transition-smooth);
+}
+
+.log-delete-btn:hover {
+  opacity: 1;
+  text-decoration: underline;
+}

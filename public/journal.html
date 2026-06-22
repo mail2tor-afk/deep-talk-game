@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reflection Space - Solo Journal</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/journal.css">
+</head>
+<body>
+  <div class="container journal-layout">
+    
+    <!-- Header with Back navigation -->
+    <header class="journal-header">
+      <div class="journal-title-section">
+        <h1>Reflection Space</h1>
+        <div class="journal-subtitle">Your private, secure emotional diary</div>
+      </div>
+      <a href="index.html" class="btn btn-outline" style="font-size: 0.8rem; padding: 8px 16px;">
+        ✕ Exit
+      </a>
+    </header>
+
+    <!-- Main Entry Panel -->
+    <main class="glass-panel" style="padding: 25px;">
+      
+      <!-- Step 1: Mood Tracker -->
+      <section class="mood-picker-section">
+        <label class="form-label" style="font-size: 1rem;">How are you feeling right now? (รู้สึกอย่างไรบ้างตอนนี้?)</label>
+        <div class="mood-selector" id="mood-selector">
+          <button class="mood-btn" data-mood="great">
+            <span class="mood-emoji">😊</span>
+            <span class="mood-label">Great</span>
+          </button>
+          <button class="mood-btn" data-mood="good">
+            <span class="mood-emoji">🙂</span>
+            <span class="mood-label">Good</span>
+          </button>
+          <button class="mood-btn" data-mood="neutral">
+            <span class="mood-emoji">😐</span>
+            <span class="mood-label">Neutral</span>
+          </button>
+          <button class="mood-btn" data-mood="sad">
+            <span class="mood-emoji">😔</span>
+            <span class="mood-label">Sad</span>
+          </button>
+          <button class="mood-btn" data-mood="anxious">
+            <span class="mood-emoji">😰</span>
+            <span class="mood-label">Anxious</span>
+          </button>
+        </div>
+      </section>
+
+      <hr style="border: 0; border-top: 1px solid var(--surface-border); margin: 25px 0;">
+
+      <!-- Step 2: Random Prompt Card -->
+      <section class="journal-prompt-card" id="prompt-card-section" style="margin-bottom: 25px;">
+        <div class="prompt-header" id="prompt-category">Reflection Prompt</div>
+        <div class="prompt-text-th" id="prompt-th">คลิกปุ่มด้านล่างเพื่อเลือกคำถามทบทวนตัวเอง</div>
+        <div class="prompt-text-en" id="prompt-en">Click the button below to pick a reflection prompt</div>
+        <button class="btn btn-outline" id="new-prompt-btn" style="padding: 8px 16px; font-size: 0.8rem;">
+          🔄 New Prompt
+        </button>
+      </section>
+
+      <!-- Step 3: Journal Text Area -->
+      <section class="journal-workspace">
+        <label class="form-label" for="journal-input" style="font-size: 1rem;">Write down your honest thoughts... (เขียนความรู้สึกของคุณอย่างซื่อสัตย์)</label>
+        <textarea id="journal-input" class="journal-textarea" placeholder="Take a deep breath and start typing here. All data remains locally inside your browser..."></textarea>
+        
+        <!-- Live Sentiment Feedback Panel -->
+        <div class="sentiment-panel" id="sentiment-feedback">
+          <div style="font-weight: bold; margin-bottom: 5px;">Emotional Sentiment:</div>
+          <span class="sentiment-value" id="sentiment-text">Reflective</span>
+          <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;" id="sentiment-desc"></div>
+        </div>
+
+        <div class="journal-controls">
+          <div style="font-size: 0.85rem; color: var(--text-muted);">
+            🔒 Local Storage Encryption active
+          </div>
+          <button class="btn btn-primary" id="save-entry-btn">
+            💾 Save reflection
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <!-- Step 4: History Logs Section -->
+    <section class="history-section">
+      <h2>Historical Reflections (บันทึกย้อนหลัง)</h2>
+      <div class="logs-list" id="logs-list">
+        <!-- Log items dynamically injected here -->
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Script Imports -->
+  <script src="js/db.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/journal.js"></script>
+</body>
+</html>

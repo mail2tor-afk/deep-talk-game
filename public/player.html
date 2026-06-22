@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Deep Talk Controller - Player Screen</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/player.css">
+</head>
+<body class="player-body">
+  
+  <div class="player-container">
+    
+    <!-- HEADER: Status and Safe-Zone Button -->
+    <header class="player-header" style="flex-wrap: wrap; gap: 10px; justify-content: space-between;">
+      <div style="display: flex; flex-direction: column;">
+        <span id="player-name-badge" style="font-weight: 700; font-size: 1.1rem; color: #fff;">Joining...</span>
+        <span class="player-room-badge" id="player-room-badge">ROOM: ----</span>
+      </div>
+      
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <button class="btn btn-outline" id="player-cancel-btn" style="font-size: 0.75rem; padding: 6px 12px; background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.4); color: #f87171; text-transform: none;">✕ ยกเลิกเกม</button>
+        <button class="safe-zone-btn" id="safezone-btn" style="font-size: 0.75rem; padding: 8px 12px;" title="Skip this card safely with no penalties">🛡️ Safe Skip</button>
+      </div>
+    </header>
+
+    <!-- MAIN INTERACTIVE SPACE (Scrollable) -->
+    <main class="player-main-workspace" id="player-workspace">
+      
+      <!-- SUB-STATE 0: DIRECT JOIN FORM (Fallback if accessed without index.html form) -->
+      <section id="pstate-join" style="display: none; width: 100%;">
+        <div class="glass-panel" style="padding: 20px;">
+          <h2 style="font-family: var(--font-heading); margin-bottom: 20px; text-align: center;">Enter Room</h2>
+          <div class="form-group">
+            <label class="form-label" for="direct-room-code">Room Code (4 Letters)</label>
+            <input type="text" id="direct-room-code" class="form-input" placeholder="ABCD" maxlength="4" style="text-transform: uppercase; font-weight: bold; text-align: center; letter-spacing: 0.1em;">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="direct-player-name">Your Nickname</label>
+            <input type="text" id="direct-player-name" class="form-input" placeholder="Somchai">
+          </div>
+          <button class="btn btn-secondary" id="direct-join-btn" style="width: 100%; margin-top: 10px;">
+            Join Game
+          </button>
+        </div>
+      </section>
+
+      <!-- SUB-STATE 1: LOBBY WAITING SCREEN -->
+      <section id="pstate-lobby" class="waiting-screen" style="display: none; width: 100%;">
+        <div class="waiting-spinner"></div>
+        <h2 style="font-family: var(--font-heading);">Connected to Room</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">
+          Wait for the host to select the game mode and start the round. Look at the main screen!
+        </p>
+
+        <!-- Bot Impersonator Checkbox for Invited Player -->
+        <div class="glass-panel" style="margin-top: 15px; padding: 15px; text-align: left;">
+          <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-family: var(--font-heading); font-size: 0.95rem; color: #fff;">
+            <input type="checkbox" id="player-bot-toggle" style="width: 18px; height: 18px; accent-color: var(--primary);">
+            🤖 เปิดใช้งานบอทนิรนามสวมรอย (สำหรับ 2 คน)
+          </label>
+          <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 5px; line-height: 1.4;">
+            เปิดใช้งานในกรณีเล่น 2 คน เพื่อให้บอทช่วยสวมรอยตอบคำถาม ป้องกันไม่ให้โฮสต์รู้ว่าคำตอบเปราะบางเป็นของคุณหรือของบอท
+          </p>
+        </div>
+        
+        <!-- Local/LDR configuration tools for WebRTC streaming -->
+        <div class="glass-panel" id="mobile-stream-options" style="margin-top: 15px; padding: 15px; text-align: left; display: none;">
+          <h4 style="font-family: var(--font-heading); color: #fff; margin-bottom: 8px;">Hybrid Mode Streaming:</h4>
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; cursor: pointer;">
+            <input type="checkbox" id="camera-stream-toggle" style="accent-color: var(--primary);">
+            Enable Video Camera & Mic Stream
+          </label>
+          <video id="player-local-video" autoplay playsinline muted style="width: 100%; height: 100px; object-fit: cover; border-radius: var(--radius-sm); margin-top: 10px; display: none; background: #000; border: 1px solid var(--surface-border);"></video>
+        </div>
+      </section>
+
+      <!-- SUB-STATE 2: WRITE ANSWER -->
+      <section id="pstate-write" style="display: none; width: 100%;">
+        <div class="answer-form-container">
+          <div class="active-card-hint" id="player-card-hint">
+            คำถามประจำรอบ (Active Question)
+          </div>
+          
+          <!-- Question text on mobile screen -->
+          <div class="glass-panel" style="padding: 18px; border: 1px solid var(--primary); text-align: center; margin-bottom: 10px; background: rgba(6, 182, 212, 0.05);">
+            <div id="player-question-text-th" style="font-family: var(--font-heading); font-size: 1.15rem; font-weight: 700; color: #fff; margin-bottom: 8px; line-height: 1.4;"></div>
+            <div id="player-question-text-en" style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.4;"></div>
+          </div>
+          
+          <textarea id="player-answer-input" class="mobile-textarea" placeholder="พิมพ์คำตอบอย่างซื่อสัตย์ของคุณที่นี่..."></textarea>
+          <div class="char-counter"><span id="char-count">0</span> / 150</div>
+          
+          <button class="btn btn-primary" id="player-submit-answer-btn">
+            ส่งคำตอบ ➔
+          </button>
+        </div>
+      </section>
+
+      <!-- SUB-STATE 3: ANSWER SUBMITTED WAITING -->
+      <section id="pstate-submitted" class="waiting-screen" style="display: none;">
+        <div class="waiting-spinner" style="border-top-color: var(--secondary);"></div>
+        <h2 style="font-family: var(--font-heading);">ส่งคำตอบเรียบร้อย!</h2>
+        <p style="color: var(--text-muted); font-size: 0.9rem;">
+          กำลังรอให้เพื่อนร่วมวงป้อนคำตอบครบทุกคน... เตรียมพร้อมนะ!
+        </p>
+      </section>
+
+      <!-- SUB-STATE 4: INCOGNITO VOTING / GUESSING -->
+      <section id="pstate-vote" class="voting-container" style="display: none;">
+        <div class="voting-title">ทายซิว่า... ใครเขียนคำตอบนี้?</div>
+        <div class="active-card-hint" id="voting-answer-highlight" style="font-weight: 500; font-size: 1rem; border-color: var(--secondary); color: #fff;">
+          "ข้อความคำตอบ"
+        </div>
+        
+        <div class="voting-list" id="voting-players-list">
+          <!-- List of player options to vote on -->
+        </div>
+
+        <button class="btn btn-secondary" id="player-submit-vote-btn" disabled>
+          ส่งคะแนนโหวตทาย ➔
+        </button>
+      </section>
+
+      <!-- SUB-STATE 5: ROUND OVER / SHOW ANSWERS DIRECTLY -->
+      <section id="pstate-roundover" style="display: none; width: 100%;">
+        <div class="glass-panel" style="padding: 20px; display: flex; flex-direction: column; gap: 15px; border-color: var(--accent);">
+          <h2 style="font-family: var(--font-heading); color: var(--accent); text-align: center; font-size: 1.3rem;">คำตอบเปิดใจของทุกคน 🔓</h2>
+          <div id="player-revealed-answers-list" style="display: flex; flex-direction: column; gap: 10px; max-height: 250px; overflow-y: auto;">
+            <!-- Answers list injected here -->
+          </div>
+          <p style="color: var(--text-muted); font-size: 0.8rem; text-align: center; margin-top: 10px;">
+            รอโฮสต์เปิดการ์ดใบถัดไป... (Waiting for host to start next card...)
+          </p>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- TWIST CARDS INVENTORY DOCK (Bottom Area) -->
+    <footer class="twist-dock" id="twist-dock" style="display: none;">
+      <div class="twist-dock-header">
+        <span>Twist Cards (การ์ดขัดจังหวะ)</span>
+        <span id="twist-count">4 Available</span>
+      </div>
+      <div class="twist-tray">
+        <button class="twist-button" data-twist="fake-it" id="twist-btn-fake-it">
+          <span class="twist-icon">🤥</span>
+          <span class="twist-name">Fake It</span>
+        </button>
+        <button class="twist-button" data-twist="nominate" id="twist-btn-nominate">
+          <span class="twist-icon">👉</span>
+          <span class="twist-name">Nominate</span>
+        </button>
+        <button class="twist-button" data-twist="fast-forward" id="twist-btn-fast-forward">
+          <span class="twist-icon">👵</span>
+          <span class="twist-name">80 Yrs Old</span>
+        </button>
+        <button class="twist-button" data-twist="hot-seat" id="twist-btn-hot-seat">
+          <span class="twist-icon">🔥</span>
+          <span class="twist-name">Hot Seat</span>
+        </button>
+      </div>
+    </footer>
+
+    <!-- TWIST CARD DETAIL MODAL -->
+    <div class="twist-modal" id="twist-modal">
+      <div class="twist-modal-content">
+        <h3 class="twist-modal-title" id="twist-modal-title">Fake It</h3>
+        <p class="twist-modal-desc" id="twist-modal-desc">
+          Submit a fabricated answer. Players must guess if you are lying or telling the truth.
+        </p>
+        
+        <!-- Target player select (for Nominate or target-based cards) -->
+        <div class="form-group" id="twist-target-group" style="display: none; text-align: left;">
+          <label class="form-label" for="twist-target-select">Choose Target Player:</label>
+          <select id="twist-target-select" class="custom-select-mobile">
+            <!-- Player option tags injected here -->
+          </select>
+        </div>
+
+        <div style="display: flex; gap: 10px; margin-top: 15px;">
+          <button class="btn btn-outline" id="twist-close-btn" style="flex: 1; padding: 10px;">Cancel</button>
+          <button class="btn btn-secondary" id="twist-play-confirm-btn" style="flex: 1; padding: 10px; background: var(--accent);">Play Card!</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SCRIPT IMPORTS -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/db.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/webrtc.js"></script>
+  <script src="js/player.js"></script>
+</body>
+</html>

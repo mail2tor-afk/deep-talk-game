@@ -1,0 +1,398 @@
+/* ==========================================================================
+   No-App Deep Talk Platform - Host HUD & Display Styles
+   ========================================================================= */
+
+.host-layout {
+  display: grid;
+  grid-template-rows: 80px 1fr 100px;
+  min-height: 100vh;
+  padding: 0 40px;
+  gap: 20px;
+}
+
+/* Header & HUD */
+.host-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--surface-border);
+  padding: 10px 0;
+}
+
+.host-logo {
+  font-family: var(--font-heading);
+  font-size: 1.8rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.host-room-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.room-badge {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--primary);
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  color: var(--primary);
+  letter-spacing: 0.1em;
+  font-size: 1.2rem;
+  box-shadow: 0 0 10px rgba(6, 182, 212, 0.2);
+}
+
+.join-url {
+  font-size: 1.1rem;
+  color: var(--text-muted);
+}
+
+.join-url strong {
+  color: #fff;
+}
+
+/* Main Hub States */
+.host-main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+}
+
+/* Lobby Screen styling */
+.lobby-grid {
+  display: grid;
+  grid-template-columns: 350px 1fr;
+  gap: 40px;
+  width: 100%;
+  max-width: 1100px;
+  align-items: stretch;
+}
+
+.qrcode-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+  text-align: center;
+  border-radius: var(--radius-lg);
+}
+
+.qrcode-box {
+  background: #fff;
+  padding: 15px;
+  border-radius: var(--radius-md);
+  margin-bottom: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 30px rgba(6, 182, 212, 0.3);
+  display: inline-block;
+}
+
+.qrcode-box img {
+  display: block;
+  width: 200px;
+  height: 200px;
+}
+
+.players-section {
+  padding: 30px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+}
+
+.players-section h3 {
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--surface-border);
+  padding-bottom: 10px;
+}
+
+.players-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 15px;
+  overflow-y: auto;
+  flex-grow: 1;
+}
+
+.player-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--surface-border);
+  padding: 15px;
+  border-radius: var(--radius-md);
+  text-align: center;
+  animation: pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+  position: relative;
+  overflow: hidden;
+}
+
+.player-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(to right, var(--primary), var(--secondary));
+}
+
+.player-card .avatar {
+  width: 45px;
+  height: 45px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--surface-border);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 10px auto;
+  font-size: 1.2rem;
+  color: var(--primary);
+  font-weight: bold;
+}
+
+.player-card .name {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@keyframes pop-in {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+/* Setup/Modes Board */
+.modes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+  width: 100%;
+  max-width: 1000px;
+  margin-top: 30px;
+}
+
+.mode-card {
+  padding: 30px;
+  text-align: center;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.mode-card.selected {
+  border-color: var(--primary);
+  background: rgba(6, 182, 212, 0.08);
+  box-shadow: 0 0 25px rgba(6, 182, 212, 0.2);
+}
+
+.mode-icon {
+  font-size: 2.5rem;
+  color: var(--primary);
+}
+
+.mode-card h3 {
+  font-size: 1.3rem;
+  color: #fff;
+}
+
+.mode-card p {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.4;
+}
+
+/* Play Arena styles */
+.arena-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  width: 100%;
+  max-width: 900px;
+  gap: 30px;
+}
+
+.active-prompt-card {
+  min-height: 300px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 40px;
+  text-align: center;
+  position: relative;
+  background: linear-gradient(135deg, rgba(30, 20, 50, 0.8) 0%, rgba(10, 5, 20, 0.9) 100%);
+  border: 1px solid var(--primary);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(6, 182, 212, 0.1);
+}
+
+.card-category-badge {
+  align-self: center;
+  background: rgba(6, 182, 212, 0.15);
+  border: 1px solid var(--primary);
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  color: var(--primary);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.card-question-th {
+  font-family: var(--font-heading);
+  font-size: 2.2rem;
+  font-weight: 700;
+  line-height: 1.4;
+  margin: 20px 0;
+  color: #fff;
+}
+
+.card-question-en {
+  font-size: 1.4rem;
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-bottom: 20px;
+}
+
+.card-footer-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  border-top: 1px solid var(--surface-border);
+  padding-top: 15px;
+}
+
+/* Responses Visualizer */
+.answers-dashboard {
+  width: 100%;
+  max-width: 1000px;
+  margin-top: 30px;
+}
+
+.answers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.answer-card {
+  padding: 25px;
+  border-radius: var(--radius-md);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 150px;
+}
+
+.answer-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--surface-border);
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+.answer-text {
+  font-size: 1.1rem;
+  line-height: 1.4;
+  color: #fff;
+  flex-grow: 1;
+}
+
+/* Word Cloud Aggregator (Corporate Mode) */
+.word-cloud-container {
+  width: 100%;
+  height: 350px;
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-top: 20px;
+  border: 1px solid var(--surface-border);
+  background: rgba(14, 10, 27, 0.4);
+}
+
+.word-cloud-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+/* LDR video streaming tray */
+.video-stream-tray {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 15px;
+  width: 100%;
+  margin-top: 30px;
+}
+
+.video-wrapper {
+  aspect-ratio: 4/3;
+  background: #000;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  position: relative;
+  border: 1px solid var(--surface-border);
+}
+
+.video-wrapper video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.video-label {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  background: rgba(0, 0, 0, 0.6);
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  color: #fff;
+  z-index: 10;
+}
+
+/* Round Timer Styles */
+.timer-bar-container {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 15px;
+}
+
+.timer-bar-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(to right, var(--primary), var(--secondary));
+  transition: width 1s linear;
+}
+
+/* Controls bottom tray */
+.host-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid var(--surface-border);
+  padding: 20px 0;
+}

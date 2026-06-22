@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deep Talk & Icebreakers - No-App Required</title>
+  <meta name="description" content="A culturally adaptive conversation platform solving barriers through incognito responses, safe-zone passes, and AI generation.">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Unique index page layouts */
+    .landing-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      margin-top: 50px;
+      align-items: start;
+    }
+
+    @media (max-width: 768px) {
+      .landing-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .hero-section {
+      padding: 20px;
+    }
+
+    .hero-title {
+      font-size: 3.5rem;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 20px;
+    }
+
+    .hero-desc {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+
+    .tabs-nav {
+      display: flex;
+      gap: 10px;
+      border-bottom: 1px solid var(--surface-border);
+      padding-bottom: 15px;
+      margin-bottom: 25px;
+    }
+
+    .tab-link {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 8px 16px;
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      transition: var(--transition-smooth);
+    }
+
+    .tab-link.active {
+      color: var(--primary);
+      background: rgba(6, 182, 212, 0.08);
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .brand-preview-box {
+      border: 1px dashed var(--surface-border);
+      border-radius: var(--radius-md);
+      padding: 15px;
+      text-align: center;
+      margin-top: 15px;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" style="flex-grow: 1; display: flex; flex-direction: column; justify-content: center;">
+    
+    <!-- Branding Header -->
+    <header style="margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center;">
+      <div class="host-logo">
+        <span style="color: var(--primary);">✦</span> DeepTalk.io
+      </div>
+      <div>
+        <a href="journal.html" class="btn btn-outline" style="font-size: 0.8rem; padding: 8px 16px;">
+          📓 Solo Journal
+        </a>
+      </div>
+    </header>
+
+    <div class="landing-grid">
+      <!-- Left side: Hero context -->
+      <div class="hero-section">
+        <h1 class="hero-title">
+          <span class="text-gradient-cyan text-glow">Deep Connection,</span><br>
+          No App Required.
+        </h1>
+        <p class="hero-desc">
+          Break communication barriers and make space for vulnerability. Perfect for parties, long-distance relationships (LDR), and corporate team building. Built with cultural safety solvers like <strong style="color: var(--secondary);">Incognito Submit</strong> and the <strong style="color: #10b981;">Safe-Zone Pass</strong>.
+        </p>
+        <div style="display: flex; gap: 20px; align-items: center; font-size: 0.9rem; color: var(--text-muted);">
+          <div>✨ Real-time WebRTC Sync</div>
+          <div>•</div>
+          <div>🤖 AI-Powered Prompting</div>
+        </div>
+      </div>
+
+      <!-- Right side: Interaction tabs -->
+      <div class="glass-panel" style="padding: 30px;">
+        <div class="tabs-nav">
+          <button class="tab-link active" onclick="switchTab('join')">Join Game</button>
+          <button class="tab-link" onclick="switchTab('host')">Host Room</button>
+          <button class="tab-link" onclick="switchTab('b2b')">HR / Branding</button>
+        </div>
+
+        <!-- TAB 1: JOIN GAME -->
+        <div id="tab-join" class="tab-content active">
+          <form id="join-form" onsubmit="handleJoinSubmit(event)">
+            <div class="form-group">
+              <label class="form-label" for="room-code">Room Code (รหัสห้อง)</label>
+              <input type="text" id="room-code" class="form-input" placeholder="e.g. ABCD" required maxlength="4" style="text-transform: uppercase; font-weight: 700; letter-spacing: 0.1em; text-align: center;">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="player-name">Your Nickname (ชื่อเล่น)</label>
+              <input type="text" id="player-name" class="form-input" placeholder="e.g. Somchai" required maxlength="15">
+            </div>
+            <button type="submit" class="btn btn-secondary" style="width: 100%; margin-top: 10px;">
+              Join Room
+            </button>
+          </form>
+        </div>
+
+        <!-- TAB 2: HOST ROOM -->
+        <div id="tab-host" class="tab-content">
+          <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5;">
+            Ready to host? Display the lobby on a smart TV, projector, or tablet. Players can easily join by scanning the screen's QR code.
+          </p>
+          <button onclick="handleHostRoom()" class="btn btn-primary" style="width: 100%;">
+            Create Host Room
+          </button>
+        </div>
+
+        <!-- TAB 3: HR / B2B BRANDING -->
+        <div id="tab-b2b" class="tab-content">
+          <form id="b2b-form" onsubmit="saveBranding(event)">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+              <div class="form-group">
+                <label class="form-label">Primary Color</label>
+                <input type="color" id="brand-primary" class="form-input" style="height: 50px; padding: 2px;" value="#06b6d4">
+              </div>
+              <div class="form-group">
+                <label class="form-label">Secondary Color</label>
+                <input type="color" id="brand-secondary" class="form-input" style="height: 50px; padding: 2px;" value="#ec4899">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="brand-logo">Brand Logo URL</label>
+              <input type="url" id="brand-logo" class="form-input" placeholder="https://example.com/logo.png">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="brand-custom-questions">Import Custom Decks (JSON format)</label>
+              <textarea id="brand-custom-questions" class="form-input" placeholder='[{"questionTh": "คำถามคัสตอม...", "questionEn": "Custom prompt...", "category": "HR", "level": 1}]' style="min-height: 80px; font-family: monospace; font-size: 0.8rem;"></textarea>
+            </div>
+            <button type="submit" class="btn btn-outline" style="width: 100%;">
+              Apply Custom Theme
+            </button>
+            <div class="brand-preview-box text-gradient-cyan" id="brand-status">
+              Using default branding tokens.
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer style="text-align: center; padding: 30px; font-size: 0.8rem; color: var(--text-muted); border-top: 1px solid var(--surface-border); margin-top: 50px;">
+    &copy; 2026 DeepTalk.io. Developed with cultural empathy, safe-zone passes, and AI generation. All Rights Reserved.
+  </footer>
+
+  <script>
+    // Tab switching controller
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-link').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+      event.target.classList.add('active');
+      document.getElementById('tab-' + tabId).classList.add('active');
+    }
+
+    // Host room router
+    function handleHostRoom() {
+      // Fetch B2B branding configuration if available
+      const branding = localStorage.getItem('b2b_branding');
+      window.location.href = `host.html`;
+    }
+
+    // Join room router
+    function handleJoinSubmit(e) {
+      e.preventDefault();
+      const code = document.getElementById('room-code').value.toUpperCase().trim();
+      const name = document.getElementById('player-name').value.trim();
+      
+      // Save joining properties to sessionStorage for transition to player.html
+      sessionStorage.setItem('join_room_code', code);
+      sessionStorage.setItem('join_player_name', name);
+      window.location.href = `player.html`;
+    }
+
+    // B2B theme configuration persister
+    function saveBranding(e) {
+      e.preventDefault();
+      const primary = document.getElementById('brand-primary').value;
+      const secondary = document.getElementById('brand-secondary').value;
+      const logo = document.getElementById('brand-logo').value.trim();
+      const customQText = document.getElementById('brand-custom-questions').value.trim();
+
+      let customQuestions = [];
+      if (customQText) {
+        try {
+          customQuestions = JSON.parse(customQText);
+          if (!Array.isArray(customQuestions)) throw new Error("Must be a JSON Array");
+        } catch (err) {
+          alert("Invalid Custom Question JSON structure: " + err.message);
+          return;
+        }
+      }
+
+      const config = {
+        theme: { primary, secondary, darkBg: '#0b0815' },
+        logo,
+        customQuestions
+      };
+
+      localStorage.setItem('b2b_branding', JSON.stringify(config));
+      
+      // Update UI preview
+      document.documentElement.style.setProperty('--primary', primary);
+      document.documentElement.style.setProperty('--secondary', secondary);
+      
+      const statusEl = document.getElementById('brand-status');
+      statusEl.innerText = "✓ Custom Theme Stored & Activated!";
+      statusEl.style.color = '#10b981';
+      
+      console.log("Branding config saved:", config);
+    }
+
+    // On Load: Check if branding already exists
+    window.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem('b2b_branding');
+      if (saved) {
+        try {
+          const config = JSON.parse(saved);
+          document.getElementById('brand-primary').value = config.theme.primary;
+          document.getElementById('brand-secondary').value = config.theme.secondary;
+          document.getElementById('brand-logo').value = config.logo || '';
+          document.getElementById('brand-custom-questions').value = config.customQuestions.length > 0 
+            ? JSON.stringify(config.customQuestions, null, 2) 
+            : '';
+
+          document.documentElement.style.setProperty('--primary', config.theme.primary);
+          document.documentElement.style.setProperty('--secondary', config.theme.secondary);
+
+          const statusEl = document.getElementById('brand-status');
+          statusEl.innerText = "✓ Loaded active custom branding.";
+          statusEl.style.color = '#06b6d4';
+        } catch (e) {
+          console.error("Error loading saved branding:", e);
+        }
+      }
+    });
+  </script>
+</body>
+</html>
