@@ -12,6 +12,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentCard = null;
   let isHost = false;
   let selectedVoteTarget = '';
+  let selectedChoice = '';
+  let matchScores = {}; // { playerName: { matched: 0, total: 0 } }
   let selectedIntensity = 1;
   let usedCardIds = new Set();
   let selectedCategory = 'all';
@@ -68,6 +70,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const votingDesc = document.getElementById('voting-desc');
   const votingPlayersList = document.getElementById('voting-players-list');
   const playerSubmitVoteBtn = document.getElementById('player-submit-vote-btn');
+
+  // Multiple Choice
+  const pstateChoice = document.getElementById('pstate-choice');
+  const choiceCardHint = document.getElementById('choice-card-hint');
+  const choiceQuestionTextTh = document.getElementById('choice-question-text-th');
+  const choiceOptionsList = document.getElementById('choice-options-list');
+  const playerSubmitChoiceBtn = document.getElementById('player-submit-choice-btn');
 
   // Revealed / Roundover
   const playerRevealedAnswersList = document.getElementById('player-revealed-answers-list');
@@ -263,18 +272,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
   socket.on('card-updated', (state) => {
     currentCard = state.gameState.currentCard;
-
-    // Reset typing UI
-    playerAnswerInput.value = '';
-    charCount.innerText = '0';
-    playerSubmitAnswerBtn.removeAttribute('disabled');
-
-    // Questions bindings
     const levelNames = { 1: 'ระดับ 1', 2: 'ระดับ 2', 3: 'ระดับ 3' };
-    playerCardHint.innerText = `คำถามชวนคิด · ${levelNames[currentCard.level] || 'ระดับ ' + currentCard.level} (หมวด: ${currentCard.category || 'เปิดใจ'})`;
-    playerQuestionTextTh.innerText = currentCard.questionTh;
+    const hint = `คำถามชวนคิด · ${levelNames[currentCard.level] || 'ระดับ ' + currentCard.level} (หมวด: ${currentCard.category || 'เปิดใจ'})`;
 
-    transitionView('write');
+    if (currentCard.choices && currentCard.level < 3) {
+      // L1 / L2 — multiple choice
+      populateChoices(currentCard, hint);
+      transitionView('choice');
+    } else {
+      // L3 — open-ended typing
+      playerAnswerInput.value = '';
+      charCount.innerText = '0';
+      playerSubmitAnswerBtn.removeAttribute('disabled');
+      playerCardHint.innerText = hint;
+      playerQuestionTextTh.innerText = currentCard.questionTh;
+      transitionView('write');
+    }
   });
 
   socket.on('answer-submitted', ({ playerName: subName, allSubmitted, responsesCount, roomState: state }) => {
@@ -505,6 +518,38 @@ document.addEventListener('DOMContentLoaded', () => {
     transitionView('submitted');
   });
 
+  // ==========================================================================
+  // MULTIPLE CHOICE LOGIC
+  // ==========================================================================
+
+  function populateChoices(card, hint) {
+    choiceCardHint.innerText = hint;
+    choiceQuestionTextTh.innerText = card.questionTh;
+    choiceOptionsList.innerHTML = '';
+    selectedChoice = '';
+    playerSubmitChoiceBtn.setAttribute('disabled', 'true');
+
+    card.choices.forEach(choice => {
+      const btn = document.createElement('button');
+      btn.className = 'choice-option';
+      btn.textContent = choice;
+      btn.addEventListener('click', () => {
+        choiceOptionsList.querySelectorAll('.choice-option').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        selectedChoice = choice;
+        playerSubmitChoiceBtn.removeAttribute('disabled');
+      });
+      choiceOptionsList.appendChild(btn);
+    });
+  }
+
+  playerSubmitChoiceBtn.addEventListener('click', () => {
+    if (!selectedChoice) return;
+    playerSubmitChoiceBtn.setAttribute('disabled', 'true');
+    socket.emit('submit-answer', { roomCode, answer: selectedChoice });
+    transitionView('submitted');
+  });
+
   // Persistent Safe skip
   safezoneBtn.addEventListener('click', () => {
     if (confirm("คุณต้องการใช้สิทธิ์ Safe Skip เพื่อข้ามคำถามรอบนี้ใช่หรือไม่?")) {
@@ -582,24 +627,23 @@ document.addEventListener('DOMContentLoaded', () => {
   function showRevealedAnswers(responses) {
     playerRevealedAnswersList.innerHTML = '';
 
-    // Display current card question in roundover view
     if (currentCard) {
       const roQuestionTh = document.getElementById('roundover-question-th');
       if (roQuestionTh) roQuestionTh.innerText = currentCard.questionTh;
     }
 
-    Object.keys(responses).forEach(name => {
-      const isMe = name === playerName;
-      const bubble = document.createElement('div');
-      bubble.className = `bubble ${isMe ? 'me' : 'other'}`;
-      bubble.innerHTML = `
-        <div class="bubble-author">${name}</div>
-        <div>"${responses[name]}"</div>
-      `;
-      playerRevealedAnswersList.appendChild(bubble);
-    });
+    if (currentCard && currentCard.choices && currentCard.level < 3) {
+      showChoiceMatchResults(responses);
+    } else {
+      Object.keys(responses).forEach(name => {
+        const isMe = name === playerName;
+        const bubble = document.createElement('div');
+        bubble.className = `bubble ${isMe ? 'me' : 'other'}`;
+        bubble.innerHTML = `<div class="bubble-author">${name}</div><div>"${responses[name]}"</div>`;
+        playerRevealedAnswersList.appendChild(bubble);
+      });
+    }
 
-    // Display host card controls or waiting message
     if (isHost) {
       hostNextCardArea.style.display = 'block';
       guestNextCardWaiting.style.display = 'none';
@@ -611,6 +655,53 @@ document.addEventListener('DOMContentLoaded', () => {
     transitionView('roundover');
   }
 
+  function showChoiceMatchResults(responses) {
+    const BOT = 'ผู้เล่นนิรนาม';
+    const groups = {};
+    Object.keys(responses).forEach(name => {
+      const c = responses[name];
+      if (!groups[c]) groups[c] = [];
+      groups[c].push(name);
+    });
+
+    // Update cumulative match scores (human players only)
+    const humans = Object.keys(responses).filter(n => n !== BOT);
+    humans.forEach(name => {
+      if (!matchScores[name]) matchScores[name] = { matched: 0, total: 0 };
+      matchScores[name].total++;
+      if (groups[responses[name]].filter(n => n !== BOT).length >= 2) {
+        matchScores[name].matched++;
+      }
+    });
+
+    // Render grouped choice results
+    Object.keys(groups).forEach(choice => {
+      const names = groups[choice];
+      const humanPicked = names.filter(n => n !== BOT);
+      const isMatch = humanPicked.length >= 2;
+      const div = document.createElement('div');
+      div.className = `match-group${isMatch ? ' matched' : ''}`;
+      div.innerHTML = `
+        <div class="match-choice-text">"${choice}"${isMatch ? '<span class="match-badge">ตรงกัน! 🎉</span>' : ''}</div>
+        <div class="match-players">👤 ${names.join(', ')}</div>
+      `;
+      playerRevealedAnswersList.appendChild(div);
+    });
+
+    // Round summary
+    const matchedHumans = new Set();
+    Object.values(groups).forEach(names => {
+      const h = names.filter(n => n !== BOT);
+      if (h.length >= 2) h.forEach(n => matchedHumans.add(n));
+    });
+    if (humans.length > 1) {
+      const s = document.createElement('div');
+      s.style.cssText = 'text-align:center;margin-top:14px;padding:12px;background:rgba(77,182,164,0.08);border-radius:12px;font-family:Kanit;font-size:14px;color:#9cc0b8;';
+      s.innerHTML = `รอบนี้ <strong style="color:var(--primary)">${matchedHumans.size}/${humans.length}</strong> คนตอบตรงกัน`;
+      playerRevealedAnswersList.appendChild(s);
+    }
+  }
+
   // ==========================================================================
   // TRANSITION VIEW UTILITY
   // ==========================================================================
@@ -619,6 +710,7 @@ document.addEventListener('DOMContentLoaded', () => {
     pstateJoin.style.display = 'none';
     pstateConnecting.style.display = 'none';
     pstateLobby.style.display = 'none';
+    pstateChoice.style.display = 'none';
     pstateWrite.style.display = 'none';
     pstateSubmitted.style.display = 'none';
     pstateVote.style.display = 'none';
@@ -639,6 +731,8 @@ document.addEventListener('DOMContentLoaded', () => {
       pstateJoin.style.display = 'block';
     } else if (view === 'lobby') {
       pstateLobby.style.display = 'block';
+    } else if (view === 'choice') {
+      pstateChoice.style.display = 'block';
     } else if (view === 'write') {
       pstateWrite.style.display = 'block';
     } else if (view === 'submitted') {

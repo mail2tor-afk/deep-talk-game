@@ -527,6 +527,34 @@
     /* Start button pinned at bottom of host dashboard */
     #host-start-btn { margin-top: 20px; min-height: 60px; font-size: 18px; }
     #host-next-card-btn { min-height: 60px; font-size: 17px; }
+
+    /* ===== MULTIPLE CHOICE ===== */
+    .choice-option {
+      width: 100%; min-height: 52px; background: rgba(255,255,255,0.05);
+      border: 1.5px solid rgba(122,200,188,0.2); border-radius: 14px;
+      color: #d4ece7; font-family: 'Kanit'; font-size: 15px;
+      text-align: left; padding: 13px 16px; cursor: pointer;
+      transition: all 0.18s ease; line-height: 1.4;
+    }
+    .choice-option.selected {
+      background: rgba(77,182,164,0.2); border-color: var(--primary);
+      color: #eef7f4; box-shadow: 0 0 0 2px rgba(77,182,164,0.35);
+    }
+    /* Match reveal groups */
+    .match-group {
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(122,200,188,0.2);
+      border-radius: 14px; padding: 12px 16px; margin-bottom: 10px;
+    }
+    .match-group.matched {
+      background: rgba(77,182,164,0.12); border-color: rgba(77,182,164,0.5);
+    }
+    .match-choice-text { font-family: 'Kanit'; font-size: 15px; color: #e8f4f0; margin-bottom: 5px; }
+    .match-players { font-size: 13px; color: #8fb3aa; }
+    .match-badge {
+      display: inline-block; background: var(--primary); color: #0e1a1f;
+      font-size: 11px; font-family: 'Kanit'; font-weight: 700;
+      padding: 2px 8px; border-radius: 8px; margin-left: 8px;
+    }
   </style>
 </head>
 
@@ -701,7 +729,21 @@
         </div>
       </section>
 
-      <!-- SUB-STATE 2: WRITE ANSWER (Typing View) -->
+      <!-- SUB-STATE: MULTIPLE CHOICE (L1+L2 Cards) -->
+      <section id="pstate-choice" style="display: none; width: 100%;">
+        <div class="alert-banner">
+          <span>🎯</span>
+          <div>เลือก 1 ตัวเลือกที่ใกล้เคียงความรู้สึกของคุณมากที่สุด</div>
+        </div>
+        <div class="card-question">
+          <span class="card-badge" id="choice-card-hint">คำถามชวนคิด · ระดับ 1</span>
+          <div class="card-text-th" id="choice-question-text-th">คำถาม</div>
+        </div>
+        <div id="choice-options-list" style="display: flex; flex-direction: column; gap: 10px; margin-top: 16px;"></div>
+        <button class="submit-btn" id="player-submit-choice-btn" disabled style="margin-top: 20px;">ส่งตัวเลือกที่เลือก ➔</button>
+      </section>
+
+      <!-- SUB-STATE 2: WRITE ANSWER (Typing View — L3 only) -->
       <section id="pstate-write" style="display: none; width: 100%;">
         <div class="alert-banner">
           <span>🔒</span>
