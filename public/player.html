@@ -459,6 +459,74 @@
       height: 16px;
       accent-color: var(--primary);
     }
+
+    /* ===== SUBMIT / ACTION BUTTONS ===== */
+    .submit-btn {
+      width: 100%;
+      min-height: 56px;
+      background: var(--primary);
+      color: #0e1a1f;
+      font-family: 'Kanit';
+      font-size: 17px;
+      font-weight: 600;
+      border-radius: 16px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 20px rgba(77, 182, 164, 0.35);
+      transition: all 0.2s ease;
+      padding: 14px 20px;
+      letter-spacing: 0.2px;
+    }
+    .submit-btn:active { transform: scale(0.97); }
+    .submit-btn:disabled {
+      background: rgba(77, 182, 164, 0.25);
+      color: rgba(14, 26, 31, 0.5);
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    /* ===== RESPONSIVE — iPhone 15 Pro (393px) + S25 (412px) ===== */
+    .player-outer-wrap {
+      padding-top: max(56px, env(safe-area-inset-top, 56px));
+      padding-bottom: max(34px, env(safe-area-inset-bottom, 34px));
+      padding-left: max(20px, env(safe-area-inset-left, 20px));
+      padding-right: max(20px, env(safe-area-inset-right, 20px));
+    }
+    @media (max-width: 430px) {
+      .header-bar { margin-bottom: 16px; }
+      .glass-panel { padding: 18px 16px !important; }
+      .host-dashboard { padding: 16px; }
+      .card-question { padding: 20px 16px; }
+      .submit-btn { min-height: 54px; font-size: 16px; }
+    }
+
+    /* ===== LOBBY PLAYER LIST — ชัดและเห็นครบ ===== */
+    #host-players-list-area { display: block !important; margin-top: 16px; }
+    .lobby-players {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 240px;
+      overflow-y: auto;
+    }
+    .lobby-player-tag {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(77, 182, 164, 0.1);
+      border: 1px solid rgba(77, 182, 164, 0.3);
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 15px;
+      font-family: 'Kanit';
+    }
+
+    /* Start button pinned at bottom of host dashboard */
+    #host-start-btn { margin-top: 20px; min-height: 60px; font-size: 18px; }
+    #host-next-card-btn { min-height: 60px; font-size: 17px; }
   </style>
 </head>
 
@@ -550,16 +618,15 @@
               <button class="category-btn" data-category="ทั่วไป">ทั่วไป</button>
               <button class="category-btn" data-category="ความรัก">ความรัก 💕</button>
               <button class="category-btn" data-category="เพื่อนสนิท">เพื่อนสนิท</button>
-              <button class="category-btn" data-category="ทีมสร้างสัมพันธ์">ทีม 🏢</button>
             </div>
           </div>
 
           <div class="host-form-group">
             <label class="host-form-label">ระดับความลึกซึ้งของการสนทนา</label>
             <div class="intensity-container">
-              <button class="intensity-btn active" data-level="1">สนุก</button>
-              <button class="intensity-btn" data-level="2">กล้าๆกลัว</button>
-              <button class="intensity-btn" data-level="3">แตกหัก</button>
+              <button class="intensity-btn active" data-level="1">ระดับ 1</button>
+              <button class="intensity-btn" data-level="2">ระดับ 2</button>
+              <button class="intensity-btn" data-level="3">ระดับ 3</button>
             </div>
           </div>
 
@@ -567,7 +634,7 @@
           <div id="level3-warning"
             style="display: none; margin-top: 14px; background: rgba(255, 120, 120, 0.1); border: 1.5px solid rgba(255, 120, 120, 0.35); border-radius: 12px; padding: 12px 14px; text-align: left;">
             <div style="font-family: 'Kanit'; font-size: 14px; color: #ff9c9c; font-weight: 600; margin-bottom: 4px;">⚠️
-              โหมดแตกหัก — แรงมาก</div>
+              ระดับ 3 — แรงมาก</div>
             <div style="font-size: 12.5px; color: #e8c4c4; line-height: 1.4;">
               คำถามระดับนี้จะเจาะลึกถึงแผลใจ ความกลัวลึกที่สุด และความเปราะบางทางอารมณ์
               หากคุณหรือผู้เล่นไม่สบายใจ <strong>ให้รีบกดยกเลิกเกมทันที</strong> ใช้สิทธิ์ 🛡️ Safe Skip ได้เสมอ
@@ -728,55 +795,7 @@
 
     </main>
 
-    <!-- TWIST CARDS INVENTORY DOCK (Bottom Area) -->
-    <footer class="twist-dock" id="twist-dock" style="display: none;">
-      <div class="twist-dock-header">
-        <span>Twist Cards (การ์ดขัดจังหวะ)</span>
-        <span id="twist-count">4 Available</span>
-      </div>
-      <div class="twist-tray">
-        <button class="twist-button" data-twist="fake-it" id="twist-btn-fake-it">
-          <span class="twist-icon">🤥</span>
-          <span class="twist-name">ตอบหลอก</span>
-        </button>
-        <button class="twist-button" data-twist="nominate" id="twist-btn-nominate">
-          <span class="twist-icon">👉</span>
-          <span class="twist-name">จี้ถาม</span>
-        </button>
-        <button class="twist-button" data-twist="fast-forward" id="twist-btn-fast-forward">
-          <span class="twist-icon">👵</span>
-          <span class="twist-name">วัย 80</span>
-        </button>
-        <button class="twist-button" data-twist="hot-seat" id="twist-btn-hot-seat">
-          <span class="twist-icon">🔥</span>
-          <span class="twist-name">เก้าอี้ร้อน</span>
-        </button>
-      </div>
-    </footer>
-
-    <!-- TWIST CARD DETAIL MODAL -->
-    <div class="twist-modal" id="twist-modal">
-      <div class="twist-modal-content">
-        <h3 class="twist-modal-title" id="twist-modal-title">Fake It</h3>
-        <p class="twist-modal-desc" id="twist-modal-desc">
-          สวมรอยส่งคำตอบหลอกลวง คนอื่นต้องทายว่าคุณกำลังโกหกหรือไม่
-        </p>
-
-        <!-- Target player select (for Nominate or target-based cards) -->
-        <div class="form-group" id="twist-target-group" style="display: none; text-align: left;">
-          <label class="form-label" for="twist-target-select">เลือกเป้าหมายผู้เล่น:</label>
-          <select id="twist-target-select" class="custom-select-mobile">
-            <!-- Player option tags injected here -->
-          </select>
-        </div>
-
-        <div style="display: flex; gap: 10px; margin-top: 15px;">
-          <button class="btn btn-outline" id="twist-close-btn" style="flex: 1; padding: 10px;">ยกเลิก</button>
-          <button class="btn btn-secondary" id="twist-play-confirm-btn"
-            style="flex: 1; padding: 10px; background: var(--accent); color: #0e1a1f;">ใช้การ์ดขัดขวาง!</button>
-        </div>
-      </div>
-    </div>
+    <!-- Twist cards removed — Safe Skip is the only helper mechanic -->
 
     <!-- Home indicator gesture bar simulation -->
     <div

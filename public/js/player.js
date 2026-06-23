@@ -11,7 +11,6 @@ document.addEventListener('DOMContentLoaded', () => {
   let playersList = [];
   let currentCard = null;
   let isHost = false;
-  let activeTwistType = null;
   let selectedVoteTarget = '';
   let selectedIntensity = 1;
   let usedCardIds = new Set();
@@ -76,23 +75,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const hostNextCardBtn = document.getElementById('host-next-card-btn');
   const guestNextCardWaiting = document.getElementById('guest-next-card-waiting');
 
-  // Twist Dock
-  const twistDock = document.getElementById('twist-dock');
-  const twistCount = document.getElementById('twist-count');
-  const twistModal = document.getElementById('twist-modal');
-  const twistModalTitle = document.getElementById('twist-modal-title');
-  const twistModalDesc = document.getElementById('twist-modal-desc');
-  const twistTargetGroup = document.getElementById('twist-target-group');
-  const twistTargetSelect = document.getElementById('twist-target-select');
-  const twistCloseBtn = document.getElementById('twist-close-btn');
-  const twistPlayConfirmBtn = document.getElementById('twist-play-confirm-btn');
-
-  const twistButtons = {
-    'fake-it': document.getElementById('twist-btn-fake-it'),
-    'nominate': document.getElementById('twist-btn-nominate'),
-    'fast-forward': document.getElementById('twist-btn-fast-forward'),
-    'hot-seat': document.getElementById('twist-btn-hot-seat')
-  };
 
   // ==========================================================================
   // ROOM JOIN / INITIALIZATION
@@ -189,8 +171,6 @@ document.addEventListener('DOMContentLoaded', () => {
     playerRoomBadge.innerText = roomCode;
 
     transitionView('lobby');
-    updateTwistCardsHUD(player.twistCards);
-
     // If guest joined, read the bot choice and update settings
     if (state.hostSocketId !== socket.id) {
       const botChoiceInput = document.querySelector('input[name="prejoin-bot-choice"]:checked');
@@ -290,7 +270,7 @@ document.addEventListener('DOMContentLoaded', () => {
     playerSubmitAnswerBtn.removeAttribute('disabled');
 
     // Questions bindings
-    const levelNames = { 1: 'สนุก', 2: 'กล้าๆกลัว', 3: 'แตกหัก' };
+    const levelNames = { 1: 'ระดับ 1', 2: 'ระดับ 2', 3: 'ระดับ 3' };
     playerCardHint.innerText = `คำถามชวนคิด · ${levelNames[currentCard.level] || 'ระดับ ' + currentCard.level} (หมวด: ${currentCard.category || 'เปิดใจ'})`;
     playerQuestionTextTh.innerText = currentCard.questionTh;
 
@@ -354,10 +334,9 @@ document.addEventListener('DOMContentLoaded', () => {
     '🔒 คำตอบของคุณจะถูกซ่อนชื่อเสมอ — พิมพ์อย่างจริงใจได้เลย ไม่มีใครรู้ว่าเป็นคุณจนกว่าจะเฉลย',
     '🛡️ ถ้าเจอคำถามที่ไม่สบายใจ กดปุ่ม Safe Skip ที่มุมบนขวาได้ทันที — ไม่เสียคะแนน ไม่มีโทษ',
     '🤖 มีบอทนิรนามช่วยสวมรอยในห้อง — ทำให้โฮสต์เดาคำตอบของคุณได้ยากขึ้น',
-    '💬 เกมนี้มี 3 ระดับ: สนุก → กล้าๆกลัว → แตกหัก — โฮสต์เป็นคนเลือกระดับก่อนเริ่มเกม',
+    '💬 เกมนี้มี 3 ระดับ: ระดับ 1 → ระดับ 2 → ระดับ 3 — โฮสต์เป็นคนเลือกระดับก่อนเริ่มเกม',
     '🎭 ในโหมดนิรนาม คุณจะต้องทายว่าคำตอบที่แสดงบนจอเป็นของใคร — สนุกและคาดเดายาก!',
     '✕ ปุ่มยกเลิกเกมมุมบนขวา — กดแล้วออกจากห้องทันที (ถ้าเป็นโฮสต์ ห้องจะปิด)',
-    '🃏 Twist Cards คือการ์ดพิเศษที่ใช้เปลี่ยนกติกาได้ เช่น Fake It (ส่งคำตอบหลอก), Nominate (จี้ถามเพื่อน)',
     '💡 คำตอบยิ่งจริงใจ เกมยิ่งสนุก — ไม่ต้องกลัวถูกตัดสิน เพราะทุกคนตอบแบบนิรนามเหมือนกันหมด',
     '📱 ใช้สมาร์ทโฟนเป็นคอนโทรลเลอร์ — ไม่ต้องโหลดแอป เล่นผ่านเบราว์เซอร์ได้เลย',
     '👥 ยิ่งคนเยอะ เกมยิ่งสนุก — เพราะมีคำตอบให้ทายมากขึ้นและเดายากขึ้น',
@@ -644,7 +623,6 @@ document.addEventListener('DOMContentLoaded', () => {
     pstateSubmitted.style.display = 'none';
     pstateVote.style.display = 'none';
     pstateRoundover.style.display = 'none';
-    twistDock.style.display = 'none';
 
     // หน้าจอตอนจัดตั้งห้อง (join และ lobby) ไม่ต้องมี safe skip กับยกเลิกเกม
     if (view === 'join' || view === 'lobby' || view === 'connecting') {
@@ -663,7 +641,6 @@ document.addEventListener('DOMContentLoaded', () => {
       pstateLobby.style.display = 'block';
     } else if (view === 'write') {
       pstateWrite.style.display = 'block';
-      twistDock.style.display = 'block';
     } else if (view === 'submitted') {
       pstateSubmitted.style.display = 'block';
     } else if (view === 'vote') {
@@ -673,86 +650,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // ==========================================================================
-  // TWIST CARDS INVENTORY
-  // ==========================================================================
-
-  function updateTwistCardsHUD(cards) {
-    twistCount.innerText = `${cards.length} ใบพร้อมใช้`;
-    Object.keys(twistButtons).forEach(type => {
-      const btn = twistButtons[type];
-      if (cards.includes(type)) {
-        btn.classList.remove('disabled');
-      } else {
-        btn.classList.add('disabled');
-      }
-    });
-  }
-
-  Object.keys(twistButtons).forEach(type => {
-    const btn = twistButtons[type];
-    btn.addEventListener('click', () => {
-      openTwistModal(type);
-    });
-  });
-
-  const twistNames = {
-    'fake-it': 'ตอบหลอก',
-    'nominate': 'จี้ถาม',
-    'fast-forward': 'วัย 80',
-    'hot-seat': 'เก้าอี้ร้อน'
-  };
-
-  const twistDescriptions = {
-    'fake-it': "เขียนคำตอบที่แต่งขึ้น — ผู้เล่นคนอื่นต้องทายว่าคุณกำลังโกหกอยู่หรือไม่",
-    'nominate': "โยนคำถามใบนี้ให้ผู้เล่นคนใดคนหนึ่งเป็นคนตอบแทนคุณ",
-    'fast-forward': "ตอบคำถามนี้โดยสมมติว่าเป็นตัวคุณในวัย 80 ปี มุมมองชีวิตจะเปลี่ยนไปอย่างไร",
-    'hot-seat': "บังคับเปลี่ยนความสนใจ — คุณต้องเป็นคนตอบคำถามนี้แบบลึกซึ้งที่สุด"
-  };
-
-  function openTwistModal(type) {
-    activeTwistType = type;
-    twistModalTitle.innerText = twistNames[type] || type.toUpperCase();
-    twistModalDesc.innerText = twistDescriptions[type] || 'การ์ดขัดจังหวะรอบสนทนา';
-
-    twistTargetGroup.style.display = 'none';
-    twistTargetSelect.innerHTML = '';
-
-    if (type === 'nominate' || type === 'hot-seat') {
-      const targets = playersList.filter(p => p.name !== playerName);
-      if (targets.length > 0) {
-        targets.forEach(t => {
-          const opt = document.createElement('option');
-          opt.value = t.name;
-          opt.innerText = t.name;
-          twistTargetSelect.appendChild(opt);
-        });
-        twistTargetGroup.style.display = 'block';
-      }
-    }
-
-    twistModal.classList.add('active');
-  }
-
-  twistCloseBtn.addEventListener('click', () => {
-    twistModal.classList.remove('active');
-  });
-
-  twistPlayConfirmBtn.addEventListener('click', () => {
-    const targetName = twistTargetSelect.value || null;
-    socket.emit('play-twist', {
-      roomCode,
-      twistType: activeTwistType,
-      targetPlayerName: targetName
-    });
-    twistModal.classList.remove('active');
-  });
-
-  socket.on('twist-played', ({ player, twist }) => {
-    const thaiName = twistNames[twist.type] || twist.type;
-    alert(`✨ การ์ดขัดจังหวะ "${thaiName}" ถูกเปิดใช้งานโดย ${twist.playedBy}`);
-    if (player.name === playerName) {
-      updateTwistCardsHUD(player.twistCards);
-    }
-  });
 });
