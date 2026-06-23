@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Views
   const pstateJoin = document.getElementById('pstate-join');
+  const pstateConnecting = document.getElementById('pstate-connecting');
   const pstateLobby = document.getElementById('pstate-lobby');
   const pstateWrite = document.getElementById('pstate-write');
   const pstateSubmitted = document.getElementById('pstate-submitted');
@@ -118,6 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // We are the Host creating a room
     isHost = true;
     playerRoleBadge.innerText = 'โฮสต์ (Host) 👑';
+    transitionView('connecting');
     socket.emit('create-room');
   } else if (sessionCode && sessionName) {
     // We are a Guest joining a room
@@ -125,6 +127,9 @@ document.addEventListener('DOMContentLoaded', () => {
     playerRoleBadge.innerText = 'ผู้ร่วมวง 👥';
     roomCode = sessionCode.toUpperCase();
     playerName = sessionName.trim();
+    const connectingTitle = document.getElementById('connecting-title');
+    if (connectingTitle) connectingTitle.innerText = 'กำลังเข้าร่วมห้อง...';
+    transitionView('connecting');
     joinRoom(roomCode, playerName);
   } else {
     // No session data and no room param, redirect to index.html
@@ -618,6 +623,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function transitionView(view) {
     pstateJoin.style.display = 'none';
+    pstateConnecting.style.display = 'none';
     pstateLobby.style.display = 'none';
     pstateWrite.style.display = 'none';
     pstateSubmitted.style.display = 'none';
@@ -626,7 +632,7 @@ document.addEventListener('DOMContentLoaded', () => {
     twistDock.style.display = 'none';
 
     // หน้าจอตอนจัดตั้งห้อง (join และ lobby) ไม่ต้องมี safe skip กับยกเลิกเกม
-    if (view === 'join' || view === 'lobby') {
+    if (view === 'join' || view === 'lobby' || view === 'connecting') {
       playerCancelBtn.style.display = 'none';
       safezoneBtn.style.display = 'none';
     } else {
@@ -634,7 +640,9 @@ document.addEventListener('DOMContentLoaded', () => {
       safezoneBtn.style.display = 'inline-flex';
     }
 
-    if (view === 'join') {
+    if (view === 'connecting') {
+      pstateConnecting.style.display = 'block';
+    } else if (view === 'join') {
       pstateJoin.style.display = 'block';
     } else if (view === 'lobby') {
       pstateLobby.style.display = 'block';
