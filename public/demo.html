@@ -1,16 +1,20 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DeepTalk - Dual Device Simulator</title>
+  <title>DeepTalk - Demo Test Mode</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css">
   <style>
-    body {
+    * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
+    }
+
+    body {
       background: #0f1c20;
       color: #eef7f4;
       font-family: 'Kanit', sans-serif;
@@ -20,138 +24,499 @@
       overflow: hidden;
     }
 
-    .sim-header {
+    .header {
       background: #16292f;
       border-bottom: 1.5px solid rgba(122, 200, 188, 0.25);
-      padding: 12px 24px;
+      padding: 8px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-shrink: 0;
     }
 
-    .sim-title {
-      font-size: 18px;
+    .header-title {
+      font-size: 14px;
       font-weight: 600;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
-    .sim-badge {
-      background: var(--primary);
+    .badge {
+      background: #4db6a4;
       color: #0e1a1f;
-      font-size: 11px;
-      font-weight: 600;
-      padding: 4px 8px;
-      border-radius: 6px;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
       text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
-    .sim-workspace {
+    .controls {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    .btn {
+      font-family: 'Kanit';
+      font-size: 11px;
+      padding: 5px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(122, 200, 188, 0.3);
+      background: rgba(255, 255, 255, 0.04);
+      color: #eef7f4;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn:hover {
+      background: rgba(77, 182, 164, 0.15);
+    }
+
+    .btn.go {
+      background: #4db6a4;
+      color: #0e1a1f;
+      border-color: #4db6a4;
+      font-weight: 600;
+    }
+
+    .btn.red {
+      border-color: rgba(255, 120, 120, 0.4);
+      color: #ff9c9c;
+    }
+
+    .workspace {
       display: flex;
       flex: 1;
-      justify-content: center;
-      align-items: center;
-      gap: 40px;
-      padding: 20px;
-      background: radial-gradient(circle at 50% 50%, #1a3037 0%, #0f1c20 100%);
-      overflow-y: auto;
+      gap: 12px;
+      padding: 10px;
+      overflow: hidden;
     }
 
-    .phone-container {
+    .col {
+      flex: 1;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 12px;
+      min-width: 0;
     }
 
-    .phone-label {
-      font-size: 14px;
+    .col-label {
+      font-size: 11px;
       color: #8fb3aa;
-      font-weight: 500;
+      margin-bottom: 4px;
+      text-align: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
     }
 
-    .phone-frame {
-      width: 375px;
-      height: 760px;
+    .col-label .code {
+      font-family: 'Kanit';
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      color: #4db6a4;
+    }
+
+    .frame-wrap {
+      flex: 1;
       background: #000;
-      border-radius: 40px;
-      border: 10px solid #2d3e40;
-      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 0 4px #1a2a2d;
+      border-radius: 20px;
+      border: 4px solid #2d3e40;
       overflow: hidden;
       position: relative;
     }
 
-    .phone-iframe {
+    .frame-wrap iframe {
       width: 100%;
       height: 100%;
       border: none;
-      background: #16292f;
     }
 
-    /* Simulate dynamic island on left and right frames */
-    .phone-island {
+    .frame-wrap .island {
       position: absolute;
-      top: 10px;
+      top: 5px;
       left: 50%;
       transform: translateX(-50%);
-      width: 110px;
-      height: 28px;
+      width: 70px;
+      height: 18px;
       background: #000;
-      border-radius: 15px;
+      border-radius: 10px;
       z-index: 1000;
       pointer-events: none;
     }
+
+    .step-bar {
+      background: #16292f;
+      border-top: 1px solid rgba(122, 200, 188, 0.2);
+      padding: 6px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .step-bar .dots {
+      display: flex;
+      gap: 4px;
+      flex: 1;
+    }
+
+    .step-bar .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.1);
+      transition: all 0.2s;
+    }
+
+    .step-bar .dot.on {
+      background: #4db6a4;
+      box-shadow: 0 0 6px rgba(77, 182, 164, 0.4);
+    }
+
+    .step-bar .dot.ok {
+      background: #8bd3a0;
+    }
+
+    .step-bar .txt {
+      font-size: 10.5px;
+      color: #9cc0b8;
+      min-width: 220px;
+    }
   </style>
 </head>
+
 <body>
 
-  <header class="sim-header">
-    <div class="sim-title">
-      🔮 DeepTalk - Dual Device Simulator <span class="sim-badge">Dev Mode</span>
+  <div class="header">
+    <div class="header-title">
+      DeepTalk Demo <span class="badge">หน้าจริง 2 ฝั่ง</span>
     </div>
-    <div style="font-size: 13.5px; color: #8fb3aa;">
-      จำลองทดสอบระบบแบบสองมือถือฝั่ง Host และ Player เพื่อตรวจสอบความคุ้นชิน
+    <div class="controls">
+      <span id="room-display"
+        style="font-family:'Kanit';font-size:15px;font-weight:700;letter-spacing:3px;color:#4db6a4;">----</span>
+      <input id="room-input" type="text" maxlength="4" placeholder="รหัส"
+        style="font-family:'Kanit';font-size:13px;font-weight:700;letter-spacing:2px;width:56px;height:24px;text-align:center;background:rgba(255,255,255,0.06);border:1px solid rgba(122,200,188,0.3);border-radius:5px;color:#4db6a4;"
+        oninput="this.value=this.value.toUpperCase()">
+      <button class="btn" onclick="joinPlayer()">เข้าร่วม ➔</button>
+      <button class="btn red" onclick="resetAll()">ล้าง</button>
+      <button class="btn go" id="next-btn" onclick="go()">▶ เริ่ม</button>
     </div>
-  </header>
+  </div>
 
-  <main class="sim-workspace">
-    
-    <!-- Phone 1: Host -->
-    <div class="phone-container">
-      <div class="phone-label">📱 เครื่องที่ 1 (ใช้เพื่อกดสร้างห้อง / เป็นโฮสต์)</div>
-      <div class="phone-frame">
-        <div class="phone-island"></div>
-        <iframe src="index.html" class="phone-iframe"></iframe>
+  <div class="workspace">
+    <div class="col">
+      <div class="col-label">👑 โฮสต์</div>
+      <div class="frame-wrap">
+        <div class="island"></div>
+        <iframe id="host-frame" src="index.html"></iframe>
       </div>
     </div>
-
-    <!-- Phone 2: Player -->
-    <div class="phone-container">
-      <div class="phone-label">📱 เครื่องที่ 2 (ฝั่งผู้เล่นเกสต์ - วางลิงก์เพื่อเข้าร่วม)</div>
-      <div style="display: flex; gap: 8px; width: 375px; margin-bottom: 8px;">
-        <input type="text" id="guest-url-input" placeholder="วางลิงก์ที่ได้รับจาก Host ที่นี่..." style="flex: 1; height: 32px; background: rgba(255,255,255,0.08); border: 1.5px solid rgba(122,200,188,0.25); border-radius: 8px; color: #fff; padding: 0 10px; font-size: 13px;">
-        <button onclick="loadGuestUrl()" style="height: 32px; background: var(--primary); color: #0e1a1f; border: none; border-radius: 8px; padding: 0 12px; font-family: 'Kanit'; font-size: 13px; font-weight: 500; cursor: pointer;">โหลดลิงก์</button>
-      </div>
-      <div class="phone-frame">
-        <div class="phone-island"></div>
-        <iframe id="guest-iframe" src="index.html" class="phone-iframe"></iframe>
+    <div class="col">
+      <div class="col-label">👤 ผู้เล่น</div>
+      <div class="frame-wrap">
+        <div class="island"></div>
+        <iframe id="player-frame" src="index.html"></iframe>
       </div>
     </div>
+  </div>
 
-  </main>
+  <div class="step-bar">
+    <div class="dots" id="dots"></div>
+    <div class="txt" id="step-txt">กด ▶ เริ่ม</div>
+  </div>
 
   <script>
-    function loadGuestUrl() {
-      const url = document.getElementById('guest-url-input').value.trim();
-      if (url) {
-        document.getElementById('guest-iframe').src = url;
-      } else {
-        alert("กรุณากรอกลิงก์เชิญก่อน");
+    const hostFrame = document.getElementById('host-frame');
+    const playerFrame = document.getElementById('player-frame');
+    const roomDisplay = document.getElementById('room-display');
+    const stepTxt = document.getElementById('step-txt');
+    const nextBtn = document.getElementById('next-btn');
+
+    let step = 0;
+    let hostRoomCode = '';
+    let pollTimers = [];
+
+    // Manual join: player iframe joins via room code input
+    function joinPlayer() {
+      const code = document.getElementById('room-input').value.trim().toUpperCase();
+      if (!code || code.length !== 4) { alert('กรุณากรอกรหัสห้อง 4 ตัวอักษร'); return; }
+      hostRoomCode = code;
+      roomDisplay.textContent = code;
+      playerFrame.src = 'player.html?room=' + code;
+      stepTxt.textContent = 'ผู้เล่นกำลังเข้าห้อง ' + code + '...';
+    }
+
+    const STEPS = [
+      { label: '1) โฮสต์กดสร้างห้อง (รหัสจะปรากฏ) — หรือกด ▶ เริ่ม ให้ทำเอง', run: s1 },
+      { label: '2) ผู้เล่นเข้าห้อง: กรอกรหัสด้านบน + กดเข้าร่วม หรือกด ▶ ต่อไป', run: s2 },
+      { label: '3) โฮสต์เลือกระดับ ➔ กดเริ่มเกม', run: s3 },
+      { label: '4) ผู้เล่นอ่านคำถาม ➔ พิมพ์ตอบ ➔ ส่ง', run: s4 },
+      { label: '5) โฮสต์ดูเฉลย ➔ กดจั่วถัดไป', run: s5 },
+      { label: '6) ผู้เล่นตอบรอบที่ 2 ➔ ส่ง', run: s6 },
+      { label: 'เสร็จสิ้น — กด ▶ เริ่ม เพื่อเล่นรอบใหม่', run: () => { nextBtn.textContent = '▶ เล่นใหม่'; } }
+    ];
+
+    function renderDots() {
+      const el = document.getElementById('dots');
+      el.innerHTML = '';
+      STEPS.forEach((_, i) => {
+        const d = document.createElement('div');
+        d.className = 'dot' + (i === step ? ' on' : '') + (i < step ? ' ok' : '');
+        el.appendChild(d);
+      });
+    }
+
+    // Helper: wait for iframe doc ready
+    function whenReady(iframe, cb) {
+      let tries = 0;
+      const t = setInterval(() => {
+        tries++;
+        try {
+          const doc = iframe.contentDocument;
+          if (doc && doc.readyState === 'complete') { clearInterval(t); cb(doc); }
+        } catch (e) { }
+        if (tries > 80) clearInterval(t);
+      }, 250);
+      pollTimers.push(t);
+    }
+
+    // Helper: wait for element visible in iframe
+    function whenVisible(iframe, id, cb) {
+      let tries = 0;
+      const t = setInterval(() => {
+        tries++;
+        try {
+          const el = iframe.contentDocument.getElementById(id);
+          if (el && el.offsetParent !== null) { clearInterval(t); cb(el); }
+        } catch (e) { }
+        if (tries > 120) clearInterval(t);
+      }, 400);
+      pollTimers.push(t);
+    }
+
+    // Helper: wait for element exists in iframe (not necessarily visible)
+    function whenExists(iframe, id, cb) {
+      let tries = 0;
+      const t = setInterval(() => {
+        tries++;
+        try {
+          const el = iframe.contentDocument.getElementById(id);
+          if (el) { clearInterval(t); cb(el); }
+        } catch (e) { }
+        if (tries > 120) clearInterval(t);
+      }, 400);
+      pollTimers.push(t);
+    }
+
+    // Helper: poll for room code badge
+    function pollRoomCode(iframe, cb) {
+      let tries = 0;
+      const t = setInterval(() => {
+        tries++;
+        try {
+          const el = iframe.contentDocument.getElementById('player-room-badge');
+          if (el && el.textContent && el.textContent !== '----') {
+            clearInterval(t);
+            hostRoomCode = el.textContent;
+            roomDisplay.textContent = hostRoomCode;
+            const roomInput = document.getElementById('room-input');
+            if (roomInput) roomInput.value = hostRoomCode;
+            cb(hostRoomCode);
+          }
+        } catch (e) { }
+        if (tries > 120) clearInterval(t);
+      }, 400);
+      pollTimers.push(t);
+    }
+
+    // ---- STEP 1: Host creates room ----
+    function s1() {
+      // If room already exists (manual creation), skip auto-create
+      if (hostRoomCode) { advance(); return; }
+
+      // Reset host frame to index.html
+      hostFrame.src = 'index.html';
+
+      whenReady(hostFrame, (doc) => {
+        const nameInput = doc.getElementById('host-name');
+        if (nameInput) {
+          nameInput.value = 'โฮสต์Demo';
+          nameInput.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        const form = doc.querySelector('form[onsubmit]');
+        if (form) {
+          try {
+            hostFrame.contentWindow.handleCreateSubmit(new Event('submit', { cancelable: true }));
+          } catch (e) {
+            form.dispatchEvent(new Event('submit', { cancelable: true }));
+          }
+        }
+      });
+
+      pollRoomCode(hostFrame, (code) => {
+        setTimeout(() => advance(), 600);
+      });
+    }
+
+    // ---- STEP 2: Player joins ----
+    function s2() {
+      if (!hostRoomCode) {
+        stepTxt.textContent = '⚠️ กรอกรหัสห้องในช่องด้านบน แล้วกด "เข้าร่วม ➔" ก่อน';
+        return;
+      }
+
+      // Only set src if not already loaded manually
+      if (!playerFrame.src.includes('player.html?room=' + hostRoomCode)) {
+        playerFrame.src = 'player.html?room=' + hostRoomCode;
+      }
+
+      whenVisible(playerFrame, 'direct-player-name', (input) => {
+        input.value = 'ผู้เล่น1';
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+
+        setTimeout(() => {
+          const btn = playerFrame.contentDocument.getElementById('direct-join-btn');
+          if (btn) btn.click();
+        }, 300);
+      });
+
+      whenVisible(playerFrame, 'lobby-players-list', () => {
+        setTimeout(() => advance(), 600);
+      });
+    }
+
+    // ---- STEP 3: Host starts game ----
+    function s3() {
+      // Wait for host lobby to render
+      whenVisible(hostFrame, 'host-start-btn', () => {
+        // Click intensity level 2 (กล้าๆกลัว)
+        setTimeout(() => {
+          try {
+            const btns = hostFrame.contentDocument.querySelectorAll('.intensity-btn');
+            if (btns.length >= 2) {
+              btns[1].click(); // level 2
+            }
+          } catch (e) { }
+        }, 500);
+
+        // Wait for start button to be enabled, then click
+        setTimeout(() => {
+          const startBtn = hostFrame.contentDocument.getElementById('host-start-btn');
+          const poll = setInterval(() => {
+            if (startBtn && !startBtn.hasAttribute('disabled')) {
+              clearInterval(poll);
+              startBtn.click();
+              setTimeout(() => advance(), 1000);
+            }
+          }, 400);
+          pollTimers.push(poll);
+        }, 1000);
+      });
+    }
+
+    // ---- STEP 4: Player answers ----
+    function s4() {
+      whenVisible(playerFrame, 'player-answer-input', (textarea) => {
+        textarea.value = 'คิดว่าความสัมพันธ์ที่ดีคือการที่เราสามารถเป็นตัวของตัวเองได้โดยไม่ต้องกลัวถูกตัดสิน';
+        textarea.dispatchEvent(new Event('input', { bubbles: true }));
+
+        setTimeout(() => {
+          const submitBtn = playerFrame.contentDocument.getElementById('player-submit-answer-btn');
+          if (submitBtn && !submitBtn.hasAttribute('disabled')) submitBtn.click();
+        }, 400);
+      });
+
+      // Wait for submitted view
+      whenVisible(playerFrame, 'pstate-submitted', () => {
+        // Also wait for host to see answers reveal
+        whenVisible(hostFrame, 'player-revealed-answers-list', () => {
+          setTimeout(() => advance(), 1000);
+        });
+      });
+    }
+
+    // ---- STEP 5: Host clicks next card ----
+    function s5() {
+      whenVisible(hostFrame, 'host-next-card-btn', (btn) => {
+        const poll = setInterval(() => {
+          if (btn.offsetParent !== null && btn.style.display !== 'none') {
+            clearInterval(poll);
+            btn.click();
+            setTimeout(() => advance(), 800);
+          }
+        }, 400);
+        pollTimers.push(poll);
+      });
+    }
+
+    // ---- STEP 6: Player answers round 2 ----
+    function s6() {
+      whenVisible(playerFrame, 'player-answer-input', (textarea) => {
+        textarea.value = 'กลัวว่าวันหนึ่งจะไม่มีคนเข้าใจเราอีกแล้ว';
+        textarea.dispatchEvent(new Event('input', { bubbles: true }));
+
+        setTimeout(() => {
+          const submitBtn = playerFrame.contentDocument.getElementById('player-submit-answer-btn');
+          if (submitBtn && !submitBtn.hasAttribute('disabled')) submitBtn.click();
+        }, 400);
+      });
+
+      whenVisible(playerFrame, 'pstate-submitted', () => {
+        setTimeout(() => advance(), 800);
+      });
+    }
+
+    // ---- Flow control ----
+    function advance() {
+      if (step < STEPS.length - 1) {
+        step++;
+        goToStep(step);
       }
     }
-  </script>
 
+    function goToStep(idx) {
+      step = idx;
+      stepTxt.textContent = STEPS[idx].label;
+      renderDots();
+
+      if (STEPS[idx].run) STEPS[idx].run();
+    }
+
+    function go() {
+      if (step === 0 || step >= STEPS.length - 1) {
+        // Reset for new round
+        step = 0;
+        hostRoomCode = '';
+        roomDisplay.textContent = '----';
+        nextBtn.textContent = '▶ เริ่ม';
+        goToStep(0);
+      } else {
+        advance();
+      }
+    }
+
+    function resetAll() {
+      pollTimers.forEach(t => clearInterval(t));
+      pollTimers = [];
+      hostRoomCode = '';
+      step = 0;
+      roomDisplay.textContent = '----';
+      const roomInput = document.getElementById('room-input');
+      if (roomInput) roomInput.value = '';
+      hostFrame.src = 'index.html';
+      playerFrame.src = 'index.html';
+      renderDots();
+      stepTxt.textContent = 'กด ▶ เริ่ม';
+      nextBtn.textContent = '▶ เริ่ม';
+    }
+
+    renderDots();
+  </script>
 </body>
+
 </html>

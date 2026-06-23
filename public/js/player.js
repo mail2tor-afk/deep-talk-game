@@ -15,7 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let selectedVoteTarget = '';
   let selectedIntensity = 1;
   let usedCardIds = new Set();
-  
+  let selectedCategory = 'all';
+
   // DOM Elements
   const playerRoleBadge = document.getElementById('player-role-badge');
   const playerRoomBadge = document.getElementById('player-room-badge');
@@ -45,6 +46,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const lobbyStatusTitle = document.getElementById('lobby-status-title');
   const lobbyStatusDesc = document.getElementById('lobby-status-desc');
   const lobbyPlayersList = document.getElementById('lobby-players-list');
+
+  // Guest-only status + tips area
+  const guestStatusArea = document.getElementById('guest-status-area');
+  const guestStatusText = document.getElementById('guest-status-text');
+  const guestConnectionStatus = document.getElementById('guest-connection-status');
+  const guestTipText = document.getElementById('guest-tip-text');
+  const tipRefreshBtn = document.getElementById('tip-refresh-btn');
+  const shareLinkArea = document.getElementById('share-link-area');
+  const hostPlayersListArea = document.getElementById('host-players-list-area');
 
   // Typing Answer
   const playerCardHint = document.getElementById('player-card-hint');
@@ -126,7 +136,7 @@ document.addEventListener('DOMContentLoaded', () => {
     roomCode = code;
     playerName = sessionStorage.getItem('join_player_name') || 'โฮสต์';
     playerRoomBadge.innerText = roomCode;
-    
+
     // Automatically join the newly created room as the first player
     joinRoom(roomCode, playerName);
   });
@@ -139,7 +149,7 @@ document.addEventListener('DOMContentLoaded', () => {
   directJoinBtn.addEventListener('click', () => {
     const code = directRoomCode.value.toUpperCase().trim();
     const name = directPlayerName.value.trim();
-    
+
     if (code.length !== 4) {
       alert("กรุณากรอกรหัสห้องให้ครบ 4 หลัก");
       return;
@@ -164,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
     roomCode = code;
     playerName = player.name;
     playerRoomBadge.innerText = roomCode;
-    
+
     transitionView('lobby');
     updateTwistCardsHUD(player.twistCards);
 
@@ -182,41 +192,52 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Render Host Dashboard or Guest waiting area
     if (state.hostSocketId === socket.id) {
+      // === HOST ===
       isHost = true;
       playerRoleBadge.innerText = 'โฮสต์ (Host) 👑';
       hostControls.style.display = 'block';
       guestWaitingArea.querySelector('.waiting-spinner').style.display = 'none';
       lobbyStatusTitle.innerText = 'รอผู้เล่น...';
       lobbyStatusDesc.innerText = 'กำลังรอให้มีผู้เล่นเข้าร่วมวงสนทนา...';
+
+      // Show share link + player list for host only
+      if (shareLinkArea) shareLinkArea.style.display = 'block';
+      if (hostPlayersListArea) hostPlayersListArea.style.display = 'block';
+      if (guestStatusArea) guestStatusArea.style.display = 'none';
+
+      // Generate share link
+      const shareUrl = window.location.origin + '/player.html?room=' + roomCode;
+      const shareInput = document.getElementById('share-link-input');
+      if (shareInput) shareInput.value = shareUrl;
+      const copyBtn = document.getElementById('copy-share-link-btn');
+      if (copyBtn) {
+        copyBtn.onclick = () => {
+          if (shareInput) {
+            shareInput.select();
+            shareInput.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(shareInput.value)
+              .then(() => { alert('คัดลอกลิงก์ชวนเพื่อนสำเร็จ!'); })
+              .catch(err => { console.error('Failed to copy: ', err); });
+          }
+        };
+      }
     } else {
+      // === GUEST PLAYER ===
       isHost = false;
       playerRoleBadge.innerText = 'ผู้ร่วมวง 👥';
       hostControls.style.display = 'none';
-      guestWaitingArea.querySelector('.waiting-spinner').style.display = 'block';
-      lobbyStatusTitle.innerText = 'เชื่อมต่อห้องสำเร็จแล้ว';
-      lobbyStatusDesc.innerText = 'กำลังรอเพื่อน ๆ และรอโฮสต์กดเริ่มเกม...';
-    }
 
-    // Generate and show invite link for copying
-    const shareUrl = window.location.origin + '/player.html?room=' + roomCode;
-    const shareInput = document.getElementById('share-link-input');
-    if (shareInput) shareInput.value = shareUrl;
+      // Hide share link + player list for guests
+      if (shareLinkArea) shareLinkArea.style.display = 'none';
+      if (hostPlayersListArea) hostPlayersListArea.style.display = 'none';
 
-    const copyBtn = document.getElementById('copy-share-link-btn');
-    if (copyBtn) {
-      copyBtn.onclick = () => {
-        if (shareInput) {
-          shareInput.select();
-          shareInput.setSelectionRange(0, 99999);
-          navigator.clipboard.writeText(shareInput.value)
-            .then(() => {
-              alert('คัดลอกลิงก์ชวนเพื่อนสำเร็จ!');
-            })
-            .catch(err => {
-              console.error('Failed to copy: ', err);
-            });
-        }
-      };
+      // Show guest-only status + tips area
+      if (guestStatusArea) guestStatusArea.style.display = 'block';
+      if (guestStatusText) guestStatusText.textContent = 'เชื่อมต่อแล้ว — รอโฮสต์เริ่มเกม...';
+      if (guestConnectionStatus) guestConnectionStatus.textContent = '🟢 เชื่อมต่อแล้ว — ห้อง ' + roomCode;
+
+      // Show random tip
+      showRandomTip();
     }
 
     updateLobbyPlayersUI(state.players, state.hostSocketId, state.settings.botEnabled);
@@ -249,14 +270,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   socket.on('card-updated', (state) => {
     currentCard = state.gameState.currentCard;
-    
+
     // Reset typing UI
     playerAnswerInput.value = '';
     charCount.innerText = '0';
     playerSubmitAnswerBtn.removeAttribute('disabled');
 
     // Questions bindings
-    playerCardHint.innerText = `คำถามชวนคิด · ระดับ ${currentCard.level} (หมวด: ${currentCard.category || 'เปิดใจ'})`;
+    const levelNames = { 1: 'สนุก', 2: 'กล้าๆกลัว', 3: 'แตกหัก' };
+    playerCardHint.innerText = `คำถามชวนคิด · ${levelNames[currentCard.level] || 'ระดับ ' + currentCard.level} (หมวด: ${currentCard.category || 'เปิดใจ'})`;
     playerQuestionTextTh.innerText = currentCard.questionTh;
 
     transitionView('write');
@@ -307,9 +329,38 @@ document.addEventListener('DOMContentLoaded', () => {
   // LOBBY UI RENDERER & INTERACTION
   // ==========================================================================
 
+  // Random tips for guest players while waiting
+  const GUEST_TIPS = [
+    '🔒 คำตอบของคุณจะถูกซ่อนชื่อเสมอ — พิมพ์อย่างจริงใจได้เลย ไม่มีใครรู้ว่าเป็นคุณจนกว่าจะเฉลย',
+    '🛡️ ถ้าเจอคำถามที่ไม่สบายใจ กดปุ่ม Safe Skip ที่มุมบนขวาได้ทันที — ไม่เสียคะแนน ไม่มีโทษ',
+    '🤖 มีบอทนิรนามช่วยสวมรอยในห้อง — ทำให้โฮสต์เดาคำตอบของคุณได้ยากขึ้น',
+    '💬 เกมนี้มี 3 ระดับ: สนุก → กล้าๆกลัว → แตกหัก — โฮสต์เป็นคนเลือกระดับก่อนเริ่มเกม',
+    '🎭 ในโหมดนิรนาม คุณจะต้องทายว่าคำตอบที่แสดงบนจอเป็นของใคร — สนุกและคาดเดายาก!',
+    '✕ ปุ่มยกเลิกเกมมุมบนขวา — กดแล้วออกจากห้องทันที (ถ้าเป็นโฮสต์ ห้องจะปิด)',
+    '🃏 Twist Cards คือการ์ดพิเศษที่ใช้เปลี่ยนกติกาได้ เช่น Fake It (ส่งคำตอบหลอก), Nominate (จี้ถามเพื่อน)',
+    '💡 คำตอบยิ่งจริงใจ เกมยิ่งสนุก — ไม่ต้องกลัวถูกตัดสิน เพราะทุกคนตอบแบบนิรนามเหมือนกันหมด',
+    '📱 ใช้สมาร์ทโฟนเป็นคอนโทรลเลอร์ — ไม่ต้องโหลดแอป เล่นผ่านเบราว์เซอร์ได้เลย',
+    '👥 ยิ่งคนเยอะ เกมยิ่งสนุก — เพราะมีคำตอบให้ทายมากขึ้นและเดายากขึ้น',
+    '⏳ เกมจะดำเนินการตามลำดับ: โฮสต์แสดงคำถาม → ทุกคนพิมพ์ตอบ → ระบบสุ่มเฉลย → ทายเจ้าของคำตอบ → เฉลยจริง',
+    '🔮 คำถามมี 3 หมวด: ทั่วไป, ความรัก, เพื่อนสนิท — โฮสต์เป็นคนเลือกธีม'
+  ];
+  let currentTipIndex = -1;
+
+  function showRandomTip() {
+    if (!guestTipText) return;
+    let idx;
+    do { idx = Math.floor(Math.random() * GUEST_TIPS.length); } while (idx === currentTipIndex && GUEST_TIPS.length > 1);
+    currentTipIndex = idx;
+    guestTipText.textContent = GUEST_TIPS[idx];
+  }
+
+  if (tipRefreshBtn) {
+    tipRefreshBtn.addEventListener('click', showRandomTip);
+  }
+
   function updateLobbyPlayersUI(players, hostSocketId, botEnabled) {
     lobbyPlayersList.innerHTML = '';
-    
+
     // Update host start button based on guest player count
     if (isHost) {
       const guestPlayers = players.filter(p => p.socketId !== hostSocketId);
@@ -350,12 +401,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Category selector handlers (host only)
+  const categoryButtons = document.querySelectorAll('.category-btn');
+  categoryButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      categoryButtons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      selectedCategory = btn.getAttribute('data-category');
+      usedCardIds.clear();
+    });
+  });
+
   // Intensity buttons handlers
+  const level3Warning = document.getElementById('level3-warning');
   intensityButtons.forEach(btn => {
     btn.addEventListener('click', () => {
       intensityButtons.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       selectedIntensity = Number(btn.getAttribute('data-level'));
+
+      // Show/hide level 3 warning
+      if (level3Warning) {
+        level3Warning.style.display = selectedIntensity === 3 ? 'block' : 'none';
+      }
     });
   });
 
@@ -391,14 +459,18 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function pickNextCard(level) {
-    const deck = window.DEEP_TALK_DB[level];
+    let deck;
+    if (selectedCategory === 'all') {
+      deck = window.DEEP_TALK_DB[level];
+    } else {
+      const key = `${selectedCategory}_${level}`;
+      deck = window.DEEP_TALK_DB[key];
+    }
     if (!deck || deck.length === 0) return null;
 
-    // Filter cards not yet used
     const pool = deck.filter(c => !usedCardIds.has(c.id));
     if (pool.length === 0) return null;
 
-    // Pick random card
     const card = pool[Math.floor(Math.random() * pool.length)];
     usedCardIds.add(card.id);
     return card;
@@ -411,7 +483,7 @@ document.addEventListener('DOMContentLoaded', () => {
   playerAnswerInput.addEventListener('input', () => {
     let len = playerAnswerInput.value.length;
     charCount.innerText = len;
-    
+
     if (len > 150) {
       playerAnswerInput.value = playerAnswerInput.value.substring(0, 150);
       charCount.innerText = '150';
@@ -506,13 +578,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function showRevealedAnswers(responses) {
     playerRevealedAnswersList.innerHTML = '';
-    
+
     // Display current card question in roundover view
     if (currentCard) {
       const roQuestionTh = document.getElementById('roundover-question-th');
       if (roQuestionTh) roQuestionTh.innerText = currentCard.questionTh;
     }
-    
+
     Object.keys(responses).forEach(name => {
       const isMe = name === playerName;
       const bubble = document.createElement('div');
@@ -597,18 +669,25 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  const twistNames = {
+    'fake-it': 'ตอบหลอก',
+    'nominate': 'จี้ถาม',
+    'fast-forward': 'วัย 80',
+    'hot-seat': 'เก้าอี้ร้อน'
+  };
+
   const twistDescriptions = {
-    'fake-it': "คำตอบหลอก: เขียนคำตอบที่แต่งขึ้น เพื่อดูว่าเพื่อนร่วมวงจะจับโกหกคุณได้ไหม",
-    'nominate': "จี้ถาม: โยนคำถามการ์ดใบนี้ให้เพื่อนร่วมวงระบุคนใดคนหนึ่งเป็นคนตอบ",
-    'fast-forward': "จินตนาการอนาคต: ตอบคำถามนี้โดยสมมติมุมมองของตัวคุณในอายุ 80 ปี",
-    'hot-seat': "เก้าอี้ร้อน: บังคับเปลี่ยนความสนใจให้คุณเป็นคนตอบแบบลึกซึ้งแทน"
+    'fake-it': "เขียนคำตอบที่แต่งขึ้น — ผู้เล่นคนอื่นต้องทายว่าคุณกำลังโกหกอยู่หรือไม่",
+    'nominate': "โยนคำถามใบนี้ให้ผู้เล่นคนใดคนหนึ่งเป็นคนตอบแทนคุณ",
+    'fast-forward': "ตอบคำถามนี้โดยสมมติว่าเป็นตัวคุณในวัย 80 ปี มุมมองชีวิตจะเปลี่ยนไปอย่างไร",
+    'hot-seat': "บังคับเปลี่ยนความสนใจ — คุณต้องเป็นคนตอบคำถามนี้แบบลึกซึ้งที่สุด"
   };
 
   function openTwistModal(type) {
     activeTwistType = type;
-    twistModalTitle.innerText = type.toUpperCase().replace('-', ' ');
+    twistModalTitle.innerText = twistNames[type] || type.toUpperCase();
     twistModalDesc.innerText = twistDescriptions[type] || 'การ์ดขัดจังหวะรอบสนทนา';
-    
+
     twistTargetGroup.style.display = 'none';
     twistTargetSelect.innerHTML = '';
 
@@ -643,7 +722,8 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   socket.on('twist-played', ({ player, twist }) => {
-    alert(`✨ การ์ดขัดจังหวะ ${twist.type.toUpperCase()} ถูกเปิดใช้งานโดยคุณ ${twist.playedBy}`);
+    const thaiName = twistNames[twist.type] || twist.type;
+    alert(`✨ การ์ดขัดจังหวะ "${thaiName}" ถูกเปิดใช้งานโดยคุณ ${twist.playedBy}`);
     if (player.name === playerName) {
       updateTwistCardsHUD(player.twistCards);
     }

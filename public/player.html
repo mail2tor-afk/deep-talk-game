@@ -1,11 +1,14 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="th">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>DeepTalk Controller</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700&family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap"
+    rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/player.css">
   <style>
@@ -28,7 +31,8 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      padding: 56px 20px 34px; /* safe areas for dynamic island and home bar */
+      padding: 56px 20px 34px;
+      /* safe areas for dynamic island and home bar */
       position: relative;
       overflow-y: auto;
     }
@@ -422,6 +426,25 @@
       font-weight: 500;
     }
 
+    .category-btn {
+      padding: 7px 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(122, 200, 188, 0.2);
+      border-radius: 10px;
+      color: #8fb3aa;
+      font-family: 'Kanit';
+      font-size: 12.5px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .category-btn.active {
+      background: rgba(77, 182, 164, 0.18);
+      border-color: var(--primary);
+      color: #eef7f4;
+      font-weight: 500;
+    }
+
     .bot-checkbox-label {
       display: flex;
       align-items: center;
@@ -438,6 +461,7 @@
     }
   </style>
 </head>
+
 <body class="player-body">
 
   <div class="player-outer-wrap">
@@ -459,29 +483,37 @@
       <!-- SUB-STATE 0: DIRECT JOIN FORM (Guest Pre-Join Screen) -->
       <section id="pstate-join" style="display: none; width: 100%;">
         <div class="glass-panel" style="padding: 24px;">
-          <h2 style="font-family: 'Kanit'; margin-bottom: 20px; text-align: center; font-size: 20px;" id="join-room-title">เข้าร่วมวงสนทนา</h2>
-          
+          <h2 style="font-family: 'Kanit'; margin-bottom: 20px; text-align: center; font-size: 20px;"
+            id="join-room-title">เข้าร่วมวงสนทนา</h2>
+
           <!-- Hidden input to hold room code from URL query param -->
           <input type="hidden" id="direct-room-code">
-          
+
           <div class="form-group">
             <label class="form-label" for="direct-player-name">ระบุชื่อเล่นของคุณ</label>
-            <input type="text" id="direct-player-name" class="form-input" placeholder="เช่น ส้ม, ฟ้า" required maxlength="15">
+            <input type="text" id="direct-player-name" class="form-input" placeholder="เช่น ส้ม, ฟ้า" required
+              maxlength="15">
           </div>
 
           <!-- Forced Bot Choice -->
           <div class="form-group" style="margin-top: 15px;">
             <label class="form-label">ต้องการเพิ่มบอทนิรนามสวมรอยเข้ามาในวงสนทนาเพื่อลดความกดดันหรือไม่?</label>
             <div style="display: flex; flex-direction: column; gap: 8px;">
-              <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(122,200,188,0.2); border-radius: 12px;">
-                <input type="radio" name="prejoin-bot-choice" value="true" checked style="accent-color: var(--primary); width: 18px; height: 18px;">
+              <label
+                style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(122,200,188,0.2); border-radius: 12px;">
+                <input type="radio" name="prejoin-bot-choice" value="true" checked
+                  style="accent-color: var(--primary); width: 18px; height: 18px;">
                 <div>
-                  <span style="font-family: 'Kanit'; font-size: 13.5px; font-weight: 500;">🤖 เพิ่มบอทนิรนามสวมรอย (แนะนำ)</span>
-                  <div style="font-size: 11px; color: #8fb3aa; margin-top: 2px;">ช่วยสลัวสวมรอยตอบคำถาม ป้องกันไม่ให้โฮสต์เดาคำตอบเปราะบางของคุณได้</div>
+                  <span style="font-family: 'Kanit'; font-size: 13.5px; font-weight: 500;">🤖 เพิ่มบอทนิรนามสวมรอย
+                    (แนะนำ)</span>
+                  <div style="font-size: 11px; color: #8fb3aa; margin-top: 2px;">ช่วยสลัวสวมรอยตอบคำถาม
+                    ป้องกันไม่ให้โฮสต์เดาคำตอบเปราะบางของคุณได้</div>
                 </div>
               </label>
-              <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(122,200,188,0.2); border-radius: 12px;">
-                <input type="radio" name="prejoin-bot-choice" value="false" style="accent-color: var(--primary); width: 18px; height: 18px;">
+              <label
+                style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(122,200,188,0.2); border-radius: 12px;">
+                <input type="radio" name="prejoin-bot-choice" value="false"
+                  style="accent-color: var(--primary); width: 18px; height: 18px;">
                 <div>
                   <span style="font-family: 'Kanit'; font-size: 13.5px; font-weight: 500;">ไม่เพิ่มบอท</span>
                   <div style="font-size: 11px; color: #8fb3aa; margin-top: 2px;">เล่นเฉพาะคนจริงในห้องเท่านั้น</div>
@@ -496,47 +528,97 @@
 
       <!-- SUB-STATE 1: LOBBY & WAITING SCREEN -->
       <section id="pstate-lobby" style="display: none; width: 100%;">
-        
+
         <!-- Host Dashboard Controls (Only visible to Host) -->
         <div class="host-dashboard" id="host-controls" style="display: none;">
           <div class="host-dashboard-title">👑 ตั้งค่าห้องเล่นเกม (โฮสต์)</div>
-          
+
           <!-- Keep only intensity and start button on Host side (mode and bot checkbox removed) -->
           <div class="host-form-group">
-            <label class="host-form-label">ระดับความลึกซึ้งของการสนทนา</label>
-            <div class="intensity-container">
-              <button class="intensity-btn active" data-level="1">ระดับ 1 (สนุก)</button>
-              <button class="intensity-btn" data-level="2">ระดับ 2 (ลึกซึ้ง)</button>
-              <button class="intensity-btn" data-level="3">ระดับ 3 (เปราะบาง)</button>
+            <label class="host-form-label">หมวดคำถาม</label>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button class="category-btn active" data-category="all">ทุกหมวด</button>
+              <button class="category-btn" data-category="ทั่วไป">ทั่วไป</button>
+              <button class="category-btn" data-category="ความรัก">ความรัก 💕</button>
+              <button class="category-btn" data-category="เพื่อนสนิท">เพื่อนสนิท</button>
+              <button class="category-btn" data-category="ทีมสร้างสัมพันธ์">ทีม 🏢</button>
             </div>
           </div>
 
-          <button class="submit-btn" id="host-start-btn" style="margin-top: 18px;" disabled>เริ่มเกมเริ่มวงสนทนา ➔</button>
+          <div class="host-form-group">
+            <label class="host-form-label">ระดับความลึกซึ้งของการสนทนา</label>
+            <div class="intensity-container">
+              <button class="intensity-btn active" data-level="1">สนุก</button>
+              <button class="intensity-btn" data-level="2">กล้าๆกลัว</button>
+              <button class="intensity-btn" data-level="3">แตกหัก</button>
+            </div>
+          </div>
+
+          <!-- แตกหัก Warning Banner -->
+          <div id="level3-warning"
+            style="display: none; margin-top: 14px; background: rgba(255, 120, 120, 0.1); border: 1.5px solid rgba(255, 120, 120, 0.35); border-radius: 12px; padding: 12px 14px; text-align: left;">
+            <div style="font-family: 'Kanit'; font-size: 14px; color: #ff9c9c; font-weight: 600; margin-bottom: 4px;">⚠️
+              โหมดแตกหัก — แรงมาก</div>
+            <div style="font-size: 12.5px; color: #e8c4c4; line-height: 1.4;">
+              คำถามระดับนี้จะเจาะลึกถึงแผลใจ ความกลัวลึกที่สุด และความเปราะบางทางอารมณ์
+              หากคุณหรือผู้เล่นไม่สบายใจ <strong>ให้รีบกดยกเลิกเกมทันที</strong> ใช้สิทธิ์ 🛡️ Safe Skip ได้เสมอ
+            </div>
+          </div>
+
+          <button class="submit-btn" id="host-start-btn" style="margin-top: 18px;" disabled>เริ่มเกมเริ่มวงสนทนา
+            ➔</button>
         </div>
 
-        <!-- Waiting for Host Area (Visible to Guests or Host waiting) -->
-        <div class="glass-panel" style="padding: 24px; text-align: center;" id="guest-waiting-area">
+        <!-- Waiting for Host Area (Host only) -->
+        <div class="glass-panel" style="padding: 24px; text-align: center; display:none;" id="guest-waiting-area">
           <div class="waiting-spinner" style="margin: 0 auto 18px;"></div>
-          <h2 style="font-family: 'Kanit'; font-size: 18px; margin-bottom: 10px;" id="lobby-status-title">เชื่อมต่อห้องสำเร็จแล้ว</h2>
+          <h2 style="font-family: 'Kanit'; font-size: 18px; margin-bottom: 10px;" id="lobby-status-title">
+            เชื่อมต่อห้องสำเร็จแล้ว</h2>
           <p style="color: #9cc0b8; font-size: 13.5px; line-height: 1.45;" id="lobby-status-desc">
             กำลังรอให้เพื่อนร่วมวงเข้ามาเพิ่ม และรอโฮสต์กดเริ่มเกม...
           </p>
-
-          <!-- Guest Bot area removed as it's resolved during pre-join -->
         </div>
 
-        <!-- Share Link Area -->
-        <div id="share-link-area" style="margin-top: 18px; background: rgba(255, 255, 255, 0.04); border: 1px dashed rgba(122, 200, 188, 0.3); border-radius: 14px; padding: 14px;">
-          <div style="font-family: 'Kanit'; font-size: 13px; color: #8fb3aa; margin-bottom: 6px;">🔗 ลิงก์ชวนเพื่อนเข้าร่วมวง:</div>
+        <!-- Share Link Area (Host only) -->
+        <div id="share-link-area"
+          style="display:none; margin-top: 18px; background: rgba(255, 255, 255, 0.04); border: 1px dashed rgba(122, 200, 188, 0.3); border-radius: 14px; padding: 14px;">
+          <div style="font-family: 'Kanit'; font-size: 13px; color: #8fb3aa; margin-bottom: 6px;">🔗
+            ลิงก์ชวนเพื่อนเข้าร่วมวง:</div>
           <div style="display: flex; gap: 8px;">
-            <input type="text" id="share-link-input" style="flex: 1; height: 38px; background: rgba(0,0,0,0.2); border: 1px solid rgba(122,200,188,0.2); border-radius: 8px; color: #eef7f4; padding: 0 10px; font-size: 12.5px;" readonly>
-            <button id="copy-share-link-btn" style="background: var(--primary); color: #0e1a1f; font-family: 'Kanit'; font-size: 12.5px; border: none; border-radius: 8px; padding: 0 14px; cursor: pointer; font-weight: 500; height: 38px;">คัดลอก</button>
+            <input type="text" id="share-link-input"
+              style="flex: 1; height: 38px; background: rgba(0,0,0,0.2); border: 1px solid rgba(122,200,188,0.2); border-radius: 8px; color: #eef7f4; padding: 0 10px; font-size: 12.5px;"
+              readonly>
+            <button id="copy-share-link-btn"
+              style="background: var(--primary); color: #0e1a1f; font-family: 'Kanit'; font-size: 12.5px; border: none; border-radius: 8px; padding: 0 14px; cursor: pointer; font-weight: 500; height: 38px;">คัดลอก</button>
           </div>
         </div>
 
-        <!-- Joined Players List (Visible to everyone) -->
-        <div style="margin-top: 24px;">
-          <div style="font-family: 'Kanit'; font-size: 14px; color: #8fb3aa; margin-bottom: 10px;">รายชื่อผู้ร่วมวงสนทนา:</div>
+        <!-- Guest-only: Connection Status + Tips (Visible only to non-host players) -->
+        <div id="guest-status-area" style="display:none; margin-top: 18px;">
+          <div class="glass-panel" style="padding: 16px; text-align: center;">
+            <div class="waiting-spinner" style="margin: 0 auto 12px;"></div>
+            <div style="font-family: 'Kanit'; font-size: 14px; color: #cfe6e0; margin-bottom: 4px;"
+              id="guest-status-text">กำลังรอโฮสต์เริ่มเกม...</div>
+            <div style="font-size: 11.5px; color: #8fb3aa;" id="guest-connection-status">🟢 เชื่อมต่อแล้ว</div>
+          </div>
+
+          <!-- Random Tips Card -->
+          <div class="glass-panel" style="padding: 14px; margin-top: 12px;">
+            <div style="font-family: 'Kanit'; font-size: 12px; color: var(--primary); margin-bottom: 8px;">💡 เคล็ดลับ
+            </div>
+            <div style="font-size: 12.5px; color: #9cc0b8; line-height: 1.45;" id="guest-tip-text">
+              กำลังโหลดเคล็ดลับ...
+            </div>
+            <button id="tip-refresh-btn"
+              style="margin-top: 10px; background: transparent; border: 1px solid rgba(122,200,188,0.2); color: #8fb3aa; font-family: 'Kanit'; font-size: 11px; padding: 4px 10px; border-radius: 6px; cursor: pointer;">↻
+              เคล็ดลับใหม่</button>
+          </div>
+        </div>
+
+        <!-- Joined Players List (Host only) -->
+        <div id="host-players-list-area" style="display:none; margin-top: 24px;">
+          <div style="font-family: 'Kanit'; font-size: 14px; color: #8fb3aa; margin-bottom: 10px;">
+            รายชื่อผู้ร่วมวงสนทนา:</div>
           <div class="lobby-players" id="lobby-players-list">
             <!-- Joined players injected dynamically -->
           </div>
@@ -556,10 +638,12 @@
         </div>
 
         <div class="composer-area">
-          <textarea id="player-answer-input" class="composer-textarea" placeholder="พิมพ์คำตอบอย่างจริงใจของคุณที่นี่..."></textarea>
+          <textarea id="player-answer-input" class="composer-textarea"
+            placeholder="พิมพ์คำตอบอย่างจริงใจของคุณที่นี่..."></textarea>
           <div class="composer-footer">
             <label class="incognito-toggle">
-              <input type="checkbox" id="incognito-checkbox" checked style="accent-color: var(--primary); display: none;">
+              <input type="checkbox" id="incognito-checkbox" checked
+                style="accent-color: var(--primary); display: none;">
               <span>🔒 นิรนาม (ส่งแบบไม่ระบุชื่อ)</span>
             </label>
             <div><span id="char-count">0</span> / 150</div>
@@ -581,7 +665,7 @@
       <!-- SUB-STATE 4: INCOGNITO VOTING / GUESSING -->
       <section id="pstate-vote" style="display: none; width: 100%;">
         <div class="guess-title">ทายกันหน่อย 🎭</div>
-        
+
         <div class="guess-answer-box">
           <div class="guess-answer-badge">🎭 คำตอบนิรนามผู้เขียน</div>
           <div class="guess-answer-text" id="voting-answer-highlight">"ข้อความคำตอบที่ถูกสุ่มขึ้นมาโชว์..."</div>
@@ -601,25 +685,33 @@
       <!-- SUB-STATE 5: ROUND OVER (Revealed Answers Flow) -->
       <section id="pstate-roundover" style="display: none; width: 100%;">
         <div class="glass-panel" style="padding: 22px; display: flex; flex-direction: column;">
-          <h2 style="font-family: 'Kanit'; font-size: 18px; color: var(--primary); text-align: center; margin-bottom: 16px;">🔓 เฉลยคำตอบแล้ว</h2>
-          
+          <h2
+            style="font-family: 'Kanit'; font-size: 18px; color: var(--primary); text-align: center; margin-bottom: 16px;">
+            🔓 เฉลยคำตอบแล้ว</h2>
+
           <!-- Question context so players don't forget the question -->
-          <div id="roundover-question-box" style="margin-bottom: 18px; padding: 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(122,200,188,0.2); border-radius: 12px; text-align: left; font-size: 14.5px;">
-            <div style="font-family: 'Kanit'; font-size: 11px; color: var(--primary); margin-bottom: 6px; letter-spacing: 0.5px;">คำถามประจำรอบ:</div>
-            <div id="roundover-question-th" style="font-family: 'Kanit'; font-weight: 500; color: #f4faf8; line-height: 1.4;"></div>
+          <div id="roundover-question-box"
+            style="margin-bottom: 18px; padding: 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(122,200,188,0.2); border-radius: 12px; text-align: left; font-size: 14.5px;">
+            <div
+              style="font-family: 'Kanit'; font-size: 11px; color: var(--primary); margin-bottom: 6px; letter-spacing: 0.5px;">
+              คำถามประจำรอบ:</div>
+            <div id="roundover-question-th"
+              style="font-family: 'Kanit'; font-weight: 500; color: #f4faf8; line-height: 1.4;"></div>
           </div>
-          
+
           <div class="reveal-scroll" id="player-revealed-answers-list">
             <!-- Revealed answers bubbles injected dynamically -->
           </div>
 
           <!-- Next Card Controller (Only visible to Host) -->
-          <div id="host-next-card-area" style="display: none; margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(122,200,188,0.15);">
+          <div id="host-next-card-area"
+            style="display: none; margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(122,200,188,0.15);">
             <button class="submit-btn" id="host-next-card-btn">จั่วคำถามการ์ดถัดไป ➔</button>
           </div>
 
           <!-- Waiting Screen (Visible to Guests) -->
-          <p id="guest-next-card-waiting" style="color: #8fb3aa; font-size: 13px; text-align: center; margin-top: 20px; line-height: 1.4;">
+          <p id="guest-next-card-waiting"
+            style="color: #8fb3aa; font-size: 13px; text-align: center; margin-top: 20px; line-height: 1.4;">
             กำลังรอให้โฮสต์จั่วการ์ดคำถามใหม่...
           </p>
         </div>
@@ -636,19 +728,19 @@
       <div class="twist-tray">
         <button class="twist-button" data-twist="fake-it" id="twist-btn-fake-it">
           <span class="twist-icon">🤥</span>
-          <span class="twist-name">Fake It</span>
+          <span class="twist-name">ตอบหลอก</span>
         </button>
         <button class="twist-button" data-twist="nominate" id="twist-btn-nominate">
           <span class="twist-icon">👉</span>
-          <span class="twist-name">Nominate</span>
+          <span class="twist-name">จี้ถาม</span>
         </button>
         <button class="twist-button" data-twist="fast-forward" id="twist-btn-fast-forward">
           <span class="twist-icon">👵</span>
-          <span class="twist-name">80 Yrs Old</span>
+          <span class="twist-name">วัย 80</span>
         </button>
         <button class="twist-button" data-twist="hot-seat" id="twist-btn-hot-seat">
           <span class="twist-icon">🔥</span>
-          <span class="twist-name">Hot Seat</span>
+          <span class="twist-name">เก้าอี้ร้อน</span>
         </button>
       </div>
     </footer>
@@ -660,7 +752,7 @@
         <p class="twist-modal-desc" id="twist-modal-desc">
           สวมรอยส่งคำตอบหลอกลวง คนอื่นต้องทายว่าคุณกำลังโกหกหรือไม่
         </p>
-        
+
         <!-- Target player select (for Nominate or target-based cards) -->
         <div class="form-group" id="twist-target-group" style="display: none; text-align: left;">
           <label class="form-label" for="twist-target-select">เลือกเป้าหมายผู้เล่น:</label>
@@ -671,13 +763,17 @@
 
         <div style="display: flex; gap: 10px; margin-top: 15px;">
           <button class="btn btn-outline" id="twist-close-btn" style="flex: 1; padding: 10px;">ยกเลิก</button>
-          <button class="btn btn-secondary" id="twist-play-confirm-btn" style="flex: 1; padding: 10px; background: var(--accent); color: #0e1a1f;">ใช้การ์ดขัดขวาง!</button>
+          <button class="btn btn-secondary" id="twist-play-confirm-btn"
+            style="flex: 1; padding: 10px; background: var(--accent); color: #0e1a1f;">ใช้การ์ดขัดขวาง!</button>
         </div>
       </div>
     </div>
 
     <!-- Home indicator gesture bar simulation -->
-    <div style="flex:none; height:24px; display:flex; align-items:center; justify-content:center; position:relative; z-index:6;"><span style="width:108px; height:4px; border-radius:2px; background:rgba(238,247,244,0.35);"></span></div>
+    <div
+      style="flex:none; height:24px; display:flex; align-items:center; justify-content:center; position:relative; z-index:6;">
+      <span style="width:108px; height:4px; border-radius:2px; background:rgba(238,247,244,0.35);"></span>
+    </div>
   </div>
 
   <!-- SCRIPT IMPORTS -->
@@ -687,4 +783,5 @@
   <script src="js/webrtc.js"></script>
   <script src="js/player.js"></script>
 </body>
+
 </html>
