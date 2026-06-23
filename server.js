@@ -387,6 +387,14 @@ io.on('connection', (socket) => {
     });
   });
 
+  // Event: End Game — broadcast scores screen to all players
+  socket.on('end-game', ({ roomCode }) => {
+    const room = rooms[roomCode];
+    if (!room) return;
+    room.gameState.status = 'ended';
+    io.to(roomCode).emit('game-ended', {});
+  });
+
   // Event: Return to Lobby
   socket.on('return-to-lobby', ({ roomCode }) => {
     const room = rooms[roomCode];

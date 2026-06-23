@@ -528,6 +528,29 @@
     #host-start-btn { margin-top: 20px; min-height: 60px; font-size: 18px; }
     #host-next-card-btn { min-height: 60px; font-size: 17px; }
 
+    /* ===== SCORE SCREEN ===== */
+    .score-bar-wrap { margin-bottom: 16px; }
+    .score-bar-label {
+      font-family: 'Kanit'; font-size: 14px; color: #e8f4f0;
+      margin-bottom: 5px; display: flex; justify-content: space-between;
+    }
+    .score-bar-track {
+      height: 26px; background: rgba(255,255,255,0.06);
+      border-radius: 13px; overflow: hidden;
+    }
+    .score-bar-fill {
+      height: 100%; background: linear-gradient(90deg, var(--primary), #7ac8bc);
+      border-radius: 13px; min-width: 4px;
+      transition: width 0.7s cubic-bezier(0.22,1,0.36,1);
+    }
+    #end-game-btn {
+      margin-top: 10px; min-height: 52px; font-size: 15px;
+      background: rgba(255,120,120,0.15); color: #ff9c9c;
+      border: 1.5px solid rgba(255,120,120,0.35);
+      box-shadow: none;
+    }
+    #end-game-btn:active { background: rgba(255,120,120,0.25); }
+
     /* ===== MULTIPLE CHOICE ===== */
     .choice-option {
       width: 100%; min-height: 52px; background: rgba(255,255,255,0.05);
@@ -825,6 +848,7 @@
           <div id="host-next-card-area"
             style="display: none; margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(122,200,188,0.15);">
             <button class="submit-btn" id="host-next-card-btn">จั่วคำถามการ์ดถัดไป ➔</button>
+            <button class="submit-btn" id="end-game-btn">จบเกม — ดูคะแนนรวม 🏆</button>
           </div>
 
           <!-- Waiting Screen (Visible to Guests) -->
@@ -832,6 +856,18 @@
             style="color: #8fb3aa; font-size: 13px; text-align: center; margin-top: 20px; line-height: 1.4;">
             กำลังรอให้โฮสต์จั่วการ์ดคำถามใหม่...
           </p>
+        </div>
+      </section>
+
+      <!-- SUB-STATE 6: SCORES SCREEN (Game End) -->
+      <section id="pstate-scores" style="display: none; width: 100%;">
+        <div class="glass-panel" style="padding: 22px;">
+          <h2 style="font-family:'Kanit';font-size:20px;color:var(--primary);text-align:center;margin-bottom:6px;">🏆 สรุปผลคะแนน</h2>
+          <p style="font-size:12.5px;color:#8fb3aa;text-align:center;margin-bottom:20px;line-height:1.4;">
+            รอบที่ตอบตรงกับผู้เล่นอื่น (ระดับ 1 และ 2 เท่านั้น)
+          </p>
+          <div id="scores-list"></div>
+          <button class="submit-btn" id="play-again-btn" style="margin-top:24px;">เล่นอีกรอบ 🔄</button>
         </div>
       </section>
 

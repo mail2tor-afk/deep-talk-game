@@ -71,6 +71,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const votingPlayersList = document.getElementById('voting-players-list');
   const playerSubmitVoteBtn = document.getElementById('player-submit-vote-btn');
 
+  // Scores Screen
+  const pstateScores = document.getElementById('pstate-scores');
+  const endGameBtn = document.getElementById('end-game-btn');
+  const playAgainBtn = document.getElementById('play-again-btn');
+
   // Multiple Choice
   const pstateChoice = document.getElementById('pstate-choice');
   const choiceCardHint = document.getElementById('choice-card-hint');
@@ -703,6 +708,61 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ==========================================================================
+  // SCORE SCREEN (T6)
+  // ==========================================================================
+
+  if (endGameBtn) {
+    endGameBtn.addEventListener('click', () => {
+      if (confirm('จบเกมและแสดงคะแนนรวมใช่หรือไม่?')) {
+        socket.emit('end-game', { roomCode });
+      }
+    });
+  }
+
+  if (playAgainBtn) {
+    playAgainBtn.addEventListener('click', () => {
+      socket.emit('return-to-lobby', { roomCode });
+      matchScores = {};
+    });
+  }
+
+  socket.on('game-ended', () => {
+    renderScoreScreen();
+    transitionView('scores');
+  });
+
+  function renderScoreScreen() {
+    const scoresList = document.getElementById('scores-list');
+    scoresList.innerHTML = '';
+
+    const entries = Object.entries(matchScores)
+      .sort((a, b) => (b[1].matched / Math.max(b[1].total, 1)) - (a[1].matched / Math.max(a[1].total, 1)));
+
+    if (entries.length === 0) {
+      scoresList.innerHTML = '<p style="text-align:center;color:#8fb3aa;font-size:14px;padding:20px 0;">ยังไม่มีคะแนน<br>(ยังไม่ได้เล่นรอบคำถามระดับ 1 หรือ 2)</p>';
+      return;
+    }
+
+    entries.forEach(([name, data], idx) => {
+      const pct = data.total > 0 ? Math.round((data.matched / data.total) * 100) : 0;
+      const isMe = name === playerName;
+      const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '';
+      const div = document.createElement('div');
+      div.className = 'score-bar-wrap';
+      div.innerHTML = `
+        <div class="score-bar-label">
+          <span>${medal} ${isMe ? '<strong>' : ''}${name}${isMe ? '</strong>' : ''}</span>
+          <span style="color:var(--primary);font-family:Kanit">${data.matched}/${data.total} (${pct}%)</span>
+        </div>
+        <div class="score-bar-track">
+          <div class="score-bar-fill" style="width:${pct}%"></div>
+        </div>
+      `;
+      scoresList.appendChild(div);
+    });
+  }
+
+  // ==========================================================================
   // TRANSITION VIEW UTILITY
   // ==========================================================================
 
@@ -715,6 +775,7 @@ document.addEventListener('DOMContentLoaded', () => {
     pstateSubmitted.style.display = 'none';
     pstateVote.style.display = 'none';
     pstateRoundover.style.display = 'none';
+    pstateScores.style.display = 'none';
 
     // หน้าจอตอนจัดตั้งห้อง (join และ lobby) ไม่ต้องมี safe skip กับยกเลิกเกม
     if (view === 'join' || view === 'lobby' || view === 'connecting') {
@@ -741,6 +802,9 @@ document.addEventListener('DOMContentLoaded', () => {
       pstateVote.style.display = 'block';
     } else if (view === 'roundover') {
       pstateRoundover.style.display = 'block';
+    } else if (view === 'scores') {
+      pstateScores.style.display = 'block';
+      safezoneBtn.style.display = 'none';
     }
   }
 
