@@ -121,6 +121,10 @@ document.addEventListener('DOMContentLoaded', () => {
     playerRoleBadge.innerText = 'โฮสต์ (Host) 👑';
     transitionView('connecting');
     socket.emit('create-room');
+    // Fallback: if server doesn't respond in 10s, clear session and go home
+    setTimeout(() => {
+      if (!roomCode) { sessionStorage.clear(); window.location.href = 'index.html'; }
+    }, 10000);
   } else if (sessionCode && sessionName) {
     // We are a Guest joining a room
     isHost = false;
@@ -131,6 +135,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (connectingTitle) connectingTitle.innerText = 'กำลังเข้าร่วมห้อง...';
     transitionView('connecting');
     joinRoom(roomCode, playerName);
+    // Fallback: if join fails in 10s, clear session and go home
+    setTimeout(() => {
+      if (pstateConnecting.style.display !== 'none') { sessionStorage.clear(); window.location.href = 'index.html'; }
+    }, 10000);
   } else {
     // No session data and no room param, redirect to index.html
     window.location.href = 'index.html';
@@ -326,7 +334,14 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   socket.on('room-closed', (msg) => {
+    sessionStorage.clear();
     alert(msg || 'ห้องสนทนาถูกปิดเนื่องจากโฮสต์ออกจากเกม');
+    window.location.href = 'index.html';
+  });
+
+  socket.on('join-error', (msg) => {
+    sessionStorage.clear();
+    alert(msg || 'ไม่สามารถเข้าร่วมห้องได้');
     window.location.href = 'index.html';
   });
 
