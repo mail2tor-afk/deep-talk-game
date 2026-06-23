@@ -407,11 +407,15 @@
         // Wait for start button to be enabled, then click
         setTimeout(() => {
           const startBtn = hostFrame.contentDocument.getElementById('host-start-btn');
+          let startTries = 0;
           const poll = setInterval(() => {
+            startTries++;
             if (startBtn && !startBtn.hasAttribute('disabled')) {
               clearInterval(poll);
               startBtn.click();
               setTimeout(() => advance(), 1000);
+            } else if (startTries > 60) { // 60×400ms = 24s timeout
+              clearInterval(poll);
             }
           }, 400);
           pollTimers.push(poll);
@@ -431,9 +435,9 @@
         }, 400);
       });
 
-      // Wait for submitted view
-      whenVisible(playerFrame, 'pstate-submitted', () => {
-        // Also wait for host to see answers reveal
+      // pstate-submitted is visible for ~2ms on localhost (submit→allSubmitted→roundover in one tick)
+      // Poll pstate-roundover instead — it persists until host clicks next card
+      whenVisible(playerFrame, 'pstate-roundover', () => {
         whenVisible(hostFrame, 'player-revealed-answers-list', () => {
           setTimeout(() => advance(), 1000);
         });
@@ -466,7 +470,7 @@
         }, 400);
       });
 
-      whenVisible(playerFrame, 'pstate-submitted', () => {
+      whenVisible(playerFrame, 'pstate-roundover', () => {
         setTimeout(() => advance(), 800);
       });
     }
@@ -489,7 +493,9 @@
 
     function go() {
       if (step === 0 || step >= STEPS.length - 1) {
-        // Reset for new round
+        // Reset for new round — clear all active intervals first to prevent leaks
+        pollTimers.forEach(t => clearInterval(t));
+        pollTimers = [];
         step = 0;
         hostRoomCode = '';
         roomDisplay.textContent = '----';

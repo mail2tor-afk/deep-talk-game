@@ -304,7 +304,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   socket.on('safe-zone-activated', ({ skippedBy }) => {
-    alert(`🛡️ มีผู้ใช้สิทธิ์ Safe-Zone Skip (โดยคุณ ${skippedBy}) ข้ามคำถามรอบนี้แล้ว! ระบบกำลังสุ่มคำถามใหม่...`);
+    alert(`🛡️ มีผู้ใช้สิทธิ์ Safe-Zone Skip (โดย ${skippedBy}) ข้ามคำถามรอบนี้แล้ว! ระบบกำลังสุ่มคำถามใหม่...`);
     if (isHost) {
       const card = pickNextCard(selectedIntensity);
       if (card) {
@@ -405,9 +405,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const categoryButtons = document.querySelectorAll('.category-btn');
   categoryButtons.forEach(btn => {
     btn.addEventListener('click', () => {
+      const cat = btn.getAttribute('data-category');
+      if (selectedCategory === cat) return; // guard: re-click same category would reset usedCardIds
       categoryButtons.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      selectedCategory = btn.getAttribute('data-category');
+      selectedCategory = cat;
       usedCardIds.clear();
     });
   });
@@ -452,6 +454,8 @@ document.addEventListener('DOMContentLoaded', () => {
       const retryCard = pickNextCard(selectedIntensity);
       if (retryCard) {
         socket.emit('next-card', { roomCode, card: retryCard });
+      } else {
+        socket.emit('return-to-lobby', { roomCode });
       }
       return;
     }
@@ -723,7 +727,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   socket.on('twist-played', ({ player, twist }) => {
     const thaiName = twistNames[twist.type] || twist.type;
-    alert(`✨ การ์ดขัดจังหวะ "${thaiName}" ถูกเปิดใช้งานโดยคุณ ${twist.playedBy}`);
+    alert(`✨ การ์ดขัดจังหวะ "${thaiName}" ถูกเปิดใช้งานโดย ${twist.playedBy}`);
     if (player.name === playerName) {
       updateTwistCardsHUD(player.twistCards);
     }

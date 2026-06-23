@@ -188,15 +188,9 @@ window.DEEP_TALK_DB = {
 // Maps level number → all cards across all categories at that level
 // ============================================================
 function getCardsByLevel(level) {
-  const all = [];
-  const categories = ["ทั่วไป", "ความรัก", "เพื่อนสนิท", "ทีมสร้างสัมพันธ์"];
-  for (const cat of categories) {
-    const key = `${cat}_${level}`;
-    if (window.DEEP_TALK_DB[key]) {
-      all.push(...window.DEEP_TALK_DB[key]);
-    }
-  }
-  return all;
+  return Object.keys(window.DEEP_TALK_DB)
+    .filter(k => k.endsWith(`_${level}`))
+    .flatMap(k => window.DEEP_TALK_DB[k]);
 }
 
 // Expose numeric arrays for player.js compatibility
