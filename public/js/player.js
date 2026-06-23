@@ -3,7 +3,7 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  const socket = io();
+  const socket = io('https://deep-talk-game-production.up.railway.app');
 
   // State Management
   let roomCode = '';
