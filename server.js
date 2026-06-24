@@ -24,9 +24,10 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Global Rooms State
-// Keys: roomCode (4-digit uppercase string)
-// Values: Room object
 const rooms = {};
+
+// Question ratings: { questionId: { up, down, questionTh } }
+const ratings = {};
 
 // Auto-cleanup stale rooms (2h TTL) every 10 minutes
 const ROOM_TTL = 2 * 60 * 60 * 1000;
@@ -147,6 +148,14 @@ function getOfflineThemePrompts(theme, level) {
   }
   return promptList;
 }
+
+// Admin: view question ratings sorted by score
+app.get('/api/ratings', (req, res) => {
+  const sorted = Object.entries(ratings)
+    .map(([id, r]) => ({ id, up: r.up, down: r.down, score: r.up - r.down }))
+    .sort((a, b) => a.score - b.score);
+  res.json(sorted);
+});
 
 // Serve deck config
 app.get('/api/decks', (req, res) => {
@@ -402,6 +411,13 @@ io.on('connection', (socket) => {
       senderSocketId: socket.id,
       signal
     });
+  });
+
+  // Event: Anonymous question rating (fire-and-forget, no reply)
+  socket.on('rate-question', ({ questionId, vote }) => {
+    if (!questionId || !['up', 'down'].includes(vote)) return;
+    if (!ratings[questionId]) ratings[questionId] = { up: 0, down: 0 };
+    ratings[questionId][vote]++;
   });
 
   // Event: Verify room still exists after socket reconnect

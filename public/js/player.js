@@ -648,7 +648,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     transitionView('roundover');
+
+    // Show rating widget (reset state each round)
+    const ratingDiv = document.getElementById('question-rating');
+    const rateUp = document.getElementById('rate-up-btn');
+    const rateDown = document.getElementById('rate-down-btn');
+    if (ratingDiv) {
+      ratingDiv.style.display = 'block';
+      if (rateUp) rateUp.style.opacity = '0.5';
+      if (rateDown) rateDown.style.opacity = '0.5';
+    }
   }
+
+  function sendRating(vote) {
+    const ratingDiv = document.getElementById('question-rating');
+    if (currentCard) socket.emit('rate-question', { questionId: currentCard.id, vote });
+    if (ratingDiv) ratingDiv.innerHTML = '<span style="font-size:12px;color:#8fb3aa;font-family:Kanit;">ขอบคุณ 🙏</span>';
+  }
+
+  const rateUpBtn = document.getElementById('rate-up-btn');
+  const rateDownBtn = document.getElementById('rate-down-btn');
+  if (rateUpBtn) rateUpBtn.addEventListener('click', () => sendRating('up'));
+  if (rateDownBtn) rateDownBtn.addEventListener('click', () => sendRating('down'));
 
   function showChoiceMatchResults(responses) {
     const BOT = 'ผู้เล่นนิรนาม';
