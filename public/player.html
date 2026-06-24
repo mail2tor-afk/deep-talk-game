@@ -585,6 +585,17 @@
     <!-- MAIN INTERACTIVE SPACE -->
     <main class="main-content">
 
+      <!-- GAME PROGRESS INDICATOR (shown during gameplay only) -->
+      <div id="game-progress" style="display:none;width:100%;padding:0 0 14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;">
+          <span id="progress-text" style="font-family:'Kanit';font-size:12px;color:#8fb3aa;">ข้อที่ 1 / 5</span>
+          <span id="progress-dots" style="display:flex;gap:5px;"></span>
+        </div>
+        <div style="height:4px;background:rgba(255,255,255,0.08);border-radius:2px;">
+          <div id="progress-fill" style="height:100%;background:var(--primary);border-radius:2px;transition:width 0.5s ease;width:0%;"></div>
+        </div>
+      </div>
+
       <!-- SUB-STATE 0: DIRECT JOIN FORM (Guest Pre-Join Screen) -->
       <section id="pstate-join" style="display: none; width: 100%;">
         <div class="glass-panel" style="padding: 24px;">
@@ -858,6 +869,11 @@
           <div id="gameover-guest-waiting" style="display:none;text-align:center;padding:12px 0;color:#8fb3aa;font-size:13px;line-height:1.5;">
             รอโฮสต์เลือกหมวดและเริ่มรอบใหม่...
           </div>
+
+          <!-- Share result — visible to all -->
+          <button id="share-result-btn" style="width:100%;margin-top:12px;padding:12px;background:rgba(77,182,164,0.12);border:1px solid rgba(77,182,164,0.3);border-radius:12px;color:#7ac8bc;font-family:'Kanit';font-size:14px;cursor:pointer;">
+            แชร์ผลการเล่น 📤
+          </button>
         </div>
       </section>
 

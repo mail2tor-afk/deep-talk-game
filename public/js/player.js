@@ -329,6 +329,7 @@ document.addEventListener('DOMContentLoaded', () => {
   socket.on('card-updated', (state) => {
     if (!isHost) notify('การ์ดใหม่มาแล้ว! 🃏', 'โฮสต์จั่วคำถามใหม่ — กลับมาตอบได้เลย');
     questionCount++;
+    updateProgress();
     currentCard = state.gameState.currentCard;
     const levelNames = { 1: 'ระดับ 1', 2: 'ระดับ 2', 3: 'ระดับ 3' };
     const hint = `คำถามชวนคิด · ${levelNames[currentCard.level] || 'ระดับ ' + currentCard.level} (หมวด: ${currentCard.category || 'เปิดใจ'})`;
@@ -699,6 +700,47 @@ document.addEventListener('DOMContentLoaded', () => {
     transitionView('gameover');
   });
 
+  const TOTAL_QUESTIONS = 5;
+
+  function updateProgress() {
+    const bar = document.getElementById('game-progress');
+    const fill = document.getElementById('progress-fill');
+    const text = document.getElementById('progress-text');
+    const dots = document.getElementById('progress-dots');
+    if (!bar) return;
+    bar.style.display = 'block';
+    const pct = Math.min((questionCount / TOTAL_QUESTIONS) * 100, 100);
+    if (fill) fill.style.width = pct + '%';
+    if (text) text.innerText = `ข้อที่ ${questionCount} / ${TOTAL_QUESTIONS}`;
+    if (dots) {
+      dots.innerHTML = '';
+      for (let i = 1; i <= TOTAL_QUESTIONS; i++) {
+        const d = document.createElement('span');
+        d.style.cssText = `width:7px;height:7px;border-radius:50%;background:${i <= questionCount ? 'var(--primary)' : 'rgba(255,255,255,0.15)'};transition:background 0.3s ease;`;
+        dots.appendChild(d);
+      }
+    }
+  }
+
+  function shareResult() {
+    const entries = Object.entries(matchScores).sort((a, b) => b[1].matched - a[1].matched);
+    const medals = ['🥇', '🥈', '🥉'];
+    let lines = ['🎮 DeepTalk — ผลการเล่น', `ตอบตรงกัน ${entries[0]?.[1]?.matched || 0} จาก ${questionCount} ข้อ`, ''];
+    entries.forEach(([name, data], i) => {
+      lines.push(`${medals[i] || '▪️'} ${name}: ตรงกัน ${data.matched}/${data.total} ข้อ`);
+    });
+    lines.push('', '🔗 deep-talk-game.pages.dev');
+    const text = lines.join('\n');
+    if (navigator.share) {
+      navigator.share({ title: 'DeepTalk ผลการเล่น', text });
+    } else {
+      navigator.clipboard.writeText(text).then(() => alert('คัดลอกผลแล้ว 📋'));
+    }
+  }
+
+  const shareResultBtn = document.getElementById('share-result-btn');
+  if (shareResultBtn) shareResultBtn.addEventListener('click', shareResult);
+
   function renderGameOverScreen() {
     const list = document.getElementById('gameover-scores-list');
     if (!list) return;
@@ -786,6 +828,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Null-safe hide: element might not exist if HTML/JS cache is mismatched
     const hide = el => { if (el) el.style.display = 'none'; };
     const show = (el, d) => { if (el) el.style.display = d || 'block'; };
+
+    // Progress bar: show only during active gameplay
+    const progressBar = document.getElementById('game-progress');
+    if (['join', 'connecting', 'lobby', 'gameover', 'scores'].includes(view)) {
+      hide(progressBar);
+    } else {
+      updateProgress();
+    }
 
     hide(pstateJoin);
     hide(pstateConnecting);
