@@ -3,9 +3,53 @@ const http = require('http');
 const { Server } = require('socket.io');
 const path = require('path');
 const dotenv = require('dotenv');
+const { Redis } = require('@upstash/redis');
 
 // Load environment variables
 dotenv.config();
+
+// Redis client (Upstash REST)
+const redis = process.env.UPSTASH_REDIS_REST_URL
+  ? new Redis({ url: process.env.UPSTASH_REDIS_REST_URL, token: process.env.UPSTASH_REDIS_REST_TOKEN })
+  : null;
+if (redis) console.log('Redis connected (Upstash)');
+else console.log('Redis not configured — rooms are in-memory only');
+
+// Save room to Redis (fire-and-forget, excludes non-serializable timer refs)
+function saveRoom(code) {
+  if (!redis || !rooms[code]) return;
+  const { _hostGraceTimer, ...room } = rooms[code];
+  const clean = {
+    ...room,
+    players: room.players.map(({ _reconnectTimer, ...p }) => p)
+  };
+  redis.set(`room:${code}`, clean, { ex: 4 * 60 * 60 }).catch(e => console.error('Redis save error:', e.message));
+}
+
+// Delete room from Redis
+function deleteRoom(code) {
+  if (!redis) return;
+  redis.del(`room:${code}`).catch(e => console.error('Redis delete error:', e.message));
+}
+
+// Load all rooms from Redis on startup
+async function loadRoomsFromRedis() {
+  if (!redis) return;
+  try {
+    const keys = await redis.keys('room:*');
+    for (const key of keys) {
+      const data = await redis.get(key);
+      if (data) {
+        const code = key.replace('room:', '');
+        rooms[code] = data;
+        console.log(`Restored room: ${code}`);
+      }
+    }
+    console.log(`Loaded ${keys.length} rooms from Redis`);
+  } catch (e) {
+    console.error('Redis load error:', e.message);
+  }
+}
 
 const app = express();
 const server = http.createServer(app);
@@ -40,6 +84,7 @@ const CLOSED_ROOM_MESSAGES = {
 
 function closeRoom(code, reason) {
   delete rooms[code];
+  deleteRoom(code);
   if (closedRooms[code]?._timer) clearTimeout(closedRooms[code]._timer);
   closedRooms[code] = {
     reason,
@@ -219,6 +264,7 @@ io.on('connection', (socket) => {
     rooms[code].lastActivity = Date.now();
     socket.join(code);
     socket.emit('room-created', { roomCode: code, roomState: rooms[code] });
+    saveRoom(code);
     console.log(`Room created: ${code} by host ${socket.id}`);
   });
 
@@ -244,6 +290,7 @@ io.on('connection', (socket) => {
       room.lastActivity = Date.now();
       socket.emit('joined-successfully', { roomCode: code, player: hostPlayer || { name: playerName.trim(), score: 0 }, roomState: room });
       io.to(code).emit('host-reconnected', room);
+      saveRoom(code);
       console.log(`Host ${playerName} reconnected to room ${code}`);
       return;
     }
@@ -271,6 +318,7 @@ io.on('connection', (socket) => {
 
     socket.emit('joined-successfully', { roomCode: code, player: newPlayer, roomState: room });
     io.to(code).emit('player-joined', { players: room.players, roomState: room });
+    saveRoom(code);
     console.log(`Player ${playerName} joined room ${code}`);
   });
 
@@ -287,6 +335,7 @@ io.on('connection', (socket) => {
     }
 
     io.to(roomCode).emit('settings-updated', room);
+    saveRoom(roomCode);
   });
 
   // Event: Start Mode Selection or Change Mode
@@ -302,6 +351,7 @@ io.on('connection', (socket) => {
     room.gameState.currentCard = null;
 
     io.to(roomCode).emit('mode-changed', room);
+    saveRoom(roomCode);
   });
 
   // Event: Host displays next card
@@ -332,6 +382,7 @@ io.on('connection', (socket) => {
     }
 
     io.to(roomCode).emit('card-updated', room);
+    saveRoom(roomCode);
   });
 
   // Event: Player submits answer (could be anonymous or public)
@@ -353,6 +404,7 @@ io.on('connection', (socket) => {
       responsesCount: Object.keys(room.gameState.responses).length,
       roomState: room
     });
+    saveRoom(roomCode);
   });
 
   // Event: Toggle Incognito Mode manually
@@ -385,6 +437,7 @@ io.on('connection', (socket) => {
       skippedBy: player ? player.name : 'A Player',
       roomState: room
     });
+    saveRoom(roomCode);
   });
 
   // Event: Play Twist Card
@@ -491,6 +544,7 @@ io.on('connection', (socket) => {
     room.gameState.twistPlayed = null;
 
     io.to(roomCode).emit('returned-to-lobby', room);
+    saveRoom(roomCode);
   });
 
   // Event: Disconnect
@@ -546,7 +600,9 @@ io.on('connection', (socket) => {
   });
 });
 
-// Start Server
-server.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+// Start Server — load persisted rooms first then begin listening
+loadRoomsFromRedis().then(() => {
+  server.listen(PORT, () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+  });
 });
