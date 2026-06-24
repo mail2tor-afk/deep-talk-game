@@ -198,13 +198,28 @@ io.on('connection', (socket) => {
     const room = rooms[code];
 
     if (!room) {
-      return socket.emit('join-error', 'Room not found.');
+      return socket.emit('join-error', 'ไม่พบห้อง รหัสอาจหมดอายุหรือโฮสต์ออกไปก่อน ขอให้โฮสต์สร้างห้องใหม่');
+    }
+
+    // Host reconnecting during grace period
+    if (room.hostDisconnected && room.hostName === playerName.trim()) {
+      room.hostSocketId = socket.id;
+      room.hostDisconnected = false;
+      if (room._hostGraceTimer) { clearTimeout(room._hostGraceTimer); delete room._hostGraceTimer; }
+      socket.join(code);
+      const hostPlayer = room.players.find(p => p.name === playerName.trim());
+      if (hostPlayer) hostPlayer.socketId = socket.id;
+      room.lastActivity = Date.now();
+      socket.emit('joined-successfully', { roomCode: code, player: hostPlayer || { name: playerName.trim(), score: 0 }, roomState: room });
+      io.to(code).emit('host-reconnected', room);
+      console.log(`Host ${playerName} reconnected to room ${code}`);
+      return;
     }
 
     // Check if player name already exists
     const nameExists = room.players.some(p => p.name.toLowerCase() === playerName.trim().toLowerCase());
     if (nameExists) {
-      return socket.emit('join-error', 'Name already taken in this room.');
+      return socket.emit('join-error', 'ชื่อนี้มีคนใช้แล้วในห้องนี้');
     }
 
     const newPlayer = {
@@ -212,16 +227,17 @@ io.on('connection', (socket) => {
       name: playerName.trim(),
       score: 0,
       safeZoneUsed: 0,
-      twistCards: ['fake-it', 'nominate', 'fast-forward', 'hot-seat'] // Initial twist cards inventory
+      twistCards: []
     };
+
+    // Track host name for reconnect matching
+    if (socket.id === room.hostSocketId) room.hostName = playerName.trim();
 
     room.players.push(newPlayer);
     room.lastActivity = Date.now();
     socket.join(code);
-    
+
     socket.emit('joined-successfully', { roomCode: code, player: newPlayer, roomState: room });
-    
-    // Notify host and other players
     io.to(code).emit('player-joined', { players: room.players, roomState: room });
     console.log(`Player ${playerName} joined room ${code}`);
   });
@@ -418,11 +434,19 @@ io.on('connection', (socket) => {
     for (const code in rooms) {
       const room = rooms[code];
       
-      // If host disconnected, close the room
+      // If host disconnected, start 60s grace period before closing room
       if (room.hostSocketId === socket.id) {
-        io.to(code).emit('room-closed', 'เกมถูกกดยกเลิกเนื่องจากโฮสต์ยกเลิกการเชื่อมต่อหรือปิดห้อง');
-        delete rooms[code];
-        console.log(`Room closed: ${code} due to host disconnect.`);
+        room.hostDisconnected = true;
+        room.hostSocketId = null;
+        io.to(code).emit('host-disconnected', { waitSeconds: 60 });
+        console.log(`Host disconnected from room ${code}, starting 60s grace period`);
+        room._hostGraceTimer = setTimeout(() => {
+          if (rooms[code] && rooms[code].hostDisconnected) {
+            io.to(code).emit('room-closed', 'โฮสต์ไม่กลับมาภายใน 60 วินาที ห้องถูกปิดแล้ว');
+            delete rooms[code];
+            console.log(`Room ${code} closed after host grace period expired`);
+          }
+        }, 60000);
         break;
       }
 

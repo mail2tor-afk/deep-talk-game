@@ -269,9 +269,25 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   socket.on('join-error', (msg) => {
-    alert(msg);
     sessionStorage.clear();
-    transitionView('join');
+    alert(msg || 'ไม่สามารถเข้าร่วมห้องได้');
+    window.location.href = 'index.html';
+  });
+
+  socket.on('host-disconnected', ({ waitSeconds }) => {
+    let banner = document.getElementById('host-disconnected-banner');
+    if (!banner) {
+      banner = document.createElement('div');
+      banner.id = 'host-disconnected-banner';
+      banner.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#c0392b;color:#fff;font-family:Kanit;font-size:14px;text-align:center;padding:12px 16px;z-index:9999;';
+      document.body.appendChild(banner);
+    }
+    banner.innerText = `โฮสต์หลุดการเชื่อมต่อ — รอ ${waitSeconds} วินาที ถ้าไม่กลับมาห้องจะถูกปิด`;
+  });
+
+  socket.on('host-reconnected', () => {
+    const banner = document.getElementById('host-disconnected-banner');
+    if (banner) banner.remove();
   });
 
   socket.on('player-joined', ({ players, roomState: state }) => {
@@ -343,12 +359,6 @@ document.addEventListener('DOMContentLoaded', () => {
   socket.on('room-closed', (msg) => {
     sessionStorage.clear();
     alert(msg || 'ห้องสนทนาถูกปิดเนื่องจากโฮสต์ออกจากเกม');
-    window.location.href = 'index.html';
-  });
-
-  socket.on('join-error', (msg) => {
-    sessionStorage.clear();
-    alert(msg || 'ไม่สามารถเข้าร่วมห้องได้');
     window.location.href = 'index.html';
   });
 
