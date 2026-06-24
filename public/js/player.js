@@ -295,15 +295,15 @@ document.addEventListener('DOMContentLoaded', () => {
     window.location.href = 'index.html';
   });
 
-  socket.on('host-disconnected', ({ waitSeconds }) => {
+  socket.on('host-disconnected', ({ waitMinutes }) => {
     let banner = document.getElementById('host-disconnected-banner');
     if (!banner) {
       banner = document.createElement('div');
       banner.id = 'host-disconnected-banner';
-      banner.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#c0392b;color:#fff;font-family:Kanit;font-size:14px;text-align:center;padding:12px 16px;z-index:9999;';
+      banner.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#7d3c1a;color:#fff;font-family:Kanit;font-size:13px;text-align:center;padding:10px 16px;z-index:9999;line-height:1.5;';
       document.body.appendChild(banner);
     }
-    banner.innerText = `โฮสต์หลุดการเชื่อมต่อ — รอ ${waitSeconds} วินาที ถ้าไม่กลับมาห้องจะถูกปิด`;
+    banner.innerText = `โฮสต์หลุดการเชื่อมต่อ — รอโฮสต์กลับมา (ห้องยังเปิดอยู่อีก ${waitMinutes} นาที)`;
   });
 
   socket.on('host-reconnected', () => {

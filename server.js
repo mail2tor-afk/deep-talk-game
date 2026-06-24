@@ -32,7 +32,7 @@ const ratings = {};
 // Closed room reason cache (10 min) — gives player specific error message
 const closedRooms = {};
 const CLOSED_ROOM_MESSAGES = {
-  host_disconnect: 'โฮสต์ไม่กลับมาภายใน 60 วินาที — ขอให้โฮสต์สร้างห้องใหม่แล้วส่ง link ใหม่',
+  host_disconnect: 'โฮสต์ไม่กลับมาภายใน 120 นาที — ขอให้โฮสต์สร้างห้องใหม่แล้วส่ง link ใหม่',
   player_left:     'ผู้เล่นออกระหว่างเกม เกมถูกปิด — ขอให้โฮสต์สร้างห้องใหม่',
   ttl:             'ห้องหมดอายุ (ไม่มีการใช้งาน 2 ชั่วโมง) — ขอให้โฮสต์สร้างห้องใหม่',
   unknown:         'ไม่พบห้องรหัสนี้ อาจพิมพ์ผิด หรือเซิร์ฟเวอร์รีสตาร์ท — ขอ link ใหม่จากโฮสต์',
@@ -495,15 +495,15 @@ io.on('connection', (socket) => {
       if (room.hostSocketId === socket.id) {
         room.hostDisconnected = true;
         room.hostSocketId = null;
-        io.to(code).emit('host-disconnected', { waitSeconds: 60 });
+        io.to(code).emit('host-disconnected', { waitMinutes: 120 });
         console.log(`Host disconnected from room ${code}, starting 60s grace period`);
         room._hostGraceTimer = setTimeout(() => {
           if (rooms[code] && rooms[code].hostDisconnected) {
-            io.to(code).emit('room-closed', 'โฮสต์ไม่กลับมาภายใน 60 วินาที ห้องถูกปิดแล้ว');
+            io.to(code).emit('room-closed', 'โฮสต์ไม่กลับมาภายใน 120 นาที ห้องถูกปิดแล้ว');
             closeRoom(code, 'host_disconnect');
             console.log(`Room ${code} closed after host grace period expired`);
           }
-        }, 60000);
+        }, 120 * 60 * 1000);
         break;
       }
 
