@@ -215,7 +215,14 @@ function getOfflineThemePrompts(theme, level) {
 
 // Version check — confirms which features are deployed
 app.get('/api/version', (req, res) => {
-  res.json({ version: 'a943ef0', redis: !!redis, rooms: Object.keys(rooms).length });
+  res.json({
+    version: 'c0196f5',
+    redis: !!redis,
+    rooms: Object.keys(rooms).length,
+    env_url_set: !!process.env.UPSTASH_REDIS_REST_URL,
+    env_token_set: !!process.env.UPSTASH_REDIS_REST_TOKEN,
+    env_url_len: (process.env.UPSTASH_REDIS_REST_URL || '').length,
+  });
 });
 
 // Admin: view question ratings sorted by score
