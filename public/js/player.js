@@ -311,6 +311,22 @@ document.addEventListener('DOMContentLoaded', () => {
     if (banner) banner.remove();
   });
 
+  socket.on('player-disconnected', ({ playerName: dcName, waitSeconds }) => {
+    let banner = document.getElementById('player-disconnected-banner');
+    if (!banner) {
+      banner = document.createElement('div');
+      banner.id = 'player-disconnected-banner';
+      banner.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#7d3c1a;color:#fff;font-family:Kanit;font-size:13px;text-align:center;padding:10px 16px;z-index:9999;line-height:1.5;';
+      document.body.appendChild(banner);
+    }
+    banner.innerText = `${dcName} หลุดการเชื่อมต่อ — รอกลับมา (${waitSeconds} วินาที)`;
+  });
+
+  socket.on('player-reconnected', ({ playerName: rcName }) => {
+    const banner = document.getElementById('player-disconnected-banner');
+    if (banner) banner.remove();
+  });
+
   socket.on('player-joined', ({ players, roomState: state }) => {
     playersList = players;
     updateLobbyPlayersUI(players, state.hostSocketId, state.settings.botEnabled);

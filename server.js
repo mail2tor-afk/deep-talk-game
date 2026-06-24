@@ -450,7 +450,14 @@ io.on('connection', (socket) => {
     }
     socket.join(code);
     const player = room.players.find(p => p.name === playerName);
-    if (player) player.socketId = socket.id;
+    if (player) {
+      player.socketId = socket.id;
+      if (player.disconnected) {
+        player.disconnected = false;
+        if (player._reconnectTimer) { clearTimeout(player._reconnectTimer); delete player._reconnectTimer; }
+        io.to(code).emit('player-reconnected', { playerName, roomState: room });
+      }
+    }
     if (asHost && room.hostName === playerName) {
       room.hostSocketId = socket.id;
       room.hostDisconnected = false;
@@ -510,14 +517,23 @@ io.on('connection', (socket) => {
       // If player disconnected, remove them from list
       const playerIndex = room.players.findIndex(p => p.socketId === socket.id);
       if (playerIndex > -1) {
-        const playerName = room.players[playerIndex].name;
-        room.players.splice(playerIndex, 1);
-        
+        const player = room.players[playerIndex];
+        const playerName = player.name;
+
         if (room.gameState.status === 'playing') {
-          io.to(code).emit('room-closed', `เกมถูกกดยกเลิกเนื่องจากผู้เล่น ${playerName} ออกจากเกม`);
-          closeRoom(code, 'player_left');
-          console.log(`Room closed: ${code} due to player ${playerName} leaving during active game.`);
+          // Grace period — don't close immediately, wait for reconnect
+          player.disconnected = true;
+          io.to(code).emit('player-disconnected', { playerName, waitSeconds: 60 });
+          console.log(`Player ${playerName} disconnected from room ${code}, starting 60s grace period`);
+          player._reconnectTimer = setTimeout(() => {
+            if (rooms[code] && player.disconnected) {
+              io.to(code).emit('room-closed', `ผู้เล่น ${playerName} ไม่กลับมาภายใน 60 วินาที ห้องถูกปิดแล้ว`);
+              closeRoom(code, 'player_left');
+              console.log(`Room ${code} closed after player ${playerName} grace period expired`);
+            }
+          }, 60 * 1000);
         } else {
+          room.players.splice(playerIndex, 1);
           io.to(code).emit('player-left', { playerName, players: room.players, roomState: room });
           console.log(`Player ${playerName} left lobby of room ${code}`);
         }
