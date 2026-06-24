@@ -9,6 +9,8 @@ const { Redis } = require('@upstash/redis');
 dotenv.config();
 
 // Redis client (Upstash REST)
+console.log('[ENV CHECK] UPSTASH_REDIS_REST_URL:', process.env.UPSTASH_REDIS_REST_URL ? `set (${process.env.UPSTASH_REDIS_REST_URL.slice(0,30)}...)` : 'NOT SET');
+console.log('[ENV CHECK] UPSTASH_REDIS_REST_TOKEN:', process.env.UPSTASH_REDIS_REST_TOKEN ? `set (len=${process.env.UPSTASH_REDIS_REST_TOKEN.length})` : 'NOT SET');
 const redis = process.env.UPSTASH_REDIS_REST_URL
   ? new Redis({ url: process.env.UPSTASH_REDIS_REST_URL, token: process.env.UPSTASH_REDIS_REST_TOKEN })
   : null;
