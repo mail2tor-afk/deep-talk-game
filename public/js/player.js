@@ -86,6 +86,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
   // ==========================================================================
+  // BROWSER NOTIFICATIONS
+  // ==========================================================================
+
+  function requestNotifPermission() {
+    if ('Notification' in window && Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+  }
+
+  function notify(title, body) {
+    if ('Notification' in window && Notification.permission === 'granted' && document.hidden) {
+      new Notification(title, { body, icon: '/icon-192.png' });
+    }
+  }
+
+  // ==========================================================================
   // ROOM JOIN / INITIALIZATION
   // ==========================================================================
 
@@ -181,6 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==========================================================================
 
   socket.on('joined-successfully', ({ roomCode: code, player, roomState: state }) => {
+    requestNotifPermission();
     roomCode = code;
     playerName = player.name;
     playerRoomBadge.innerText = roomCode;
@@ -278,6 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   socket.on('card-updated', (state) => {
+    if (!isHost) notify('การ์ดใหม่มาแล้ว! 🃏', 'โฮสต์จั่วคำถามใหม่ — กลับมาตอบได้เลย');
     questionCount++;
     currentCard = state.gameState.currentCard;
     const levelNames = { 1: 'ระดับ 1', 2: 'ระดับ 2', 3: 'ระดับ 3' };
@@ -300,6 +318,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   socket.on('answer-submitted', ({ playerName: subName, allSubmitted, responsesCount, roomState: state }) => {
     if (allSubmitted) {
+      if (isHost) notify('ตอบครบแล้ว! ✅', 'ผู้เล่นทุกคนตอบแล้ว — กลับมาดูคำตอบได้เลย');
       showRevealedAnswers(state.gameState.responses);
     }
   });
