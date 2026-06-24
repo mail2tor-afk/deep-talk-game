@@ -344,6 +344,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   socket.on('mode-changed', (state) => {
     questionCount = 0;
+    matchScores = {};
+    currentCard = null;
+    selectedChoice = '';
+    playerRevealedAnswersList.innerHTML = '';
+    const roQ = document.getElementById('roundover-question-th');
+    if (roQ) roQ.innerText = '';
     transitionView('lobby');
   });
 
@@ -589,28 +595,23 @@ document.addEventListener('DOMContentLoaded', () => {
     choiceQuestionTextTh.innerText = card.questionTh;
     choiceOptionsList.innerHTML = '';
     selectedChoice = '';
-    playerSubmitChoiceBtn.setAttribute('disabled', 'true');
 
     card.choices.forEach(choice => {
       const btn = document.createElement('button');
       btn.className = 'choice-option';
       btn.textContent = choice;
       btn.addEventListener('click', () => {
+        if (selectedChoice) return; // prevent double-submit
         choiceOptionsList.querySelectorAll('.choice-option').forEach(b => b.classList.remove('selected'));
         btn.classList.add('selected');
         selectedChoice = choice;
-        playerSubmitChoiceBtn.removeAttribute('disabled');
+        choiceOptionsList.querySelectorAll('.choice-option').forEach(b => b.setAttribute('disabled', 'true'));
+        socket.emit('submit-answer', { roomCode, answer: selectedChoice });
+        transitionView('submitted');
       });
       choiceOptionsList.appendChild(btn);
     });
   }
-
-  playerSubmitChoiceBtn.addEventListener('click', () => {
-    if (!selectedChoice) return;
-    playerSubmitChoiceBtn.setAttribute('disabled', 'true');
-    socket.emit('submit-answer', { roomCode, answer: selectedChoice });
-    transitionView('submitted');
-  });
 
   // Persistent Safe skip
   safezoneBtn.addEventListener('click', () => {
@@ -665,7 +666,7 @@ document.addEventListener('DOMContentLoaded', () => {
       guestNextCardWaiting.style.display = 'block';
       guestNextCardWaiting.textContent = questionCount >= 5
         ? 'รอโฮสต์สรุปคะแนนและเริ่มรอบใหม่...'
-        : 'กำลังรอให้โฮสต์จั่วการ์ดคำถามใหม่...';
+        : 'กำลังรอให้โฮสต์กดคำถามถัดไป...';
     }
 
     transitionView('roundover');

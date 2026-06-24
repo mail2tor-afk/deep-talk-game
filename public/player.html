@@ -474,19 +474,19 @@
     .lobby-players {
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      max-height: 240px;
+      gap: 6px;
+      max-height: 160px;
       overflow-y: auto;
     }
     .lobby-player-tag {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
       background: rgba(77, 182, 164, 0.1);
       border: 1px solid rgba(77, 182, 164, 0.3);
-      border-radius: 12px;
-      padding: 12px 16px;
-      font-size: 15px;
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 13.5px;
       font-family: 'Kanit';
     }
 
@@ -760,7 +760,7 @@
           <div class="card-text-th" id="choice-question-text-th">คำถาม</div>
         </div>
         <div id="choice-options-list" style="display: flex; flex-direction: column; gap: 10px; margin-top: 16px;"></div>
-        <button class="submit-btn" id="player-submit-choice-btn" disabled style="margin-top: 20px;">ส่งตัวเลือกที่เลือก ➔</button>
+        <button class="submit-btn" id="player-submit-choice-btn" disabled style="display:none;"></button>
       </section>
 
       <!-- SUB-STATE 2: WRITE ANSWER (Typing View — L3 only) -->
@@ -824,14 +824,14 @@
           <!-- Next Card Controller (Only visible to Host) -->
           <div id="host-next-card-area"
             style="display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(122,200,188,0.15);">
-            <button class="submit-btn" id="host-next-card-btn">จั่วคำถามการ์ดถัดไป ➔</button>
+            <button class="submit-btn" id="host-next-card-btn">คำถามถัดไป ➔</button>
             <button class="submit-btn" id="host-summary-btn" style="display:none;">สรุปคะแนน 5 ข้อ 🏆</button>
           </div>
 
           <!-- Waiting Screen (Visible to Guests) -->
           <p id="guest-next-card-waiting"
             style="color: #8fb3aa; font-size: 12.5px; text-align: center; margin-top: 14px; line-height: 1.4;">
-            กำลังรอให้โฮสต์จั่วการ์ดคำถามใหม่...
+            กำลังรอให้โฮสต์กดคำถามถัดไป...
           </p>
 
           <!-- Anonymous question rating (optional, fire-and-forget) -->
