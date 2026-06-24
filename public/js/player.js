@@ -797,8 +797,11 @@ document.addEventListener('DOMContentLoaded', () => {
     hide(pstateRoundover);
     hide(pstateScores);
 
-    if (view === 'join' || view === 'lobby' || view === 'connecting') {
+    if (view === 'join' || view === 'connecting') {
       hide(playerCancelBtn);
+      hide(safezoneBtn);
+    } else if (view === 'lobby') {
+      show(playerCancelBtn, 'inline-flex');
       hide(safezoneBtn);
     } else {
       show(playerCancelBtn, 'inline-flex');
