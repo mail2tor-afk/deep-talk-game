@@ -379,7 +379,7 @@ document.addEventListener('DOMContentLoaded', () => {
   socket.on('answer-submitted', ({ playerName: subName, allSubmitted, responsesCount, roomState: state }) => {
     if (allSubmitted) {
       if (isHost) notify('ตอบครบแล้ว! ✅', 'ผู้เล่นทุกคนตอบแล้ว — กลับมาดูคำตอบได้เลย');
-      showRevealedAnswers(state.gameState.responses);
+      showRevealedAnswers(state.gameState.responses, state.gameState.currentCard);
     }
   });
 
@@ -632,15 +632,15 @@ document.addEventListener('DOMContentLoaded', () => {
   // REVEALED RESULTS UI
   // ==========================================================================
 
-  function showRevealedAnswers(responses) {
+  function showRevealedAnswers(responses, card = currentCard) {
     playerRevealedAnswersList.innerHTML = '';
 
-    if (currentCard) {
+    if (card) {
       const roQuestionTh = document.getElementById('roundover-question-th');
-      if (roQuestionTh) roQuestionTh.innerText = currentCard.questionTh;
+      if (roQuestionTh) roQuestionTh.innerText = card.questionTh;
     }
 
-    if (currentCard && currentCard.choices && currentCard.level < 3) {
+    if (card && card.choices && card.level < 3) {
       showChoiceMatchResults(responses);
     } else {
       Object.keys(responses).forEach(name => {
