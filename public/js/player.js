@@ -736,43 +736,47 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==========================================================================
 
   function transitionView(view) {
-    pstateJoin.style.display = 'none';
-    pstateConnecting.style.display = 'none';
-    pstateLobby.style.display = 'none';
-    pstateChoice.style.display = 'none';
-    pstateWrite.style.display = 'none';
-    pstateSubmitted.style.display = 'none';
-    pstateVote.style.display = 'none';
-    pstateRoundover.style.display = 'none';
-    pstateScores.style.display = 'none';
+    // Null-safe hide: element might not exist if HTML/JS cache is mismatched
+    const hide = el => { if (el) el.style.display = 'none'; };
+    const show = (el, d) => { if (el) el.style.display = d || 'block'; };
+
+    hide(pstateJoin);
+    hide(pstateConnecting);
+    hide(pstateLobby);
+    hide(pstateChoice);
+    hide(pstateWrite);
+    hide(pstateSubmitted);
+    hide(pstateVote);
+    hide(pstateRoundover);
+    hide(pstateScores);
 
     if (view === 'join' || view === 'lobby' || view === 'connecting') {
-      playerCancelBtn.style.display = 'none';
-      safezoneBtn.style.display = 'none';
+      hide(playerCancelBtn);
+      hide(safezoneBtn);
     } else {
-      playerCancelBtn.style.display = 'inline-flex';
-      safezoneBtn.style.display = 'inline-flex';
+      show(playerCancelBtn, 'inline-flex');
+      show(safezoneBtn, 'inline-flex');
     }
 
     if (view === 'connecting') {
-      pstateConnecting.style.display = 'block';
+      show(pstateConnecting);
     } else if (view === 'join') {
-      pstateJoin.style.display = 'block';
+      show(pstateJoin);
     } else if (view === 'lobby') {
-      pstateLobby.style.display = 'block';
+      show(pstateLobby);
     } else if (view === 'choice') {
-      pstateChoice.style.display = 'block';
+      show(pstateChoice);
     } else if (view === 'write') {
-      pstateWrite.style.display = 'block';
+      show(pstateWrite);
     } else if (view === 'submitted') {
-      pstateSubmitted.style.display = 'block';
+      show(pstateSubmitted);
     } else if (view === 'vote') {
-      pstateVote.style.display = 'block';
+      show(pstateVote);
     } else if (view === 'roundover') {
-      pstateRoundover.style.display = 'block';
+      show(pstateRoundover);
     } else if (view === 'scores') {
-      pstateScores.style.display = 'block';
-      safezoneBtn.style.display = 'none';
+      show(pstateScores);
+      hide(safezoneBtn);
     }
   }
 
