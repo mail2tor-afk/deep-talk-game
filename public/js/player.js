@@ -189,7 +189,11 @@ document.addEventListener('DOMContentLoaded', () => {
     playerName = name;
     isHost = false;
     playerRoleBadge.innerText = 'ผู้ร่วมวง 👥';
+    const connectingTitle = document.getElementById('connecting-title');
+    if (connectingTitle) connectingTitle.innerText = 'กำลังเข้าร่วมห้อง...';
+    transitionView('connecting');
     joinRoom(roomCode, playerName);
+    startConnectingTimeout(() => pstateConnecting && pstateConnecting.style.display !== 'none');
   });
 
   // ==========================================================================
@@ -286,7 +290,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   socket.on('join-error', (msg) => {
     sessionStorage.clear();
-    alert(msg || 'ไม่สามารถเข้าร่วมห้องได้');
+    const defaultMsg = 'ไม่พบห้องนี้แล้ว\n\nขอให้โฮสต์กด Refresh แล้วสร้างห้องใหม่ จากนั้นส่ง link ใหม่ให้';
+    alert(msg || defaultMsg);
     window.location.href = 'index.html';
   });
 
