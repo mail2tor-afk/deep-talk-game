@@ -11,9 +11,9 @@ document.addEventListener('DOMContentLoaded', () => {
   let playersList = [];
   let currentCard = null;
   let isHost = false;
-  let selectedVoteTarget = '';
   let selectedChoice = '';
-  let matchScores = {}; // { playerName: { matched: 0, total: 0 } }
+  let matchScores = {};
+  let questionCount = 0;
   let selectedIntensity = 1;
   let usedCardIds = new Set();
   let selectedCategory = 'all';
@@ -30,8 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const pstateLobby = document.getElementById('pstate-lobby');
   const pstateWrite = document.getElementById('pstate-write');
   const pstateSubmitted = document.getElementById('pstate-submitted');
-  const pstateVote = document.getElementById('pstate-vote');
   const pstateRoundover = document.getElementById('pstate-roundover');
+  const pstateGameover = document.getElementById('pstate-gameover');
 
   // Direct Join Fallback
   const directRoomCode = document.getElementById('direct-room-code');
@@ -65,16 +65,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const charCount = document.getElementById('char-count');
   const playerSubmitAnswerBtn = document.getElementById('player-submit-answer-btn');
 
-  // Voting / Guessing
-  const votingAnswerHighlight = document.getElementById('voting-answer-highlight');
-  const votingDesc = document.getElementById('voting-desc');
-  const votingPlayersList = document.getElementById('voting-players-list');
-  const playerSubmitVoteBtn = document.getElementById('player-submit-vote-btn');
-
-  // Scores Screen
-  const pstateScores = document.getElementById('pstate-scores');
-  const endGameBtn = document.getElementById('end-game-btn');
-  const playAgainBtn = document.getElementById('play-again-btn');
+  // Host Summary / Gameover
+  const hostSummaryBtn = document.getElementById('host-summary-btn');
+  const gameoverPlayAgainBtn = document.getElementById('gameover-play-again-btn');
 
   // Multiple Choice
   const pstateChoice = document.getElementById('pstate-choice');
@@ -93,6 +86,18 @@ document.addEventListener('DOMContentLoaded', () => {
   // ==========================================================================
   // ROOM JOIN / INITIALIZATION
   // ==========================================================================
+
+  // Connecting timeout with progressive messages (Railway cold-start can take 15-25s)
+  function startConnectingTimeout(stillConnecting) {
+    const title = document.getElementById('connecting-title');
+    const t1 = setTimeout(() => {
+      if (stillConnecting() && title) title.innerText = 'ยังเชื่อมต่ออยู่... (อาจใช้เวลา 15–30 วิ)';
+    }, 8000);
+    const t2 = setTimeout(() => {
+      if (stillConnecting()) { sessionStorage.clear(); window.location.href = 'index.html'; }
+    }, 30000);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }
 
   const urlParams = new URLSearchParams(window.location.search);
   const urlRoomCode = urlParams.get('room');
@@ -117,10 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
     playerRoleBadge.innerText = 'โฮสต์ (Host) 👑';
     transitionView('connecting');
     socket.emit('create-room');
-    // Fallback: if server doesn't respond in 10s, clear session and go home
-    setTimeout(() => {
-      if (!roomCode) { sessionStorage.clear(); window.location.href = 'index.html'; }
-    }, 10000);
+    startConnectingTimeout(() => !roomCode);
   } else if (sessionCode && sessionName) {
     // We are a Guest joining a room
     isHost = false;
@@ -131,10 +133,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (connectingTitle) connectingTitle.innerText = 'กำลังเข้าร่วมห้อง...';
     transitionView('connecting');
     joinRoom(roomCode, playerName);
-    // Fallback: if join fails in 10s, clear session and go home
-    setTimeout(() => {
-      if (pstateConnecting.style.display !== 'none') { sessionStorage.clear(); window.location.href = 'index.html'; }
-    }, 10000);
+    startConnectingTimeout(() => pstateConnecting.style.display !== 'none');
   } else {
     // No session data and no room param, redirect to index.html
     window.location.href = 'index.html';
@@ -272,10 +271,12 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   socket.on('mode-changed', (state) => {
+    questionCount = 0;
     transitionView('lobby');
   });
 
   socket.on('card-updated', (state) => {
+    questionCount++;
     currentCard = state.gameState.currentCard;
     const levelNames = { 1: 'ระดับ 1', 2: 'ระดับ 2', 3: 'ระดับ 3' };
     const hint = `คำถามชวนคิด · ${levelNames[currentCard.level] || 'ระดับ ' + currentCard.level} (หมวด: ${currentCard.category || 'เปิดใจ'})`;
@@ -297,19 +298,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   socket.on('answer-submitted', ({ playerName: subName, allSubmitted, responsesCount, roomState: state }) => {
     if (allSubmitted) {
-      // Transition to Guessing phase if > 2 players (human + bot included) and incognito mode is on
-      // Wait! In 2-player local or standard mode, we show answers directly to keep it simple.
-      const hasMultiplePlayers = (state.players.length > 2) || (state.players.length === 2 && state.settings.botEnabled);
-      if (state.gameState.incognito && hasMultiplePlayers) {
-        setupVotingDisplay(state.gameState.responses, state.players, state.settings.botEnabled);
-      } else {
-        showRevealedAnswers(state.gameState.responses);
-      }
-    }
-  });
-
-  socket.on('vote-submitted', ({ votes, allVoted, roomState: state }) => {
-    if (allVoted) {
       showRevealedAnswers(state.gameState.responses);
     }
   });
@@ -569,61 +557,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // ==========================================================================
-  // VOTING / GUESSING UI
-  // ==========================================================================
-
-  function setupVotingDisplay(responses, players, botEnabled) {
-    votingPlayersList.innerHTML = '';
-    selectedVoteTarget = '';
-    playerSubmitVoteBtn.setAttribute('disabled', 'true');
-
-    const otherNames = Object.keys(responses).filter(name => name !== playerName);
-    if (otherNames.length === 0) {
-      // If no other candidates, auto skip voting
-      socket.emit('submit-vote', { roomCode, voterName: playerName, targetName: playerName, optionValue: 0 });
-      return;
-    }
-
-    const targetAuthor = otherNames[Math.floor(Math.random() * otherNames.length)];
-
-    const targetAnswer = responses[targetAuthor];
-    votingAnswerHighlight.innerText = `"${targetAnswer}"`;
-    votingDesc.innerText = `คุณคิดว่าคำตอบด้านบนนี้เป็นความในใจของใคร?`;
-
-    // Filter choices: all other player names + bot (if enabled)
-    const choices = players.map(p => p.name).filter(name => name !== playerName);
-    if (botEnabled) {
-      choices.push('ผู้เล่นนิรนาม');
-    }
-
-    choices.forEach(name => {
-      const btn = document.createElement('button');
-      btn.className = 'guess-btn';
-      btn.innerText = name;
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.guess-btn').forEach(el => el.classList.remove('selected'));
-        btn.classList.add('selected');
-        selectedVoteTarget = name;
-        playerSubmitVoteBtn.removeAttribute('disabled');
-      });
-      votingPlayersList.appendChild(btn);
-    });
-
-    transitionView('vote');
-  }
-
-  playerSubmitVoteBtn.addEventListener('click', () => {
-    if (selectedVoteTarget) {
-      socket.emit('submit-vote', {
-        roomCode,
-        voterName: playerName,
-        targetName: selectedVoteTarget,
-        optionValue: 0
-      });
-      transitionView('submitted');
-    }
-  });
 
   // ==========================================================================
   // REVEALED RESULTS UI
@@ -641,20 +574,29 @@ document.addEventListener('DOMContentLoaded', () => {
       showChoiceMatchResults(responses);
     } else {
       Object.keys(responses).forEach(name => {
-        const isMe = name === playerName;
-        const bubble = document.createElement('div');
-        bubble.className = `bubble ${isMe ? 'me' : 'other'}`;
-        bubble.innerHTML = `<div class="bubble-author">${name}</div><div>"${responses[name]}"</div>`;
-        playerRevealedAnswersList.appendChild(bubble);
+        const row = document.createElement('div');
+        row.className = 'answer-row';
+        row.innerHTML = `<span class="answer-name">${name}</span><span class="answer-text">"${responses[name]}"</span>`;
+        playerRevealedAnswersList.appendChild(row);
       });
     }
 
     if (isHost) {
       hostNextCardArea.style.display = 'block';
       guestNextCardWaiting.style.display = 'none';
+      if (questionCount >= 5) {
+        hostNextCardBtn.style.display = 'none';
+        if (hostSummaryBtn) hostSummaryBtn.style.display = 'block';
+      } else {
+        hostNextCardBtn.style.display = 'block';
+        if (hostSummaryBtn) hostSummaryBtn.style.display = 'none';
+      }
     } else {
       hostNextCardArea.style.display = 'none';
       guestNextCardWaiting.style.display = 'block';
+      guestNextCardWaiting.textContent = questionCount >= 5
+        ? 'รอโฮสต์สรุปคะแนนและเริ่มรอบใหม่...'
+        : 'กำลังรอให้โฮสต์จั่วการ์ดคำถามใหม่...';
     }
 
     transitionView('roundover');
@@ -693,72 +635,99 @@ document.addEventListener('DOMContentLoaded', () => {
       playerRevealedAnswersList.appendChild(div);
     });
 
-    // Round summary
-    const matchedHumans = new Set();
-    Object.values(groups).forEach(names => {
-      const h = names.filter(n => n !== BOT);
-      if (h.length >= 2) h.forEach(n => matchedHumans.add(n));
-    });
-    if (humans.length > 1) {
-      const s = document.createElement('div');
-      s.style.cssText = 'text-align:center;margin-top:14px;padding:12px;background:rgba(77,182,164,0.08);border-radius:12px;font-family:Kanit;font-size:14px;color:#9cc0b8;';
-      s.innerHTML = `รอบนี้ <strong style="color:var(--primary)">${matchedHumans.size}/${humans.length}</strong> คนตอบตรงกัน`;
-      playerRevealedAnswersList.appendChild(s);
-    }
   }
 
   // ==========================================================================
-  // SCORE SCREEN (T6)
+  // GAME OVER — auto after 5 questions
   // ==========================================================================
 
-  if (endGameBtn) {
-    endGameBtn.addEventListener('click', () => {
-      if (confirm('จบเกมและแสดงคะแนนรวมใช่หรือไม่?')) {
-        socket.emit('end-game', { roomCode });
-      }
-    });
-  }
-
-  if (playAgainBtn) {
-    playAgainBtn.addEventListener('click', () => {
-      socket.emit('return-to-lobby', { roomCode });
-      matchScores = {};
+  if (hostSummaryBtn) {
+    hostSummaryBtn.addEventListener('click', () => {
+      socket.emit('end-game', { roomCode });
     });
   }
 
   socket.on('game-ended', () => {
-    renderScoreScreen();
-    transitionView('scores');
+    renderGameOverScreen();
+    transitionView('gameover');
   });
 
-  function renderScoreScreen() {
-    const scoresList = document.getElementById('scores-list');
-    scoresList.innerHTML = '';
+  function renderGameOverScreen() {
+    const list = document.getElementById('gameover-scores-list');
+    if (!list) return;
+    list.innerHTML = '';
 
     const entries = Object.entries(matchScores)
       .sort((a, b) => (b[1].matched / Math.max(b[1].total, 1)) - (a[1].matched / Math.max(a[1].total, 1)));
 
     if (entries.length === 0) {
-      scoresList.innerHTML = '<p style="text-align:center;color:#8fb3aa;font-size:14px;padding:20px 0;">ยังไม่มีคะแนน<br>(ยังไม่ได้เล่นรอบคำถามระดับ 1 หรือ 2)</p>';
-      return;
+      list.innerHTML = '<p style="text-align:center;color:#8fb3aa;font-size:13px;padding:12px 0;">ยังไม่มีคะแนน (ไม่มีรอบระดับ 1 หรือ 2)</p>';
+    } else {
+      entries.forEach(([name, data], idx) => {
+        const pct = data.total > 0 ? Math.round((data.matched / data.total) * 100) : 0;
+        const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '▪️';
+        const div = document.createElement('div');
+        div.className = 'score-bar-wrap';
+        div.innerHTML = `
+          <div class="score-bar-label">
+            <span>${medal} ${name}</span>
+            <span style="color:var(--primary);font-family:Kanit">${data.matched}/${data.total} ตรง (${pct}%)</span>
+          </div>
+          <div class="score-bar-track">
+            <div class="score-bar-fill" style="width:${pct}%"></div>
+          </div>
+        `;
+        list.appendChild(div);
+      });
     }
 
-    entries.forEach(([name, data], idx) => {
-      const pct = data.total > 0 ? Math.round((data.matched / data.total) * 100) : 0;
-      const isMe = name === playerName;
-      const medal = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : '';
-      const div = document.createElement('div');
-      div.className = 'score-bar-wrap';
-      div.innerHTML = `
-        <div class="score-bar-label">
-          <span>${medal} ${isMe ? '<strong>' : ''}${name}${isMe ? '</strong>' : ''}</span>
-          <span style="color:var(--primary);font-family:Kanit">${data.matched}/${data.total} (${pct}%)</span>
-        </div>
-        <div class="score-bar-track">
-          <div class="score-bar-fill" style="width:${pct}%"></div>
-        </div>
-      `;
-      scoresList.appendChild(div);
+    const hostCtrl = document.getElementById('gameover-host-controls');
+    const guestWait = document.getElementById('gameover-guest-waiting');
+    if (isHost) {
+      if (hostCtrl) hostCtrl.style.display = 'block';
+      if (guestWait) guestWait.style.display = 'none';
+    } else {
+      if (hostCtrl) hostCtrl.style.display = 'none';
+      if (guestWait) guestWait.style.display = 'block';
+    }
+  }
+
+  const gameoverCategoryBtns = document.querySelectorAll('.gameover-category-btn');
+  const gameoverIntensityBtns = document.querySelectorAll('.gameover-intensity-btn');
+  let gameoverCategory = 'all';
+  let gameoverIntensity = 1;
+
+  gameoverCategoryBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      gameoverCategoryBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      gameoverCategory = btn.getAttribute('data-category');
+    });
+  });
+
+  gameoverIntensityBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      gameoverIntensityBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      gameoverIntensity = Number(btn.getAttribute('data-level'));
+    });
+  });
+
+  if (gameoverPlayAgainBtn) {
+    gameoverPlayAgainBtn.addEventListener('click', () => {
+      if (!isHost) return;
+      matchScores = {};
+      questionCount = 0;
+      usedCardIds.clear();
+      selectedCategory = gameoverCategory;
+      selectedIntensity = gameoverIntensity;
+      const card = pickNextCard(selectedIntensity);
+      if (!card) {
+        alert('ไม่พบคำถามในหมวดและระดับที่เลือก ลองเปลี่ยนการตั้งค่า');
+        return;
+      }
+      socket.emit('change-mode', { roomCode, mode: 'corporate' });
+      socket.emit('next-card', { roomCode, card });
     });
   }
 
@@ -777,7 +746,6 @@ document.addEventListener('DOMContentLoaded', () => {
     pstateRoundover.style.display = 'none';
     pstateScores.style.display = 'none';
 
-    // หน้าจอตอนจัดตั้งห้อง (join และ lobby) ไม่ต้องมี safe skip กับยกเลิกเกม
     if (view === 'join' || view === 'lobby' || view === 'connecting') {
       playerCancelBtn.style.display = 'none';
       safezoneBtn.style.display = 'none';
@@ -807,5 +775,46 @@ document.addEventListener('DOMContentLoaded', () => {
       safezoneBtn.style.display = 'none';
     }
   }
+
+  // ==========================================================================
+  // PULL-TO-REFRESH
+  // ==========================================================================
+
+  const ptrIndicator = document.getElementById('ptr-indicator');
+  const ptrText = document.getElementById('ptr-text');
+  const ptrSpinner = document.getElementById('ptr-spinner');
+  let ptrStartY = 0;
+  const PTR_THRESHOLD = 70;
+  const outerWrap = document.querySelector('.player-outer-wrap');
+
+  document.addEventListener('touchstart', e => {
+    ptrStartY = e.touches[0].clientY;
+  }, { passive: true });
+
+  document.addEventListener('touchmove', e => {
+    if (!ptrIndicator) return;
+    const delta = e.touches[0].clientY - ptrStartY;
+    const atTop = (outerWrap?.scrollTop || 0) === 0;
+    if (delta > 0 && atTop) {
+      const progress = Math.min(delta / PTR_THRESHOLD, 1);
+      ptrIndicator.classList.add('visible');
+      ptrIndicator.style.transform = `translateX(-50%) translateY(${Math.min(delta * 0.4, 24)}px)`;
+      ptrText.textContent = progress >= 1 ? 'ปล่อยเพื่อรีเฟรช' : 'ดึงลงเพื่อรีเฟรช';
+    }
+  }, { passive: true });
+
+  document.addEventListener('touchend', e => {
+    if (!ptrIndicator) return;
+    const delta = e.changedTouches[0].clientY - ptrStartY;
+    if (delta >= PTR_THRESHOLD) {
+      ptrText.textContent = 'กำลังรีเฟรช...';
+      ptrSpinner.classList.add('spin');
+      ptrIndicator.classList.add('releasing');
+      setTimeout(() => window.location.reload(), 600);
+    } else {
+      ptrIndicator.classList.remove('visible', 'releasing');
+      ptrIndicator.style.transform = '';
+    }
+  }, { passive: true });
 
 });

@@ -31,8 +31,7 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      padding: 56px 20px 34px;
-      /* safe areas for dynamic island and home bar */
+      padding: 16px 20px 34px;
       position: relative;
       overflow-y: auto;
     }
@@ -246,116 +245,83 @@
       cursor: pointer;
     }
 
-    /* Guessing options */
-    .guess-title {
+    /* Gameover selectors */
+    .gameover-category-btn {
+      padding: 6px 11px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(122,200,188,0.2);
+      border-radius: 10px;
+      color: #8fb3aa;
       font-family: 'Kanit';
-      font-size: 16px;
-      color: #cfe6e0;
-      text-align: center;
-      margin-bottom: 14px;
-    }
-
-    .guess-answer-box {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1.5px solid rgba(122, 200, 188, 0.45);
-      border-radius: 6px 20px 20px 20px;
-      padding: 16px 18px;
-      margin-bottom: 20px;
-    }
-
-    .guess-answer-badge {
-      font-family: 'Kanit';
-      font-size: 11px;
-      color: #7ac8bc;
-      letter-spacing: 1px;
-      margin-bottom: 6px;
-    }
-
-    .guess-answer-text {
-      font-size: 16px;
-      color: #f4faf8;
-      line-height: 1.45;
-    }
-
-    .guess-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-
-    .guess-btn {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1.5px solid rgba(122, 200, 188, 0.3);
-      border-radius: 20px;
-      padding: 12px 16px;
-      color: #e8f3f0;
-      font-family: 'Kanit';
-      font-size: 15px;
+      font-size: 12px;
       cursor: pointer;
-      text-align: center;
       transition: all 0.2s ease;
     }
-
-    .guess-btn:hover {
-      background: rgba(77, 182, 164, 0.1);
+    .gameover-category-btn.active {
+      background: rgba(77,182,164,0.18);
       border-color: var(--primary);
+      color: #eef7f4;
+      font-weight: 500;
     }
-
-    .guess-btn.selected {
+    .gameover-intensity-btn {
+      flex: 1;
+      height: 36px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(122,200,188,0.2);
+      border-radius: 10px;
+      color: #8fb3aa;
+      font-family: 'Kanit';
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .gameover-intensity-btn.active {
       background: var(--primary);
       border-color: var(--primary);
       color: #0e1a1f;
       font-weight: 500;
     }
 
-    /* Reveal Chat bubbles */
+    /* Reveal answer rows */
     .reveal-scroll {
       display: flex;
       flex-direction: column;
-      gap: 14px;
-      max-height: 340px;
-      overflow-y: auto;
-      padding: 6px 4px;
+      gap: 0;
+      overflow: visible;
+      padding: 0;
+      border-radius: 10px;
+      border: 1px solid rgba(122,200,188,0.15);
+      background: rgba(255,255,255,0.03);
     }
-
-    .bubble {
-      max-width: 86%;
-      padding: 14px 16px;
-      line-height: 1.45;
-      font-size: 14.5px;
+    .answer-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 9px 12px;
+      border-bottom: 1px solid rgba(122,200,188,0.1);
     }
-
-    .bubble.other {
-      align-self: flex-start;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(122, 200, 188, 0.35);
-      border-radius: 6px 18px 18px 18px;
-    }
-
-    .bubble.me {
-      align-self: flex-end;
-      background: var(--primary);
-      color: #0e1a1f;
-      border-radius: 18px 6px 18px 18px;
-      box-shadow: 0 4px 12px rgba(77, 182, 164, 0.2);
-    }
-
-    .bubble-author {
+    .answer-row:last-child { border-bottom: none; }
+    .answer-name {
       font-family: 'Kanit';
-      font-size: 11.5px;
-      margin-bottom: 4px;
-      font-weight: 500;
-    }
-
-    .bubble.other .bubble-author {
+      font-size: 11px;
+      font-weight: 600;
       color: var(--primary);
+      min-width: 52px;
+      max-width: 52px;
+      padding-top: 2px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
-
-    .bubble.me .bubble-author {
-      color: #0e1a1f;
-      opacity: 0.85;
-      text-align: right;
+    .answer-text {
+      font-size: 13px;
+      color: #e8f4f0;
+      line-height: 1.45;
+      flex: 1;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
     }
 
     /* Host Panel Inside Lobby */
@@ -490,7 +456,7 @@
 
     /* ===== RESPONSIVE — iPhone 15 Pro (393px) + S25 (412px) ===== */
     .player-outer-wrap {
-      padding-top: max(56px, env(safe-area-inset-top, 56px));
+      padding-top: max(16px, env(safe-area-inset-top, 0px));
       padding-bottom: max(34px, env(safe-area-inset-bottom, 34px));
       padding-left: max(20px, env(safe-area-inset-left, 20px));
       padding-right: max(20px, env(safe-area-inset-right, 20px));
@@ -528,6 +494,25 @@
     #host-start-btn { margin-top: 20px; min-height: 60px; font-size: 18px; }
     #host-next-card-btn { min-height: 60px; font-size: 17px; }
 
+    /* ===== PULL-TO-REFRESH INDICATOR ===== */
+    #ptr-indicator {
+      position: fixed; top: 0; left: 50%; transform: translateX(-50%) translateY(-60px);
+      background: rgba(77,182,164,0.15); border: 1px solid rgba(77,182,164,0.4);
+      border-radius: 20px; padding: 6px 16px;
+      font-family: 'Kanit'; font-size: 13px; color: var(--primary);
+      display: flex; align-items: center; gap: 8px;
+      transition: transform 0.25s ease, opacity 0.25s ease;
+      opacity: 0; z-index: 9999; pointer-events: none;
+      backdrop-filter: blur(8px);
+    }
+    #ptr-indicator.visible { opacity: 1; }
+    #ptr-indicator.releasing { transform: translateX(-50%) translateY(10px); }
+    .ptr-spinner {
+      width: 14px; height: 14px; border: 2px solid rgba(77,182,164,0.3);
+      border-top-color: var(--primary); border-radius: 50%;
+    }
+    .ptr-spinner.spin { animation: spin 0.7s linear infinite; }
+
     /* ===== SCORE SCREEN ===== */
     .score-bar-wrap { margin-bottom: 16px; }
     .score-bar-label {
@@ -543,13 +528,12 @@
       border-radius: 13px; min-width: 4px;
       transition: width 0.7s cubic-bezier(0.22,1,0.36,1);
     }
-    #end-game-btn {
-      margin-top: 10px; min-height: 52px; font-size: 15px;
-      background: rgba(255,120,120,0.15); color: #ff9c9c;
-      border: 1.5px solid rgba(255,120,120,0.35);
-      box-shadow: none;
+    #host-summary-btn {
+      margin-top: 8px; min-height: 50px; font-size: 15px;
+      background: linear-gradient(135deg, rgba(255,196,77,0.9), rgba(255,215,100,0.9));
+      color: #1a1000; border: none;
+      box-shadow: 0 4px 14px rgba(255,196,77,0.3);
     }
-    #end-game-btn:active { background: rgba(255,120,120,0.25); }
 
     /* ===== MULTIPLE CHOICE ===== */
     .choice-option {
@@ -582,6 +566,8 @@
 </head>
 
 <body class="player-body">
+
+  <div id="ptr-indicator"><div class="ptr-spinner" id="ptr-spinner"></div><span id="ptr-text">ดึงลงเพื่อรีเฟรช</span></div>
 
   <div class="player-outer-wrap">
     <!-- HEADER BAR -->
@@ -803,71 +789,75 @@
         </p>
       </section>
 
-      <!-- SUB-STATE 4: INCOGNITO VOTING / GUESSING -->
-      <section id="pstate-vote" style="display: none; width: 100%;">
-        <div class="guess-title">ทายกันหน่อย 🎭</div>
-
-        <div class="guess-answer-box">
-          <div class="guess-answer-badge">🎭 คำตอบนิรนามผู้เขียน</div>
-          <div class="guess-answer-text" id="voting-answer-highlight">"ข้อความคำตอบที่ถูกสุ่มขึ้นมาโชว์..."</div>
-        </div>
-
-        <div style="font-size: 13.5px; color: #8fb3aa; text-align: center; margin-bottom: 12px;" id="voting-desc">
-          คุณคิดว่าใครเป็นคนเขียนคำตอบข้อความด้านบนนี้?
-        </div>
-
-        <div class="guess-grid" id="voting-players-list">
-          <!-- Guess choices injected dynamically -->
-        </div>
-
-        <button class="submit-btn" id="player-submit-vote-btn" disabled>ส่งคะแนนโหวตทาย ➔</button>
-      </section>
-
       <!-- SUB-STATE 5: ROUND OVER (Revealed Answers Flow) -->
       <section id="pstate-roundover" style="display: none; width: 100%;">
-        <div class="glass-panel" style="padding: 22px; display: flex; flex-direction: column;">
+        <div class="glass-panel" style="padding: 14px 16px; display: flex; flex-direction: column;">
           <h2
-            style="font-family: 'Kanit'; font-size: 18px; color: var(--primary); text-align: center; margin-bottom: 16px;">
+            style="font-family: 'Kanit'; font-size: 15px; color: var(--primary); text-align: center; margin-bottom: 8px;">
             🔓 เฉลยคำตอบแล้ว</h2>
 
-          <!-- Question context so players don't forget the question -->
+          <!-- Question context -->
           <div id="roundover-question-box"
-            style="margin-bottom: 18px; padding: 14px; background: rgba(255,255,255,0.04); border: 1px solid rgba(122,200,188,0.2); border-radius: 12px; text-align: left; font-size: 14.5px;">
+            style="margin-bottom: 10px; padding: 9px 12px; background: rgba(255,255,255,0.04); border: 1px solid rgba(122,200,188,0.18); border-radius: 10px;">
             <div
-              style="font-family: 'Kanit'; font-size: 11px; color: var(--primary); margin-bottom: 6px; letter-spacing: 0.5px;">
-              คำถามประจำรอบ:</div>
+              style="font-family: 'Kanit'; font-size: 10px; color: var(--primary); margin-bottom: 4px; letter-spacing: 0.5px; text-transform: uppercase;">
+              คำถามประจำรอบ</div>
             <div id="roundover-question-th"
-              style="font-family: 'Kanit'; font-weight: 500; color: #f4faf8; line-height: 1.4;"></div>
+              style="font-family: 'Kanit'; font-weight: 500; font-size: 13.5px; color: #f4faf8; line-height: 1.35;"></div>
           </div>
 
           <div class="reveal-scroll" id="player-revealed-answers-list">
-            <!-- Revealed answers bubbles injected dynamically -->
+            <!-- Answer rows injected dynamically -->
           </div>
 
           <!-- Next Card Controller (Only visible to Host) -->
           <div id="host-next-card-area"
-            style="display: none; margin-top: 20px; padding-top: 16px; border-top: 1px solid rgba(122,200,188,0.15);">
+            style="display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(122,200,188,0.15);">
             <button class="submit-btn" id="host-next-card-btn">จั่วคำถามการ์ดถัดไป ➔</button>
-            <button class="submit-btn" id="end-game-btn">จบเกม — ดูคะแนนรวม 🏆</button>
+            <button class="submit-btn" id="host-summary-btn" style="display:none;">สรุปคะแนน 5 ข้อ 🏆</button>
           </div>
 
           <!-- Waiting Screen (Visible to Guests) -->
           <p id="guest-next-card-waiting"
-            style="color: #8fb3aa; font-size: 13px; text-align: center; margin-top: 20px; line-height: 1.4;">
+            style="color: #8fb3aa; font-size: 12.5px; text-align: center; margin-top: 14px; line-height: 1.4;">
             กำลังรอให้โฮสต์จั่วการ์ดคำถามใหม่...
           </p>
         </div>
       </section>
 
-      <!-- SUB-STATE 6: SCORES SCREEN (Game End) -->
-      <section id="pstate-scores" style="display: none; width: 100%;">
-        <div class="glass-panel" style="padding: 22px;">
-          <h2 style="font-family:'Kanit';font-size:20px;color:var(--primary);text-align:center;margin-bottom:6px;">🏆 สรุปผลคะแนน</h2>
-          <p style="font-size:12.5px;color:#8fb3aa;text-align:center;margin-bottom:20px;line-height:1.4;">
-            รอบที่ตอบตรงกับผู้เล่นอื่น (ระดับ 1 และ 2 เท่านั้น)
+      <!-- SUB-STATE 6: GAME OVER (after 5 questions) -->
+      <section id="pstate-gameover" style="display: none; width: 100%;">
+        <div class="glass-panel" style="padding: 20px;">
+          <h2 style="font-family:'Kanit';font-size:18px;color:var(--primary);text-align:center;margin-bottom:4px;">🏆 ครบ 5 ข้อแล้ว!</h2>
+          <p style="font-size:11.5px;color:#8fb3aa;text-align:center;margin-bottom:14px;line-height:1.4;">
+            คะแนนจากรอบที่ตอบตรงกัน (ระดับ 1–2)
           </p>
-          <div id="scores-list"></div>
-          <button class="submit-btn" id="play-again-btn" style="margin-top:24px;">เล่นอีกรอบ 🔄</button>
+          <div id="gameover-scores-list" style="margin-bottom:14px;"></div>
+
+          <!-- Host controls -->
+          <div id="gameover-host-controls" style="display:none;">
+            <div style="border-top:1px solid rgba(122,200,188,0.15);padding-top:14px;">
+              <div style="font-family:'Kanit';font-size:12px;color:#8fb3aa;margin-bottom:8px;">เล่นรอบใหม่ — หมวดคำถาม:</div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
+                <button class="gameover-category-btn active" data-category="all">ทุกหมวด</button>
+                <button class="gameover-category-btn" data-category="ทั่วไป">ทั่วไป</button>
+                <button class="gameover-category-btn" data-category="ความรัก">ความรัก 💕</button>
+                <button class="gameover-category-btn" data-category="เพื่อนสนิท">เพื่อนสนิท</button>
+              </div>
+              <div style="font-family:'Kanit';font-size:12px;color:#8fb3aa;margin-bottom:8px;">ระดับความลึก:</div>
+              <div style="display:flex;gap:8px;margin-bottom:16px;">
+                <button class="gameover-intensity-btn active" data-level="1">ระดับ 1</button>
+                <button class="gameover-intensity-btn" data-level="2">ระดับ 2</button>
+                <button class="gameover-intensity-btn" data-level="3">ระดับ 3</button>
+              </div>
+              <button class="submit-btn" id="gameover-play-again-btn">เล่นอีกรอบ 🔄</button>
+            </div>
+          </div>
+
+          <!-- Guest waiting -->
+          <div id="gameover-guest-waiting" style="display:none;text-align:center;padding:12px 0;color:#8fb3aa;font-size:13px;line-height:1.5;">
+            รอโฮสต์เลือกหมวดและเริ่มรอบใหม่...
+          </div>
         </div>
       </section>
 

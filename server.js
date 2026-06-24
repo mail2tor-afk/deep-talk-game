@@ -28,6 +28,18 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Values: Room object
 const rooms = {};
 
+// Auto-cleanup stale rooms (2h TTL) every 10 minutes
+const ROOM_TTL = 2 * 60 * 60 * 1000;
+setInterval(() => {
+  const now = Date.now();
+  Object.keys(rooms).forEach(code => {
+    if (now - (rooms[code].lastActivity || 0) > ROOM_TTL) {
+      console.log(`Room expired: ${code}`);
+      delete rooms[code];
+    }
+  });
+}, 10 * 60 * 1000);
+
 // Helper: Generate a unique room code
 function generateRoomCode() {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -174,6 +186,7 @@ io.on('connection', (socket) => {
       }
     };
     
+    rooms[code].lastActivity = Date.now();
     socket.join(code);
     socket.emit('room-created', { roomCode: code, roomState: rooms[code] });
     console.log(`Room created: ${code} by host ${socket.id}`);
@@ -203,6 +216,7 @@ io.on('connection', (socket) => {
     };
 
     room.players.push(newPlayer);
+    room.lastActivity = Date.now();
     socket.join(code);
     
     socket.emit('joined-successfully', { roomCode: code, player: newPlayer, roomState: room });
@@ -247,6 +261,7 @@ io.on('connection', (socket) => {
     const room = rooms[roomCode];
     if (!room) return;
 
+    room.lastActivity = Date.now();
     room.gameState.currentCard = card;
     room.gameState.responses = {};
     room.gameState.votes = {};
@@ -301,20 +316,6 @@ io.on('connection', (socket) => {
     io.to(roomCode).emit('incognito-toggled', room);
   });
 
-  // Event: Submit Vote (for guessing who wrote what or corporate polling)
-  socket.on('submit-vote', ({ roomCode, voterName, targetName, optionValue }) => {
-    const room = rooms[roomCode];
-    if (!room) return;
-
-    room.gameState.votes[voterName] = { targetName, optionValue };
-
-    const allVoted = room.players.every(p => room.gameState.votes[p.name] !== undefined);
-    io.to(roomCode).emit('vote-submitted', {
-      votes: room.gameState.votes,
-      allVoted,
-      roomState: room
-    });
-  });
 
   // Event: Safe-Zone Pass Skip (instant skip with zero penalty)
   socket.on('safe-zone-skip', ({ roomCode }) => {
