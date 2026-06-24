@@ -411,6 +411,25 @@
       font-weight: 500;
     }
 
+    /* Room TTL countdown badge */
+    .ttl-badge {
+      position: fixed;
+      bottom: 14px;
+      right: 14px;
+      background: rgba(14, 26, 31, 0.88);
+      border: 1px solid rgba(77, 182, 164, 0.25);
+      border-radius: 8px;
+      padding: 4px 10px;
+      font-family: 'Kanit';
+      font-size: 11.5px;
+      color: #6a9990;
+      z-index: 999;
+      backdrop-filter: blur(4px);
+      pointer-events: none;
+    }
+    .ttl-badge.ttl-warn     { color: #e0a020; border-color: rgba(224, 160, 32, 0.35); }
+    .ttl-badge.ttl-critical { color: #e05050; border-color: rgba(224, 80, 80, 0.4); }
+
     .bot-checkbox-label {
       display: flex;
       align-items: center;
@@ -893,6 +912,8 @@
       <span style="width:108px; height:4px; border-radius:2px; background:rgba(238,247,244,0.35);"></span>
     </div>
   </div>
+
+  <div id="room-ttl-badge" class="ttl-badge"></div>
 
   <!-- SCRIPT IMPORTS -->
   <script src="https://deep-talk-game-production.up.railway.app/socket.io/socket.io.js"></script>

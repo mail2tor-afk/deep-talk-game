@@ -47,13 +47,14 @@ function closeRoom(code, reason) {
   };
 }
 
-// Auto-cleanup stale rooms (2h TTL) every 10 minutes
+// Auto-cleanup stale rooms (4h TTL) every 10 minutes
 const ROOM_TTL = 4 * 60 * 60 * 1000;
 setInterval(() => {
   const now = Date.now();
   Object.keys(rooms).forEach(code => {
     if (now - (rooms[code].lastActivity || 0) > ROOM_TTL) {
       console.log(`Room expired: ${code}`);
+      io.to(code).emit('room-expired');
       closeRoom(code, 'ttl');
     }
   });
@@ -213,6 +214,8 @@ io.on('connection', (socket) => {
       }
     };
     
+    rooms[code].createdAt = Date.now();
+    rooms[code].expiresAt = Date.now() + ROOM_TTL;
     rooms[code].lastActivity = Date.now();
     socket.join(code);
     socket.emit('room-created', { roomCode: code, roomState: rooms[code] });

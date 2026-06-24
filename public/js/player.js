@@ -17,6 +17,8 @@ document.addEventListener('DOMContentLoaded', () => {
   let selectedIntensity = 1;
   let usedCardIds = new Set();
   let selectedCategory = 'all';
+  let roomExpiresAt = 0;
+  let ttlInterval = null;
 
   // DOM Elements
   const playerRoleBadge = document.getElementById('player-role-badge');
@@ -209,6 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   socket.on('room-expired', () => {
+    if (ttlInterval) clearInterval(ttlInterval);
     inRoom = false;
     sessionStorage.clear();
     alert('ห้องหมดอายุแล้ว กรุณากลับหน้าหลักเพื่อสร้างหรือเข้าร่วมห้องใหม่');
@@ -221,6 +224,11 @@ document.addEventListener('DOMContentLoaded', () => {
     roomCode = code;
     playerName = player.name;
     playerRoomBadge.innerText = roomCode;
+
+    if (state.expiresAt) {
+      roomExpiresAt = state.expiresAt;
+      startTtlCountdown();
+    }
 
     transitionView('lobby');
     // If guest joined, read the bot choice and update settings
@@ -425,6 +433,29 @@ document.addEventListener('DOMContentLoaded', () => {
     '🔮 คำถามมี 3 หมวด: ทั่วไป, ความรัก, เพื่อนสนิท — โฮสต์เป็นคนเลือกธีม'
   ];
   let currentTipIndex = -1;
+
+  function startTtlCountdown() {
+    if (ttlInterval) clearInterval(ttlInterval);
+    const badge = document.getElementById('room-ttl-badge');
+    if (!badge) return;
+    badge.style.display = 'block';
+    function update() {
+      const remaining = roomExpiresAt - Date.now();
+      if (remaining <= 0) {
+        badge.textContent = 'หมดเวลา';
+        badge.className = 'ttl-badge ttl-critical';
+        clearInterval(ttlInterval);
+        return;
+      }
+      const h = Math.floor(remaining / 3600000);
+      const m = Math.floor((remaining % 3600000) / 60000);
+      const s = Math.floor((remaining % 60000) / 1000);
+      badge.textContent = h > 0 ? `⏳ ${h}h ${m}m` : m >= 10 ? `⏳ ${m}m` : `⚠️ ${m}m ${s}s`;
+      badge.className = 'ttl-badge' + (remaining < 10 * 60000 ? ' ttl-critical' : remaining < 30 * 60000 ? ' ttl-warn' : '');
+    }
+    update();
+    ttlInterval = setInterval(update, 1000);
+  }
 
   function showRandomTip() {
     if (!guestTipText) return;
