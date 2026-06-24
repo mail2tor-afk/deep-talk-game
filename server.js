@@ -404,6 +404,27 @@ io.on('connection', (socket) => {
     });
   });
 
+  // Event: Verify room still exists after socket reconnect
+  socket.on('verify-room', ({ roomCode, playerName, isHost: asHost }) => {
+    const code = roomCode?.toUpperCase();
+    const room = rooms[code];
+    if (!room) {
+      socket.emit('room-expired');
+      return;
+    }
+    socket.join(code);
+    const player = room.players.find(p => p.name === playerName);
+    if (player) player.socketId = socket.id;
+    if (asHost && room.hostName === playerName) {
+      room.hostSocketId = socket.id;
+      room.hostDisconnected = false;
+      if (room._hostGraceTimer) { clearTimeout(room._hostGraceTimer); delete room._hostGraceTimer; }
+      io.to(code).emit('host-reconnected', room);
+    }
+    room.lastActivity = Date.now();
+    console.log(`Room verified: ${code} for ${playerName}`);
+  });
+
   // Event: End Game — broadcast scores screen to all players
   socket.on('end-game', ({ roomCode }) => {
     const room = rooms[roomCode];

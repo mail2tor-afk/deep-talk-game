@@ -196,8 +196,24 @@ document.addEventListener('DOMContentLoaded', () => {
   // SOCKET STATE LISTENERS
   // ==========================================================================
 
+  // On socket reconnect (after network drop / Railway restart), verify room still exists
+  let inRoom = false;
+  socket.on('connect', () => {
+    if (inRoom && roomCode && playerName) {
+      socket.emit('verify-room', { roomCode, playerName, isHost });
+    }
+  });
+
+  socket.on('room-expired', () => {
+    inRoom = false;
+    sessionStorage.clear();
+    alert('ห้องหมดอายุแล้ว กรุณากลับหน้าหลักเพื่อสร้างหรือเข้าร่วมห้องใหม่');
+    window.location.href = 'index.html';
+  });
+
   socket.on('joined-successfully', ({ roomCode: code, player, roomState: state }) => {
     requestNotifPermission();
+    inRoom = true;
     roomCode = code;
     playerName = player.name;
     playerRoomBadge.innerText = roomCode;
