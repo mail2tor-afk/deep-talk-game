@@ -29,6 +29,24 @@ const rooms = {};
 // Question ratings: { questionId: { up, down, questionTh } }
 const ratings = {};
 
+// Closed room reason cache (10 min) — gives player specific error message
+const closedRooms = {};
+const CLOSED_ROOM_MESSAGES = {
+  host_disconnect: 'โฮสต์ไม่กลับมาภายใน 60 วินาที — ขอให้โฮสต์สร้างห้องใหม่แล้วส่ง link ใหม่',
+  player_left:     'ผู้เล่นออกระหว่างเกม เกมถูกปิด — ขอให้โฮสต์สร้างห้องใหม่',
+  ttl:             'ห้องหมดอายุ (ไม่มีการใช้งาน 2 ชั่วโมง) — ขอให้โฮสต์สร้างห้องใหม่',
+  unknown:         'ไม่พบห้องรหัสนี้ อาจพิมพ์ผิด หรือเซิร์ฟเวอร์รีสตาร์ท — ขอ link ใหม่จากโฮสต์',
+};
+
+function closeRoom(code, reason) {
+  delete rooms[code];
+  if (closedRooms[code]?._timer) clearTimeout(closedRooms[code]._timer);
+  closedRooms[code] = {
+    reason,
+    _timer: setTimeout(() => { delete closedRooms[code]; }, 10 * 60 * 1000),
+  };
+}
+
 // Auto-cleanup stale rooms (2h TTL) every 10 minutes
 const ROOM_TTL = 2 * 60 * 60 * 1000;
 setInterval(() => {
@@ -36,7 +54,7 @@ setInterval(() => {
   Object.keys(rooms).forEach(code => {
     if (now - (rooms[code].lastActivity || 0) > ROOM_TTL) {
       console.log(`Room expired: ${code}`);
-      delete rooms[code];
+      closeRoom(code, 'ttl');
     }
   });
 }, 10 * 60 * 1000);
@@ -207,7 +225,9 @@ io.on('connection', (socket) => {
     const room = rooms[code];
 
     if (!room) {
-      return socket.emit('join-error', 'ไม่พบห้อง รหัสอาจหมดอายุหรือโฮสต์ออกไปก่อน ขอให้โฮสต์สร้างห้องใหม่');
+      const closed = closedRooms[code];
+      const msg = CLOSED_ROOM_MESSAGES[closed?.reason] || CLOSED_ROOM_MESSAGES.unknown;
+      return socket.emit('join-error', msg);
     }
 
     // Host reconnecting during grace period
@@ -480,7 +500,7 @@ io.on('connection', (socket) => {
         room._hostGraceTimer = setTimeout(() => {
           if (rooms[code] && rooms[code].hostDisconnected) {
             io.to(code).emit('room-closed', 'โฮสต์ไม่กลับมาภายใน 60 วินาที ห้องถูกปิดแล้ว');
-            delete rooms[code];
+            closeRoom(code, 'host_disconnect');
             console.log(`Room ${code} closed after host grace period expired`);
           }
         }, 60000);
@@ -495,7 +515,7 @@ io.on('connection', (socket) => {
         
         if (room.gameState.status === 'playing') {
           io.to(code).emit('room-closed', `เกมถูกกดยกเลิกเนื่องจากผู้เล่น ${playerName} ออกจากเกม`);
-          delete rooms[code];
+          closeRoom(code, 'player_left');
           console.log(`Room closed: ${code} due to player ${playerName} leaving during active game.`);
         } else {
           io.to(code).emit('player-left', { playerName, players: room.players, roomState: room });
