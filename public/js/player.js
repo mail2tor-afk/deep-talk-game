@@ -71,6 +71,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Multiple Choice
   const pstateChoice = document.getElementById('pstate-choice');
+  const pstateVote = document.getElementById('pstate-vote');
+  const pstateScores = document.getElementById('pstate-scores');
   const choiceCardHint = document.getElementById('choice-card-hint');
   const choiceQuestionTextTh = document.getElementById('choice-question-text-th');
   const choiceOptionsList = document.getElementById('choice-options-list');
@@ -774,8 +776,8 @@ document.addEventListener('DOMContentLoaded', () => {
       show(pstateVote);
     } else if (view === 'roundover') {
       show(pstateRoundover);
-    } else if (view === 'scores') {
-      show(pstateScores);
+    } else if (view === 'scores' || view === 'gameover') {
+      show(pstateScores || pstateGameover);
       hide(safezoneBtn);
     }
   }
