@@ -213,6 +213,11 @@ function getOfflineThemePrompts(theme, level) {
   return promptList;
 }
 
+// Version check — confirms which features are deployed
+app.get('/api/version', (req, res) => {
+  res.json({ version: 'a943ef0', redis: !!redis, rooms: Object.keys(rooms).length });
+});
+
 // Admin: view question ratings sorted by score
 app.get('/api/ratings', (req, res) => {
   const sorted = Object.entries(ratings)
