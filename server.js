@@ -48,7 +48,7 @@ function closeRoom(code, reason) {
 }
 
 // Auto-cleanup stale rooms (2h TTL) every 10 minutes
-const ROOM_TTL = 2 * 60 * 60 * 1000;
+const ROOM_TTL = 4 * 60 * 60 * 1000;
 setInterval(() => {
   const now = Date.now();
   Object.keys(rooms).forEach(code => {
