@@ -489,7 +489,7 @@
     }
 
     /* ===== LOBBY PLAYER LIST — ชัดและเห็นครบ ===== */
-    #host-players-list-area { display: block !important; margin-top: 16px; }
+    #host-players-list-area { margin-top: 16px; }
     .lobby-players {
       display: flex;
       flex-direction: column;
@@ -778,8 +778,7 @@
           <span class="card-badge" id="choice-card-hint">คำถามชวนคิด · ระดับ 1</span>
           <div class="card-text-th" id="choice-question-text-th">คำถาม</div>
         </div>
-        <div id="choice-options-list" style="display: flex; flex-direction: column; gap: 10px; margin-top: 16px;"></div>
-        <button class="submit-btn" id="player-submit-choice-btn" disabled style="display:none;"></button>
+        <div id="choice-options-list" style="display: flex; flex-direction: column; gap: 10px; margin-top: 16px; max-height: calc(100dvh - 240px); overflow-y: auto;"></div>
       </section>
 
       <!-- SUB-STATE 2: WRITE ANSWER (Typing View — L3 only) -->

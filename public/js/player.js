@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const playerRoomBadge = document.getElementById('player-room-badge');
   const safezoneBtn = document.getElementById('safezone-btn');
   const playerCancelBtn = document.getElementById('player-cancel-btn');
+  const playerOuterWrap = document.querySelector('.player-outer-wrap');
 
   // Views
   const pstateJoin = document.getElementById('pstate-join');
@@ -78,7 +79,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const choiceCardHint = document.getElementById('choice-card-hint');
   const choiceQuestionTextTh = document.getElementById('choice-question-text-th');
   const choiceOptionsList = document.getElementById('choice-options-list');
-  const playerSubmitChoiceBtn = document.getElementById('player-submit-choice-btn');
 
   // Revealed / Roundover
   const playerRevealedAnswersList = document.getElementById('player-revealed-answers-list');
@@ -174,16 +174,22 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Direct Join Fallback Form handler
+  let _isJoiningRoom = false;
   directJoinBtn.addEventListener('click', () => {
+    if (_isJoiningRoom) return;
+    _isJoiningRoom = true;
+    setTimeout(() => { _isJoiningRoom = false; }, 3000);
     const code = directRoomCode.value.toUpperCase().trim();
     const name = directPlayerName.value.trim();
 
     if (code.length !== 4) {
       alert("กรุณากรอกรหัสห้องให้ครบ 4 หลัก");
+      _isJoiningRoom = false;
       return;
     }
     if (!name) {
       alert("กรุณากรอกชื่อเล่น");
+      _isJoiningRoom = false;
       return;
     }
 
@@ -210,6 +216,17 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // Force immediate reconnect when user returns to the page (mobile background switch)
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && inRoom && roomCode && playerName) {
+      if (!socket.connected) {
+        socket.connect();
+      } else {
+        socket.emit('verify-room', { roomCode, playerName, isHost });
+      }
+    }
+  });
+
   socket.on('room-expired', () => {
     if (ttlInterval) clearInterval(ttlInterval);
     inRoom = false;
@@ -224,6 +241,9 @@ document.addEventListener('DOMContentLoaded', () => {
     roomCode = code;
     playerName = player.name;
     playerRoomBadge.innerText = roomCode;
+    sessionStorage.setItem('join_room_code', code);
+    sessionStorage.setItem('join_player_name', playerName);
+    sessionStorage.removeItem('create_room');
 
     if (state.expiresAt) {
       roomExpiresAt = state.expiresAt;
@@ -303,36 +323,41 @@ document.addEventListener('DOMContentLoaded', () => {
     window.location.href = 'index.html';
   });
 
-  socket.on('host-disconnected', ({ waitMinutes }) => {
-    let banner = document.getElementById('host-disconnected-banner');
+  function showDisconnectBanner(id, text) {
+    let banner = document.getElementById(id);
     if (!banner) {
       banner = document.createElement('div');
-      banner.id = 'host-disconnected-banner';
+      banner.id = id;
       banner.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#7d3c1a;color:#fff;font-family:Kanit;font-size:13px;text-align:center;padding:10px 16px;z-index:9999;line-height:1.5;';
       document.body.appendChild(banner);
+      if (playerOuterWrap) playerOuterWrap.style.paddingTop = '52px';
     }
-    banner.innerText = `โฮสต์หลุดการเชื่อมต่อ — รอโฮสต์กลับมา (ห้องยังเปิดอยู่อีก ${waitMinutes} นาที)`;
+    banner.innerText = text;
+  }
+
+  function hideDisconnectBanner(id) {
+    const banner = document.getElementById(id);
+    if (banner) {
+      banner.remove();
+      const anyBanner = document.getElementById('host-disconnected-banner') || document.getElementById('player-disconnected-banner');
+      if (!anyBanner && playerOuterWrap) playerOuterWrap.style.paddingTop = '';
+    }
+  }
+
+  socket.on('host-disconnected', ({ waitMinutes }) => {
+    showDisconnectBanner('host-disconnected-banner', `โฮสต์หลุดการเชื่อมต่อ — รอโฮสต์กลับมา (ห้องยังเปิดอยู่อีก ${waitMinutes} นาที)`);
   });
 
   socket.on('host-reconnected', () => {
-    const banner = document.getElementById('host-disconnected-banner');
-    if (banner) banner.remove();
+    hideDisconnectBanner('host-disconnected-banner');
   });
 
   socket.on('player-disconnected', ({ playerName: dcName, waitSeconds }) => {
-    let banner = document.getElementById('player-disconnected-banner');
-    if (!banner) {
-      banner = document.createElement('div');
-      banner.id = 'player-disconnected-banner';
-      banner.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#7d3c1a;color:#fff;font-family:Kanit;font-size:13px;text-align:center;padding:10px 16px;z-index:9999;line-height:1.5;';
-      document.body.appendChild(banner);
-    }
-    banner.innerText = `${dcName} หลุดการเชื่อมต่อ — รอกลับมา (${waitSeconds} วินาที)`;
+    showDisconnectBanner('player-disconnected-banner', `${dcName} หลุดการเชื่อมต่อ — รอกลับมา (${waitSeconds} วินาที)`);
   });
 
   socket.on('player-reconnected', ({ playerName: rcName }) => {
-    const banner = document.getElementById('player-disconnected-banner');
-    if (banner) banner.remove();
+    hideDisconnectBanner('player-disconnected-banner');
   });
 
   socket.on('player-joined', ({ players, roomState: state }) => {
@@ -487,10 +512,11 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     }
 
-    players.forEach(p => {
+    const uniquePlayers = players.filter((p, i, arr) => arr.findIndex(x => x.name === p.name) === i);
+    uniquePlayers.forEach(p => {
       const isPlayerHost = p.socketId === hostSocketId;
       const tag = document.createElement('div');
-      tag.className = `player-tag${isPlayerHost ? ' host' : ''}`;
+      tag.className = `lobby-player-tag${isPlayerHost ? ' host' : ''}`;
       tag.innerHTML = `
         <span>${isPlayerHost ? '👑' : '👤'} ${p.name}</span>
         <span style="font-size: 12px; color: ${isPlayerHost ? 'var(--primary)' : '#8fb3aa'}">${isPlayerHost ? 'โฮสต์' : 'พร้อมเล่น'}</span>
@@ -501,7 +527,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Render bot player tag at the bottom of the lobby players list if enabled
     if (botEnabled) {
       const tag = document.createElement('div');
-      tag.className = 'player-tag';
+      tag.className = 'lobby-player-tag';
       tag.style.borderColor = 'rgba(77, 182, 164, 0.4)';
       tag.style.background = 'rgba(77, 182, 164, 0.05)';
       tag.innerHTML = `

@@ -524,13 +524,16 @@ io.on('connection', (socket) => {
       player.socketId = socket.id;
       if (player.disconnected) {
         player.disconnected = false;
+        if (player._notifyTimer) { clearTimeout(player._notifyTimer); delete player._notifyTimer; }
         if (player._reconnectTimer) { clearTimeout(player._reconnectTimer); delete player._reconnectTimer; }
+        if (player._lobbyTimer) { clearTimeout(player._lobbyTimer); delete player._lobbyTimer; }
         io.to(code).emit('player-reconnected', { playerName, roomState: room });
       }
     }
     if (asHost && room.hostName === playerName) {
       room.hostSocketId = socket.id;
       room.hostDisconnected = false;
+      if (room._hostNotifyTimer) { clearTimeout(room._hostNotifyTimer); delete room._hostNotifyTimer; }
       if (room._hostGraceTimer) { clearTimeout(room._hostGraceTimer); delete room._hostGraceTimer; }
       io.to(code).emit('host-reconnected', room);
     }
@@ -569,12 +572,16 @@ io.on('connection', (socket) => {
     for (const code in rooms) {
       const room = rooms[code];
       
-      // If host disconnected, start 60s grace period before closing room
+      // If host disconnected, start grace period (notify after 8s debounce)
       if (room.hostSocketId === socket.id) {
         room.hostDisconnected = true;
         room.hostSocketId = null;
-        io.to(code).emit('host-disconnected', { waitMinutes: 120 });
-        console.log(`Host disconnected from room ${code}, starting 60s grace period`);
+        console.log(`Host disconnected from room ${code}, starting grace period`);
+        room._hostNotifyTimer = setTimeout(() => {
+          if (rooms[code] && rooms[code].hostDisconnected) {
+            io.to(code).emit('host-disconnected', { waitMinutes: 120 });
+          }
+        }, 8000);
         room._hostGraceTimer = setTimeout(() => {
           if (rooms[code] && rooms[code].hostDisconnected) {
             io.to(code).emit('room-closed', 'โฮสต์ไม่กลับมาภายใน 120 นาที ห้องถูกปิดแล้ว');
@@ -592,9 +599,11 @@ io.on('connection', (socket) => {
         const playerName = player.name;
 
         if (room.gameState.status === 'playing') {
-          // Grace period — don't close immediately, wait for reconnect
+          // Grace period — notify after 8s debounce, close room after 60s
           player.disconnected = true;
-          io.to(code).emit('player-disconnected', { playerName, waitSeconds: 60 });
+          player._notifyTimer = setTimeout(() => {
+            if (player.disconnected) io.to(code).emit('player-disconnected', { playerName, waitSeconds: 52 });
+          }, 8000);
           console.log(`Player ${playerName} disconnected from room ${code}, starting 60s grace period`);
           player._reconnectTimer = setTimeout(() => {
             if (rooms[code] && player.disconnected) {
@@ -604,9 +613,17 @@ io.on('connection', (socket) => {
             }
           }, 60 * 1000);
         } else {
-          room.players.splice(playerIndex, 1);
-          io.to(code).emit('player-left', { playerName, players: room.players, roomState: room });
-          console.log(`Player ${playerName} left lobby of room ${code}`);
+          // Lobby: 20s grace period before removing
+          player.disconnected = true;
+          player._lobbyTimer = setTimeout(() => {
+            if (!rooms[code]) return;
+            const idx = rooms[code].players.findIndex(p => p.name === playerName);
+            if (idx > -1 && rooms[code].players[idx].disconnected) {
+              rooms[code].players.splice(idx, 1);
+              io.to(code).emit('player-left', { playerName, players: rooms[code].players, roomState: rooms[code] });
+              console.log(`Player ${playerName} left lobby of room ${code} after grace period`);
+            }
+          }, 20000);
         }
         break;
       }
